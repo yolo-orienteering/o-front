@@ -1,8 +1,13 @@
 <template>
   <div>
-    <div v-if="followingDepartures && followingDepartures.length" class="row">
+    <div
+      v-if="props.followingDepartures && props.followingDepartures.length"
+      class="row"
+    >
       <div
-        v-for="(followingDeparture, followingIndex) in followingDepartures"
+        v-for="(
+          followingDeparture, followingIndex
+        ) in props.followingDepartures"
         :key="followingIndex"
         class="col-12"
       >
@@ -13,7 +18,7 @@
           </div>
           <div class="col-3">
             <nuxt-link
-              :to="`/races/${raceId}/departures/category/${(followingDeparture.raceCategory as RaceCategory).id}`"
+              :to="`/races/${props.raceId}/departures/category/${(followingDeparture.raceCategory as RaceCategory).id}`"
               class="q-mt-md"
               style="color: unset"
             >

@@ -132,92 +132,90 @@
           </q-timeline-entry>
 
           <!-- races -->
-          <nuxt-link :to="`/races/${race.id}`">
-            <q-timeline-entry :title="race.name!">
-              <!-- date & deadline -->
-              <template #subtitle>
-                <div class="row items-center">
-                  <div class="col-6">
-                    {{ formatDate(race.date!, 'dd, DD.MM yyyy') }}
-                  </div>
-                  <!-- deadline -->
-                  <div v-if="race.deadline" class="col-6 text-right">
-                    <q-btn
-                      v-if="shouldAddUser(race)"
-                      color="secondary"
-                      href="/settings"
-                      rounded
-                      size="sm"
-                      unelevated
-                    >
-                      Deine Startzeit
-                    </q-btn>
-
-                    <q-chip
-                      v-else-if="
-                        syncCenter.myDepartures.getDepartureFor(race.id)
-                      "
-                      color="secondary"
-                      rounded
-                      size="md"
-                      unelevated
-                    >
-                      {{
-                        syncCenter.myDepartures.getFormatedDeparture(race.id)
-                      }}
-                    </q-chip>
-
-                    <q-chip
-                      v-else
-                      :class="[{ 'text-strike': new Date() > new Date(race.deadline!) }]"
-                      :outline="!syncCenter.filter.filter.deadline"
-                      color="secondary"
-                      dense
-                    >
-                      {{ formatDate(race.deadline!, 'dd, DD.MMM') }}
-                    </q-chip>
-                  </div>
+          <q-timeline-entry
+            :title="race.name!"
+            class="cursor-pointer"
+            @click="$router.push(`/races/${race.id}`)"
+          >
+            <!-- date & deadline -->
+            <template #subtitle>
+              <div class="row items-center">
+                <div class="col-6">
+                  {{ formatDate(race.date!, 'dd, DD.MM yyyy') }}
                 </div>
-              </template>
-              <!-- title & favorites -->
-              <template #title>
-                <div class="row items-center">
-                  <div class="col-10">
-                    {{ race.name }}
-                  </div>
-                  <div class="col-2 text-right">
-                    <q-btn
-                      :outline="
-                        !syncCenter.myRaces.find(
-                          (myRace) => myRace.id === race.id
-                        )
-                      "
-                      color="primary"
-                      dense
-                      round
-                      @click.stop="raceCompose.addOrRemoveRace(race)"
-                    >
-                      <q-icon name="bookmark_outline" />
-                    </q-btn>
-                  </div>
-                </div>
-              </template>
-              <!-- text body -->
-              <div class="row justify-between items-center">
-                <div class="col-auto">
-                  <span v-if="!!race?.terrain" class="q-mr-xs">
-                    <q-icon
-                      :name="getTerrainIcon(race.terrain as RaceTerrain)"
-                      size="xs"
-                      style="margin-top: -4px"
-                    />
-                  </span>
-                  {{ race.city || race.mapName || 'vakant' }}
-                  {{ race.region ? `(${race.region})` : '' }}
+                <!-- deadline -->
+                <div v-if="race.deadline" class="col-6 text-right">
+                  <q-btn
+                    v-if="shouldAddUser(race)"
+                    color="secondary"
+                    href="/settings"
+                    rounded
+                    size="sm"
+                    unelevated
+                  >
+                    Deine Startzeit
+                  </q-btn>
+
+                  <q-chip
+                    v-else-if="syncCenter.myDepartures.getDepartureFor(race.id)"
+                    color="secondary"
+                    rounded
+                    size="md"
+                    unelevated
+                  >
+                    {{ syncCenter.myDepartures.getFormatedDeparture(race.id) }}
+                  </q-chip>
+
+                  <q-chip
+                    v-else
+                    :class="[{ 'text-strike': new Date() > new Date(race.deadline!) }]"
+                    :outline="!syncCenter.filter.filter.deadline"
+                    color="secondary"
+                    dense
+                  >
+                    {{ formatDate(race.deadline!, 'dd, DD.MMM') }}
+                  </q-chip>
                 </div>
               </div>
-            </q-timeline-entry>
-          </nuxt-link>
+            </template>
+            <!-- title & favorites -->
+            <template #title>
+              <div class="row items-center">
+                <div class="col-10">
+                  {{ race.name }}
+                </div>
+                <div class="col-2 text-right">
+                  <q-btn
+                    :outline="
+                      !syncCenter.myRaces?.find(
+                        (myRace) => myRace.id === race.id
+                      )
+                    "
+                    color="primary"
+                    dense
+                    round
+                    @click.stop="raceCompose.addOrRemoveRace(race)"
+                  >
+                    <q-icon name="bookmark_outline" />
+                  </q-btn>
+                </div>
+              </div>
+            </template>
+            <!-- text body -->
+            <div class="row justify-between items-center">
+              <div class="col-auto">
+                <span v-if="!!race?.terrain" class="q-mr-xs">
+                  <q-icon
+                    :name="getTerrainIcon(race.terrain as RaceTerrain)"
+                    size="xs"
+                    style="margin-top: -4px"
+                  />
+                </span>
+                {{ race.city || race.mapName || 'vakant' }}
+                {{ race.region ? `(${race.region})` : '' }}
+              </div>
+            </div>
+          </q-timeline-entry>
         </template>
       </q-timeline>
     </div>

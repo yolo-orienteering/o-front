@@ -164,11 +164,11 @@
           class="q-mt-md"
           style="color: unset"
         >
-          <b
-            ><u>{{
-              syncCenter.myDepartures.getFormatedDeparture(race.id)
-            }}</u></b
-          >
+          <b>
+            <u>
+              {{ syncCenter.myDepartures.getFormatedDeparture(race.id) }}
+            </u>
+          </b>
         </nuxt-link>
       </div>
 

@@ -18,7 +18,7 @@
   import { useFollowingUserDepartures } from '@/composables/useFollowingUserDepartures'
   import type { FollowingUserDeparture } from '@/stores/syncCenter'
 
-  const { followingUserDepartures } = useSyncCenter()
+  const syncCenter = useSyncCenter()
   const { followOrUnfollowUserDepartures } = useFollowingUserDepartures()
 
   const props = defineProps<{
@@ -26,7 +26,7 @@
   }>()
 
   function amIFollowing(userDepartureId: string): boolean {
-    return !!followingUserDepartures.find(
+    return !!syncCenter.followingUserDepartures?.find(
       (following) => following.id === userDepartureId
     )
   }

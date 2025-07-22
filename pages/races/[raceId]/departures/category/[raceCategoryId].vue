@@ -36,7 +36,7 @@
   </div>
 
   <!-- filter </template>-->
-  <!-- <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
+  <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
     <div
       class="row no-wrap q-py-sm items-center justify-center"
       style="overflow-x: scroll"
@@ -58,7 +58,7 @@
         />
       </div>
     </div>
-  </Teleport> -->
+  </Teleport>
 </template>
 
 <script lang="ts" setup>
@@ -118,10 +118,10 @@
   const departures = ref<UserDeparture[]>([])
   const categories = ref<Pick<RaceCategory, 'id' | 'name'>[]>([])
   const race = ref<Race | undefined>(undefined)
-  // const teleportToMenuEl = ref<HTMLElement | null>(null)
+  const teleportToMenuEl = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
-    // teleportToMenuEl.value = document.getElementById('teleport-to-menu')
+    teleportToMenuEl.value = document.getElementById('teleport-to-menu')
 
     const [tmpDepartures, tmpCategories, tmpRace] = await Promise.all([
       getDepartures(),
@@ -208,12 +208,8 @@
   async function updateCategoryFilter(
     newCategory: RaceCategory
   ): Promise<void> {
-    await router.replace({
-      name: 'departures-by-category',
-      params: {
-        raceId: params.raceId,
-        raceCategoryId: newCategory.id,
-      },
-    })
+    await router.replace(
+      `/races/${params.raceId}/departures/category/${newCategory.id}`
+    )
   }
 </script>

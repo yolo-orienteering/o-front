@@ -5,14 +5,17 @@ import { useApi } from '@/stores/useApi'
 import type { UserDeparture } from '@/types/DirectusTypes'
 
 export function useFollowingUserDepartures() {
-  const { followingUserDepartures } = useSyncCenter()
+  const syncCenter = useSyncCenter()
   const { directus } = useApi()
 
   async function getFollowingUserDeparturesbyRace(
     raceId: string
   ): Promise<UserDeparture[] | false> {
     try {
-      const userDepartureIds: string[] = followingUserDepartures
+      if (!syncCenter.followingUserDepartures) {
+        return []
+      }
+      const userDepartureIds: string[] = syncCenter.followingUserDepartures
         .filter((following) => following.race === raceId)
         .map((following) => following.id)
 
@@ -48,17 +51,17 @@ export function useFollowingUserDepartures() {
   function followOrUnfollowUserDepartures(
     userDeparture: FollowingUserDeparture
   ): void {
-    if (!followingUserDepartures) {
+    if (!syncCenter.followingUserDepartures) {
       return
     }
-    const index = followingUserDepartures.findIndex(
+    const index = syncCenter.followingUserDepartures.findIndex(
       (following) => following.id === userDeparture.id
     )
 
     if (index !== -1) {
-      followingUserDepartures.splice(index, 1)
+      syncCenter.followingUserDepartures.splice(index, 1)
     } else {
-      followingUserDepartures.push(userDeparture)
+      syncCenter.followingUserDepartures.push(userDeparture)
     }
   }
 
