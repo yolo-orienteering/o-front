@@ -182,12 +182,11 @@
 
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
-  import { useSyncCenter } from '@/stores/syncCenter'
   import { useRegion } from '@/stores/useRegion'
   import { useRaceTerrain } from '@/composables/useRaceTerrain'
 
-  const { filter } = useSyncCenter()
   const regionStore = useRegion()
+  const filter = useRaceFilter()
   const { getTerrainIcon, getTerrainText } = useRaceTerrain()
 
   const props = withDefaults(
