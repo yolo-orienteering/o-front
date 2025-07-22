@@ -1,0 +1,22 @@
+// app global css in SCSS form
+@keyframes animate-up {
+  from {
+    transform: translateY(60px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+.animate-up {
+  animation: animate-up;
+  animation-duration: 600ms;
+}
+
+.border-bottom-primary {
+  border-bottom: 1px solid $primary;
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
+}

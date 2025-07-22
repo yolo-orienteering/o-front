@@ -2,5 +2,10 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', 'nuxt-quasar-ui'],
+
+  css: ['@/css/app.scss'],
+  modules: ['@nuxt/eslint', 'nuxt-quasar-ui', '@pinia/nuxt'],
+  quasar: {
+    plugins: ['Notify', 'LocalStorage'],
+  },
 })
