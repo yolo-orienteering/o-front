@@ -48,9 +48,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   readFilters()
   readFollowingUserDepartures()
   function readMyRaces(): void {
-    if (isServer()) {
-      return
-    }
     myRaces.value = localStorage.getItem<Race[]>(MY_RACES_STORAGE_KEY) || []
   }
 
@@ -64,10 +61,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     }
   }
   function readUser(): void {
-    if (isServer()) {
-      return
-    }
-
     const userFromStore: Partial<DirectusUsers> =
       localStorage.getItem<Partial<DirectusUsers>>(USER_STORAGE_KEY) || {}
     if (userFromStore) {
