@@ -8,4 +8,13 @@ export default defineNuxtConfig({
   quasar: {
     plugins: ['Notify', 'LocalStorage'],
   },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "@/css/quasar.variables.scss";`,
+        },
+      },
+    },
+  },
 })
