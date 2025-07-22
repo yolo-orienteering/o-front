@@ -6,18 +6,22 @@
     <!-- deadline -->
     <div class="col-auto">
       <q-chip
-        :selected="filter.deadline"
+        :selected="filter.filter.deadline"
         outline
         class="q-ml-none"
         color="primary"
         dense
         size="xl"
         icon-selected="notifications"
-        :class="filter.deadline ? 'bg-primary text-white' : 'bg-white'"
-        @click="updateFilter({ deadline: !filter.deadline })"
+        :class="filter.filter.deadline ? 'bg-primary text-white' : 'bg-white'"
+        @click="updateFilter({ deadline: !filter.filter.deadline })"
       >
         <span class="text-body2">
-          <q-icon v-if="!filter.deadline" name="notifications" size="sm" />
+          <q-icon
+            v-if="!filter.filter.deadline"
+            name="notifications"
+            size="sm"
+          />
           Anmeldeschluss
         </span>
       </q-chip>
@@ -26,23 +30,27 @@
     <!-- relevance -->
     <div class="col-auto">
       <q-chip
-        :selected="!!filter.geographicalScale"
+        :selected="!!filter.filter.geographicalScale"
         outline
         icon-selected="health_and_safety"
         class="q-ml-none"
         color="primary"
         dense
         size="xl"
-        :class="filter.geographicalScale ? 'bg-primary text-white' : 'bg-white'"
+        :class="
+          filter.filter.geographicalScale ? 'bg-primary text-white' : 'bg-white'
+        "
         @click="
           updateFilter({
-            geographicalScale: filter.geographicalScale ? null : 'national',
+            geographicalScale: filter.filter.geographicalScale
+              ? null
+              : 'national',
           })
         "
       >
         <span class="text-body2">
           <q-icon
-            v-if="!filter.geographicalScale"
+            v-if="!filter.filter.geographicalScale"
             name="health_and_safety"
             size="sm"
           />
@@ -59,19 +67,19 @@
         dense
         size="xl"
         outline
-        :selected="!!filter.terrain"
-        :class="filter.terrain ? 'bg-primary text-white' : 'bg-white'"
-        :removable="!!filter.terrain"
-        :icon-selected="getTerrainIcon(filter.terrain)"
+        :selected="!!filter.filter.terrain"
+        :class="filter.filter.terrain ? 'bg-primary text-white' : 'bg-white'"
+        :removable="!!filter.filter.terrain"
+        :icon-selected="getTerrainIcon(filter.filter.terrain)"
         @remove="updateFilter({ terrain: null })"
       >
         <span class="text-body2">
           <q-icon
-            v-if="!filter.terrain"
+            v-if="!filter.filter.terrain"
             :name="getTerrainIcon(undefined)"
             size="sm"
           />
-          {{ getTerrainText(filter.terrain) }}
+          {{ getTerrainText(filter.filter.terrain) }}
         </span>
 
         <q-menu cover anchor="bottom left" auto-close class="text-no-wrap">
@@ -108,23 +116,25 @@
     <!-- previous -->
     <div class="col-auto">
       <q-chip
-        :selected="!!filter.previousDays"
+        :selected="!!filter.filter.previousDays"
         outline
         icon-selected="touch_app"
         class="q-ml-none"
         color="primary"
         dense
         size="xl"
-        :class="filter.previousDays ? 'bg-primary text-white' : 'bg-white'"
-        :removable="!!filter.previousDays"
+        :class="
+          filter.filter.previousDays ? 'bg-primary text-white' : 'bg-white'
+        "
+        :removable="!!filter.filter.previousDays"
         @click="updateFilter({ previousDays: 'add' })"
         @remove="updateFilter({ previousDays: 'reset' })"
       >
         <span class="text-body2">
-          <q-icon v-if="!filter.previousDays" name="refresh" size="sm" />
-          <span v-if="filter.previousDays">
-            -{{ filter.previousDays }}
-            {{ filter.previousDays > 1 ? `Tage` : `Tag` }}
+          <q-icon v-if="!filter.filter.previousDays" name="refresh" size="sm" />
+          <span v-if="filter.filter.previousDays">
+            -{{ filter.filter.previousDays }}
+            {{ filter.filter.previousDays > 1 ? `Tage` : `Tag` }}
           </span>
           <span v-else> Frühere OLs </span>
         </span>
@@ -132,9 +142,12 @@
     </div>
 
     <!-- search -->
-    <div class="q-mr-xs" :class="[!!filter?.searchString ? 'col-6' : 'col-4']">
+    <div
+      class="q-mr-xs"
+      :class="[!!filter?.filter.searchString ? 'col-6' : 'col-4']"
+    >
       <q-input
-        v-model="filter.searchString"
+        v-model="filter.filter.searchString"
         :loading="props.loading"
         outlined
         label="Lauf suchen"
@@ -148,9 +161,9 @@
     </div>
 
     <!-- region -->
-    <div :class="[filter.regions ? 'col-7' : 'col-5']">
+    <div :class="[filter.filter.regions ? 'col-7' : 'col-5']">
       <q-select
-        v-model="filter.regions"
+        v-model="filter.filter.regions"
         :options="regionStore.regions.map((region) => region.region)"
         dense
         rounded
