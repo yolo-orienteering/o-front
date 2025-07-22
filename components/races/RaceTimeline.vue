@@ -134,7 +134,7 @@
           <!-- races -->
           <q-timeline-entry
             :title="race.name!"
-            @click="$router.push({ name: 'race', params: { id: race.id } })"
+            @click="$router.push({ name: 'races-id', params: { id: race.id } })"
           >
             <!-- date & deadline -->
             <template #subtitle>
@@ -147,7 +147,7 @@
                   <q-btn
                     v-if="shouldAddUser(race)"
                     color="secondary"
-                    href="#/settings"
+                    href="/settings"
                     rounded
                     size="sm"
                     unelevated

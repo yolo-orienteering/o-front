@@ -6,7 +6,7 @@
     <!-- content -->
     <q-page-container>
       <q-page padding>
-        <slot :key="$route.fullPath" class="animate-up" />
+        <slot />
       </q-page>
     </q-page-container>
 
