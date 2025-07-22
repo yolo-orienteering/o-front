@@ -2,6 +2,8 @@
   import { computed, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import SbbTimetable from '@/components/publicTransport/switzerland/SbbTimetable.vue'
+  import FollowingDeparturesByRace from '~/components/races/FollowingDeparturesByRace.vue'
+
   import type {
     Race,
     RaceCategory,
@@ -20,7 +22,7 @@
   const followingDepartures = ref<UserDeparture[] | false>([])
   const expandedInstructions = ref<boolean>(false)
 
-  const raceId = computed<string>(() => route.params.id as string)
+  const raceId = computed<string>(() => route.params.raceId as string)
 
   // load race
   onMounted(async () => {
@@ -67,7 +69,7 @@
         <div class="col-2 text-right">
           <q-btn
             :outline="
-              !syncCenter.myRaces.find((myRace) => myRace.id === race?.id)
+              !syncCenter.myRaces?.find((myRace) => myRace.id === race?.id)
             "
             color="primary"
             dense
@@ -156,15 +158,9 @@
 
       <div class="q-mt-md q-pl-sm text-body1">
         {{ syncCenter.user?.first_name }}, du startest um
-        <router-link
+        <nuxt-link
           v-if="myDeparture"
-          :to="{
-            name: 'departures-by-category',
-            params: {
-              raceId,
-              raceCategoryId: (myDeparture.raceCategory as UserDeparture).id
-            }
-          }"
+          :to="`/races/${raceId}/departures/category/${(myDeparture.raceCategory as UserDeparture).id}`"
           class="q-mt-md"
           style="color: unset"
         >
@@ -173,7 +169,7 @@
               syncCenter.myDepartures.getFormatedDeparture(race.id)
             }}</u></b
           >
-        </router-link>
+        </nuxt-link>
       </div>
 
       <!-- following departures-->

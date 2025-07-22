@@ -16,6 +16,9 @@ export function useFollowingUserDepartures() {
         .filter((following) => following.race === raceId)
         .map((following) => following.id)
 
+      if (!userDepartureIds.length) {
+        return []
+      }
       return await directus.request<UserDeparture[]>(
         readItems('UserDeparture', {
           filter: {
@@ -45,9 +48,13 @@ export function useFollowingUserDepartures() {
   function followOrUnfollowUserDepartures(
     userDeparture: FollowingUserDeparture
   ): void {
+    if (!followingUserDepartures) {
+      return
+    }
     const index = followingUserDepartures.findIndex(
       (following) => following.id === userDeparture.id
     )
+
     if (index !== -1) {
       followingUserDepartures.splice(index, 1)
     } else {

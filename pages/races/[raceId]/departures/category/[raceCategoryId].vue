@@ -36,7 +36,7 @@
   </div>
 
   <!-- filter </template>-->
-  <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
+  <!-- <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
     <div
       class="row no-wrap q-py-sm items-center justify-center"
       style="overflow-x: scroll"
@@ -58,13 +58,14 @@
         />
       </div>
     </div>
-  </Teleport>
+  </Teleport> -->
 </template>
 
 <script lang="ts" setup>
   import { aggregate, readItem, readItems } from '@directus/sdk'
   import type { QTableColumn } from 'quasar'
   import BackBtn from '@/components/helper/BackBtn.vue'
+  import FollowUserDepartureBtn from '~/components/races/FollowUserDepartureBtn.vue'
   import { useDeparture } from '@/composables/useDeparture'
   import { useApi } from '@/stores/useApi'
   import type {
@@ -75,7 +76,6 @@
   } from '@/types/DirectusTypes'
   import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import FollowUserDepartureBtn from './follow-user-departure-btn.vue'
 
   const { directus } = useApi()
   const { params } = useRoute()
@@ -118,10 +118,10 @@
   const departures = ref<UserDeparture[]>([])
   const categories = ref<Pick<RaceCategory, 'id' | 'name'>[]>([])
   const race = ref<Race | undefined>(undefined)
-  const teleportToMenuEl = ref<HTMLElement | null>(null)
+  // const teleportToMenuEl = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
-    teleportToMenuEl.value = document.getElementById('teleport-to-menu')
+    // teleportToMenuEl.value = document.getElementById('teleport-to-menu')
 
     const [tmpDepartures, tmpCategories, tmpRace] = await Promise.all([
       getDepartures(),

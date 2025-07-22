@@ -22,7 +22,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
    */
   const myRaces = ref<Race[] | null>(null)
   const user = ref<Partial<DirectusUsers>>({})
-  const followingUserDepartures = ref<FollowingUserDeparture[]>([])
+  const followingUserDepartures = ref<FollowingUserDeparture[] | null>(null)
 
   /**
    * DEFINE STORE KEY NAMES
@@ -41,12 +41,12 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   onMounted(() => {
     readUser()
     readMyRaces()
+    readFollowingUserDepartures()
   })
 
   // load data from the local store
 
   readFilters()
-  readFollowingUserDepartures()
   function readMyRaces(): void {
     myRaces.value = localStorage.getItem<Race[]>(MY_RACES_STORAGE_KEY) || []
   }
@@ -117,6 +117,9 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   watch(
     followingUserDepartures,
     () => {
+      if (isServer()) {
+        return
+      }
       localStorage.set(
         FOLLOWING_USER_DEPARTURES_STORAGE_KEY,
         followingUserDepartures.value

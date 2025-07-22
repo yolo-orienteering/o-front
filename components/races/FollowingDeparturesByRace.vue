@@ -12,19 +12,13 @@
             {{ (followingDeparture.user as DirectusUsers).last_name }}
           </div>
           <div class="col-3">
-            <router-link
-              :to="{
-            name: 'departures-by-category',
-            params: {
-              raceId: props.raceId,
-              raceCategoryId: (followingDeparture.raceCategory as RaceCategory).id
-            }
-          }"
+            <nuxt-link
+              :to="`/races/${raceId}/departures/category/${(followingDeparture.raceCategory as RaceCategory).id}`"
               class="q-mt-md"
               style="color: unset"
             >
               {{ (followingDeparture.raceCategory as RaceCategory).name }}
-            </router-link>
+            </nuxt-link>
           </div>
           <div class="col-3">
             <div class="row justify-between">

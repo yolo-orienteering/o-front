@@ -5,7 +5,7 @@
     <q-space />
     <!-- sbb logo -->
     <div class="col-auto">
-      <q-img width="50px" src="img/sbb_logo.svg" />
+      <img width="50px" src="@/assets/img/sbb_logo.svg" />
     </div>
 
     <!-- form -->
