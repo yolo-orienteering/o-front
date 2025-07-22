@@ -4,8 +4,8 @@
     <myol-header @click="router.push('/')" />
 
     <!-- content -->
-    <q-page-container>
-      <q-page padding>
+    <q-page-container class="page-container">
+      <q-page padding class="page">
         <slot />
       </q-page>
     </q-page-container>
@@ -21,3 +21,14 @@
 
   const router = useRouter()
 </script>
+
+<style lang="scss">
+  .page-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .page {
+    max-width: 860px;
+  }
+</style>
