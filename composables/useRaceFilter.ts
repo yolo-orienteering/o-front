@@ -15,6 +15,8 @@ export interface RaceFilter {
   page: number
 }
 
+const FILTERS_STORAGE_KEY = 'filters'
+
 export const useRaceFilter = defineStore('useRaceFilter', () => {
   const filter = ref<RaceFilter>({
     deadline: false,

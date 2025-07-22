@@ -24,7 +24,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   // local storage variables
   const localStorage = useQuasar().localStorage
   const MY_RACES_STORAGE_KEY = 'my-races'
-  const FILTERS_STORAGE_KEY = 'filters'
   const USER_STORAGE_KEY = 'user'
   const FOLLOWING_USER_DEPARTURES_STORAGE_KEY = 'following-user-departures'
 
@@ -39,20 +38,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   })
 
   // load data from the local store
-
-  readFilters()
   function readMyRaces(): void {
     myRaces.value = localStorage.getItem<Race[]>(MY_RACES_STORAGE_KEY) || []
-  }
-
-  function readFilters(): void {
-    const filtersFromStore: RaceFilter | null =
-      localStorage.getItem<RaceFilter>(FILTERS_STORAGE_KEY)
-    if (filtersFromStore) {
-      filter.initFilter(filtersFromStore)
-    } else {
-      filter.initFilter()
-    }
   }
   function readUser(): void {
     const userFromStore: Partial<DirectusUsers> =
@@ -86,14 +73,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       }
       // sort by date
       localStorage.set(MY_RACES_STORAGE_KEY, myRaces.value)
-    },
-    { deep: true }
-  )
-  // filters
-  watch(
-    filter.filter,
-    () => {
-      localStorage.set(FILTERS_STORAGE_KEY, filter.filter.value)
     },
     { deep: true }
   )
