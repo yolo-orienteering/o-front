@@ -15,7 +15,7 @@ export interface RaceFilter {
   page: number
 }
 
-export const useRaceFilter = () => {
+export const useRaceFilter = defineStore('useRaceFilter', () => {
   const filter = ref<RaceFilter>({
     deadline: false,
     searchString: undefined,
@@ -129,4 +129,4 @@ export const useRaceFilter = () => {
     initFilter,
     composeRaceQuery,
   }
-}
+})

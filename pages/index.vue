@@ -30,7 +30,7 @@
   const teleportToMenuEl = ref<HTMLElement | null>(null)
 
   // initially loads races with onMounted hook within composable
-  const syncCenter = useSyncCenter()
+  const filter = useRaceFilter()
   const { directus } = useApi()
   const races = ref<Race[]>([])
   const eventBus = useEventBus().eventBus
@@ -42,7 +42,7 @@
 
   async function initialLoad(): Promise<void> {
     loading.value = true
-    const query = syncCenter.filter.composeRaceQuery({ initialLoad: true })
+    const query = filter.composeRaceQuery({ initialLoad: true })
     races.value = await directus.request<Race[]>(readItems('Race', query))
     eventBus.emit('scrollToSavedPosition')
     loading.value = false
@@ -53,19 +53,19 @@
       top: 0,
       behavior: 'smooth',
     })
-    syncCenter.filter.page = 1
-    const query = syncCenter.filter.composeRaceQuery({})
+    filter.filter.page = 1
+    const query = filter.composeRaceQuery({})
     races.value = await directus.request<Race[]>(readItems('Race', query))
   }
 
   async function loadMore(): Promise<void> {
-    syncCenter.filter.page += 1
-    const query = syncCenter.filter.composeRaceQuery({})
+    filter.filter.page += 1
+    const query = filter.composeRaceQuery({})
     const newRaces = await directus.request<Race[]>(readItems('Race', query))
 
     // no new races
     if (!newRaces.length) {
-      syncCenter.filter.page -= 1
+      filter.filter.page -= 1
       Notify.create({
         message: 'Keine weiteren Läufe verfügbar',
       })

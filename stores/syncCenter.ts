@@ -9,12 +9,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   function isServer(): boolean {
     return typeof window === 'undefined'
   }
-
-  // NEW WAY!
-  // todo: move others into new separate composable
-  const filter = useRaceFilter()
-
-  // also to be re-written
   const myDepartures = useMyDepartures()
 
   /**
@@ -151,7 +145,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   return {
     myRaces,
     user,
-    filter,
     followingUserDepartures,
     userIdentifier,
     myDepartures,

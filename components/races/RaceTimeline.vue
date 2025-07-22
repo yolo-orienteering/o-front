@@ -2,12 +2,12 @@
   import moment from 'moment'
   import type { Race } from '@/types/DirectusTypes'
   import { formatDate } from '@/utils/DateUtils'
-  import { useSyncCenter } from '@/stores/syncCenter'
   import { useRace } from '@/composables/useRace'
   import { useRaceTerrain } from '@/composables/useRaceTerrain'
   import Mailchimp from '@/components/newsletter/mailchimp.vue'
   import { useNewsletter } from '@/composables/useNewsletter'
 
+  const filter = useRaceFilter()
   const syncCenter = useSyncCenter()
   const raceCompose = useRace()
   const { getTerrainIcon } = useRaceTerrain()
@@ -58,7 +58,7 @@
       return firstMonth
     }
 
-    const sortByDeadline = syncCenter.filter.filter.deadline
+    const sortByDeadline = filter.filter.deadline
 
     const previousRace = props.races[foundIndex - 1]
     const currentRace = props.races[foundIndex]
@@ -113,9 +113,7 @@
               <div class="col-8">
                 {{
                   getMonthlyDelimiter(
-                    syncCenter.filter.filter.deadline
-                      ? race.deadline!
-                      : race.date!
+                    filter.filter.deadline ? race.deadline! : race.date!
                   )
                 }}
               </div>
@@ -169,7 +167,7 @@
                   <q-chip
                     v-else
                     :class="[{ 'text-strike': new Date() > new Date(race.deadline!) }]"
-                    :outline="!syncCenter.filter.filter.deadline"
+                    :outline="!filter.filter.deadline"
                     color="secondary"
                     dense
                   >
