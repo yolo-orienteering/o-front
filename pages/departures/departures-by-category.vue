@@ -75,7 +75,7 @@
   } from '@/types/DirectusTypes'
   import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import FollowUserDepartureBtn from './FollowUserDepartureBtn.vue'
+  import FollowUserDepartureBtn from './follow-user-departure-btn.vue'
 
   const { directus } = useApi()
   const { params } = useRoute()

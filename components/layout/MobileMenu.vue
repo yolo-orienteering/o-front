@@ -15,12 +15,13 @@
         :key="menuEntryId"
         class="col-4 q-pt-sm text-center text-caption"
         :class="[{ 'active-menu-border': isActiveRoute(menuEntry.routeName) }]"
-        @click="$router.push({ name: menuEntry.routeName })"
       >
-        <div>
-          <q-icon :name="menuEntry.icon" size="sm" />
-        </div>
-        {{ menuEntry.name }}
+        <nuxt-link :to="{ name: menuEntry.routeName }">
+          <div>
+            <q-icon :name="menuEntry.icon" size="sm" />
+          </div>
+          {{ menuEntry.name }}
+        </nuxt-link>
       </div>
     </div>
   </q-footer>
@@ -41,17 +42,17 @@
     {
       name: 'Einstellungen',
       icon: 'settings',
-      routeName: 'Settings',
+      routeName: 'settings',
     },
     {
       name: 'Entdecken',
       icon: 'search',
-      routeName: 'Index',
+      routeName: 'index',
     },
     {
       name: 'Meine Läufe',
       icon: 'directions_run',
-      routeName: 'MyRaces',
+      routeName: 'races-my-races',
     },
   ])
   const showBackButton = ref<boolean>(false)
