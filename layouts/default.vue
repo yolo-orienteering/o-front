@@ -6,7 +6,7 @@
     <!-- content -->
     <q-page-container>
       <q-page padding>
-        <router-view :key="$route.fullPath" class="animate-up" />
+        <nuxt-page :key="$route.fullPath" class="animate-up" />
       </q-page>
     </q-page-container>
 

@@ -23,6 +23,7 @@
   import { readItems } from '@directus/sdk'
   import { Notify } from 'quasar'
   import type { Race } from '~/types/DirectusTypes'
+  import RaceTimeline from '~/components/races/RaceTimeline.vue'
 
   // defining races
   const loading = ref<boolean>(false)

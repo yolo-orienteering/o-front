@@ -84,7 +84,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   )
   // filters
   watch(
-    filter,
+    filter.filter,
     () => {
       localStorage.set(FILTERS_STORAGE_KEY, filter.filter.value)
     },

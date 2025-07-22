@@ -3,6 +3,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    public: {
+      apiUrl: '',
+    },
+  },
+
   css: ['@/assets/css/app.scss'],
   modules: ['@nuxt/eslint', 'nuxt-quasar-ui', '@pinia/nuxt'],
   quasar: {

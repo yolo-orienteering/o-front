@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import RaceTimeline from '@/components/races/RaceTimeline.vue'
+  import RaceTimeline from '~/components/races/RaceTimeline.vue'
 
   const syncCenter = useSyncCenter()
   const { eventBus } = useEventBus()
