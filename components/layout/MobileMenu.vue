@@ -41,17 +41,17 @@
     {
       name: 'Einstellungen',
       icon: 'settings',
-      routeName: 'settings',
+      routeName: 'Settings',
     },
     {
       name: 'Entdecken',
       icon: 'search',
-      routeName: 'home',
+      routeName: 'Index',
     },
     {
       name: 'Meine Läufe',
       icon: 'directions_run',
-      routeName: 'my-races',
+      routeName: 'MyRaces',
     },
   ])
   const showBackButton = ref<boolean>(false)

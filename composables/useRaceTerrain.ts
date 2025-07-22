@@ -1,5 +1,3 @@
-import type { RaceTerrain } from '@/classes/RaceFilter'
-
 export function useRaceTerrain() {
   function getTerrainIcon(terrain: RaceTerrain): string | undefined {
     if (terrain === 'forest') {

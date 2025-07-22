@@ -171,7 +171,6 @@
   import { onMounted, ref } from 'vue'
   import { useSyncCenter } from '@/stores/syncCenter'
   import { useRegion } from '@/stores/useRegion'
-  import type { RaceTerrain } from '@/classes/RaceFilter'
   import { useRaceTerrain } from '@/composables/useRaceTerrain'
 
   const { filter } = useSyncCenter()
@@ -196,15 +195,15 @@
   })
 
   // text search helpers
-  const lastSearchString = ref<string | undefined>(filter.searchString)
+  const lastSearchString = ref<string | undefined>(filter.filter.searchString)
 
   /**
    * handles user search input
    */
   function searchEngine() {
     setInterval(() => {
-      if (filter && filter?.searchString !== lastSearchString.value) {
-        lastSearchString.value = filter.searchString
+      if (filter && filter?.filter.searchString !== lastSearchString.value) {
+        lastSearchString.value = filter.filter.searchString
         emits('update:filter')
       }
     }, 1000)
@@ -222,23 +221,23 @@
     terrain?: RaceTerrain | null
   }) {
     if (deadline !== undefined) {
-      filter.deadline = deadline
+      filter.filter.deadline = deadline
     }
 
     if (geographicalScale !== undefined) {
-      filter.geographicalScale = geographicalScale || undefined
+      filter.filter.geographicalScale = geographicalScale || undefined
     }
 
     if (previousDays !== undefined) {
       if (previousDays === 'reset') {
-        filter.previousDays = 0
+        filter.filter.previousDays = 0
       } else if (previousDays === 'add') {
         graduallyIncreasePreviousDays()
       }
     }
 
     if (terrain !== undefined) {
-      filter.terrain = terrain || undefined
+      filter.filter.terrain = terrain || undefined
     }
 
     emits('update:filter')
@@ -246,7 +245,7 @@
 
   function graduallyIncreasePreviousDays() {
     let daysToChange = 7
-    const previousDays = filter.previousDays
+    const previousDays = filter.filter.previousDays
     if (previousDays === 0 || previousDays === 1) {
       daysToChange = 1
     }
@@ -255,7 +254,7 @@
       daysToChange = 5
     }
 
-    filter.previousDays += daysToChange
+    filter.filter.previousDays += daysToChange
   }
 </script>
 

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useQuasar } from 'quasar'
-import RaceFilter from '@/classes/RaceFilter'
 import type { DirectusUsers, Race, UserDeparture } from '@/types/DirectusTypes'
 import { computed, ref, watch } from 'vue'
 
@@ -9,6 +8,9 @@ export type FollowingUserDeparture = Pick<UserDeparture, 'id' | 'race'>
 export const useSyncCenter = defineStore('syncCenter', () => {
   // NEW WAY!
   // todo: move others into new separate composable
+  const filter = useRaceFilter()
+
+  // also to be re-written
   const myDepartures = useMyDepartures()
 
   /**
@@ -16,7 +18,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
    */
   const myRaces = ref<Race[]>([])
   const user = ref<Partial<DirectusUsers> | null>(null)
-  const filter = ref<RaceFilter>(new RaceFilter())
   const followingUserDepartures = ref<FollowingUserDeparture[]>([])
 
   /**
@@ -44,9 +45,9 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     const filtersFromStore: RaceFilter | null =
       localStorage.getItem<RaceFilter>(FILTERS_STORAGE_KEY)
     if (filtersFromStore) {
-      filter.value = new RaceFilter(filtersFromStore)
+      filter.initFilter(filtersFromStore)
     } else {
-      filter.value = new RaceFilter()
+      filter.initFilter()
     }
   }
   function readUser(): void {
@@ -85,7 +86,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   watch(
     filter,
     () => {
-      localStorage.set(FILTERS_STORAGE_KEY, filter.value)
+      localStorage.set(FILTERS_STORAGE_KEY, filter.filter.value)
     },
     { deep: true }
   )

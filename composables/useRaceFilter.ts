@@ -4,37 +4,50 @@ import type { CustomDirectusTypes, Race } from '@/types/DirectusTypes'
 export type RaceQuery = Query<CustomDirectusTypes, Race>
 export type RaceTerrain = 'forest' | 'urban' | 'mix' | undefined | null
 
-export default class RaceFilter {
-  public deadline: boolean
-  public searchString: string | undefined
-  public terrain?: RaceTerrain
-  public geographicalScale: string | undefined
-  public regions?: string[]
-  public previousDays: number
-  public limit: number
-  public page: number
+export interface RaceFilter {
+  deadline: boolean
+  searchString: string | undefined
+  terrain?: RaceTerrain
+  geographicalScale: string | undefined
+  regions?: string[]
+  previousDays: number
+  limit: number
+  page: number
+}
 
-  constructor(props?: Partial<RaceFilter>) {
-    this.deadline = props?.deadline || false
-    this.searchString = props?.searchString
-    this.terrain = props?.terrain
-    this.geographicalScale = props?.geographicalScale
-    this.regions = props?.regions || []
-    this.previousDays = props?.previousDays || 0
-    this.limit = props?.limit || 25
-    this.page = props?.page || 1
+export const useRaceFilter = () => {
+  const filter = ref<RaceFilter>({
+    deadline: false,
+    searchString: undefined,
+    terrain: undefined,
+    geographicalScale: undefined,
+    regions: [],
+    previousDays: 0,
+    limit: 25,
+    page: 1,
+  })
+
+  function initFilter(props?: Partial<RaceFilter>) {
+    filter.value.deadline = props?.deadline || false
+    filter.value.searchString = props?.searchString
+    filter.value.terrain = props?.terrain
+    filter.value.geographicalScale = props?.geographicalScale
+    filter.value.regions = props?.regions || []
+    filter.value.previousDays = props?.previousDays || 0
+    filter.value.limit = props?.limit || 25
+    filter.value.page = props?.page || 1
   }
 
-  public composeRaceQuery({
+  function composeRaceQuery({
     initialLoad,
   }: {
     initialLoad?: boolean
   }): RaceQuery {
-    let limit = this.limit
-    let page = this.page
+    let limit = filter.value.limit
+    let page = filter.value.page
 
     const filterDate = new Date(new Date().setHours(0, 0, 0, 0))
-    filterDate.setDate(filterDate.getDate() - this.previousDays + 1)
+    filterDate.setDate(filterDate.getDate() - filter.value.previousDays + 1)
     const filterDateIso = filterDate.toISOString()
 
     // in case of initial load
@@ -53,13 +66,13 @@ export default class RaceFilter {
           _gte: filterDateIso,
         },
         terrain: {
-          _eq: this.terrain,
+          _eq: filter.value.terrain,
         },
       },
     } as RaceQuery
 
     // add deadline filter
-    if (this.deadline) {
+    if (filter.value.deadline) {
       composedFilter.filter = {
         ...composedFilter.filter,
         _and: [
@@ -82,18 +95,18 @@ export default class RaceFilter {
     }
 
     // add geographical scale filter
-    if (this.geographicalScale) {
+    if (filter.value.geographicalScale) {
       composedFilter.filter = {
         ...composedFilter.filter,
         geographicalScale: {
-          _eq: this.geographicalScale,
+          _eq: filter.value.geographicalScale,
         },
       }
     }
 
     // add region filter
-    if (this.regions?.length) {
-      const regionsOrFilter = this.regions.map((region) => ({
+    if (filter.value.regions?.length) {
+      const regionsOrFilter = filter.value.regions.map((region) => ({
         region: { _eq: region },
       }))
 
@@ -104,10 +117,16 @@ export default class RaceFilter {
     }
 
     // add search
-    if (this.searchString) {
-      composedFilter.search = this.searchString
+    if (filter.value.searchString) {
+      composedFilter.search = filter.value.searchString
     }
 
     return composedFilter
+  }
+
+  return {
+    filter,
+    initFilter,
+    composeRaceQuery,
   }
 }

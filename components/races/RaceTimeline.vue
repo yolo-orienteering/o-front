@@ -5,7 +5,6 @@
   import { useSyncCenter } from '@/stores/syncCenter'
   import { useRace } from '@/composables/useRace'
   import { useRaceTerrain } from '@/composables/useRaceTerrain'
-  import type { RaceTerrain } from '@/classes/RaceFilter'
   import Mailchimp from '@/components/newsletter/mailchimp.vue'
   import { useNewsletter } from '@/composables/useNewsletter'
 
@@ -59,7 +58,7 @@
       return firstMonth
     }
 
-    const sortByDeadline = syncCenter.filter.deadline
+    const sortByDeadline = syncCenter.filter.filter.deadline
 
     const previousRace = props.races[foundIndex - 1]
     const currentRace = props.races[foundIndex]
@@ -114,7 +113,9 @@
               <div class="col-8">
                 {{
                   getMonthlyDelimiter(
-                    syncCenter.filter.deadline ? race.deadline! : race.date!
+                    syncCenter.filter.filter.deadline
+                      ? race.deadline!
+                      : race.date!
                   )
                 }}
               </div>
@@ -136,7 +137,7 @@
             @click="$router.push({ name: 'race', params: { id: race.id } })"
           >
             <!-- date & deadline -->
-            <template v-slot:subtitle>
+            <template #subtitle>
               <div class="row items-center">
                 <div class="col-6">
                   {{ formatDate(race.date!, 'dd, DD.MM yyyy') }}
@@ -167,7 +168,7 @@
                   <q-chip
                     v-else
                     :class="[{ 'text-strike': new Date() > new Date(race.deadline!) }]"
-                    :outline="!syncCenter.filter.deadline"
+                    :outline="!syncCenter.filter.filter.deadline"
                     color="secondary"
                     dense
                   >
@@ -177,7 +178,7 @@
               </div>
             </template>
             <!-- title & favorites -->
-            <template v-slot:title>
+            <template #title>
               <div class="row items-center">
                 <div class="col-10">
                   {{ race.name }}
