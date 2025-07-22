@@ -1,75 +1,18 @@
-# Nuxt Minimal Starter
+# o-mate front-end
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This project is a modern web application built with a powerful stack of JavaScript frameworks and libraries. It leverages the strengths of Vue, Nuxt, and Quasar to deliver a robust and responsive user experience.
 
-## Setup
+## Technology
 
-Make sure to install dependencies:
+- **[Vue](https://vuejs.org/)**: The core JavaScript framework for building user interfaces.
+- **[Nuxt](https://nuxt.com/)**: A framework built on top of Vue for server-side rendering, routing, and application structure.
+- **[Quasar](https://quasar.dev/)**: A UI framework that provides ready-to-use Vue components and utilities for responsive design.
+- **[nuxt-quasar](https://github.com/Maiquu/nuxt-quasar)**: An integration module that allows seamless use of Quasar components within a Nuxt application.
 
-```bash
-# npm
-npm install
+## How to...
 
-# pnpm
-pnpm install
+### ... use colors?
 
-# yarn
-yarn install
+`color: var(--q-primary);`
 
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+the colors are defined within the `app.config.ts`

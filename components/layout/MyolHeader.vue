@@ -23,7 +23,7 @@
     margin-left: 45px;
     margin-bottom: 0;
     font-size: 15px;
-    color: $secondary;
+    color: var(--q-secondary);
     font-weight: 400;
   }
 </style>

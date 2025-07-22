@@ -80,6 +80,6 @@
 
 <style lang="scss">
   .active-menu-border {
-    border-bottom: 2px solid $primary;
+    border-bottom: 2px solid var(--q-primary);
   }
 </style>
