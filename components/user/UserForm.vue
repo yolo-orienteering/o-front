@@ -1,33 +1,49 @@
 <template>
-  <div v-if="user" class="row q-col-gutter-sm">
+  <div v-if="syncCenter.user" class="row q-col-gutter-sm">
     <!-- hint -->
-    <div
-      v-if="!user.first_name || !user.last_name || !user.birthYear"
-      class="col-12 q-py-lg"
-    >
-      <q-banner dark>
-        <template #avatar>
-          <q-icon name="info" size="md" />
-        </template>
-        Lass dir deine <b>Startzeiten automatisch</b> von o-mate anzeigen. Gib
-        einfach deinen Vornamen, Nachnamen und Jahrgang ein.
-      </q-banner>
-    </div>
+    <client-only>
+      <div
+        v-if="
+          !syncCenter.user.first_name ||
+          !syncCenter.user.last_name ||
+          !syncCenter.user.birthYear
+        "
+        class="col-12 q-py-lg"
+      >
+        <q-banner dark>
+          <template #avatar>
+            <q-icon name="info" size="md" />
+          </template>
+          Lass dir deine <b>Startzeiten automatisch</b> von o-mate anzeigen. Gib
+          einfach deinen Vornamen, Nachnamen und Jahrgang ein.
+        </q-banner>
+      </div>
+    </client-only>
 
     <!-- first name -->
     <div class="col-6">
-      <q-input v-model="user.first_name" label="Vorname" outlined dense />
+      <q-input
+        v-model="syncCenter.user.first_name"
+        label="Vorname"
+        outlined
+        dense
+      />
     </div>
 
     <!-- last name -->
     <div class="col-6">
-      <q-input v-model="user.last_name" label="Nachname" outlined dense />
+      <q-input
+        v-model="syncCenter.user.last_name"
+        label="Nachname"
+        outlined
+        dense
+      />
     </div>
 
     <!-- birth year -->
     <div class="col-6">
       <q-input
-        v-model="user.birthYear"
+        v-model="syncCenter.user.birthYear"
         label="Jahrgang"
         outlined
         dense
@@ -38,7 +54,7 @@
     <!-- public transport starting location -->
     <div class="col-12 q-pt-md">
       <q-input
-        v-model="user.location"
+        v-model="syncCenter.user.location"
         label="Dein Wohnort (als Abfahrtsort)"
         outlined
         dense
@@ -50,5 +66,5 @@
 <script setup lang="ts">
   import { useSyncCenter } from '@/stores/syncCenter'
 
-  const { user, userIdentifier } = useSyncCenter()
+  const syncCenter = useSyncCenter()
 </script>

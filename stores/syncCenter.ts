@@ -6,6 +6,10 @@ import { computed, ref, watch } from 'vue'
 export type FollowingUserDeparture = Pick<UserDeparture, 'id' | 'race'>
 
 export const useSyncCenter = defineStore('syncCenter', () => {
+  function isServer(): boolean {
+    return typeof window === 'undefined'
+  }
+
   // NEW WAY!
   // todo: move others into new separate composable
   const filter = useRaceFilter()
@@ -16,8 +20,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   /**
    * DEFINE DATA YOU WANT SYNC
    */
-  const myRaces = ref<Race[]>([])
-  const user = ref<Partial<DirectusUsers> | null>(null)
+  const myRaces = ref<Race[] | null>(null)
+  const user = ref<Partial<DirectusUsers>>({})
   const followingUserDepartures = ref<FollowingUserDeparture[]>([])
 
   /**
@@ -33,14 +37,23 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   /**
    * INITIAL DATA READING FROM STORE
    */
+
+  onMounted(() => {
+    readUser()
+    readMyRaces()
+  })
+
   // load data from the local store
-  readMyRaces()
+
   readFilters()
-  readUser()
   readFollowingUserDepartures()
   function readMyRaces(): void {
+    if (isServer()) {
+      return
+    }
     myRaces.value = localStorage.getItem<Race[]>(MY_RACES_STORAGE_KEY) || []
   }
+
   function readFilters(): void {
     const filtersFromStore: RaceFilter | null =
       localStorage.getItem<RaceFilter>(FILTERS_STORAGE_KEY)
@@ -51,8 +64,12 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     }
   }
   function readUser(): void {
-    const userFromStore: Partial<DirectusUsers> | null =
-      localStorage.getItem<Partial<DirectusUsers>>(USER_STORAGE_KEY)
+    if (isServer()) {
+      return
+    }
+
+    const userFromStore: Partial<DirectusUsers> =
+      localStorage.getItem<Partial<DirectusUsers>>(USER_STORAGE_KEY) || {}
     if (userFromStore) {
       user.value = userFromStore
     } else {
@@ -77,6 +94,9 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   watch(
     myRaces,
     () => {
+      if (isServer()) {
+        return
+      }
       // sort by date
       localStorage.set(MY_RACES_STORAGE_KEY, myRaces.value)
     },
@@ -94,6 +114,9 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   watch(
     user,
     () => {
+      if (isServer() || Object.keys(user.value).length === 0) {
+        return
+      }
       localStorage.set(USER_STORAGE_KEY, user.value)
     },
     { deep: true }
@@ -115,28 +138,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
    * Computed data
    */
 
-  const myRacesSorted = computed<Race[]>(() => {
-    const fiveDaysAgoMs = new Date(
-      new Date().setDate(new Date().getDate() - 4)
-    ).setHours(0, 0, 0, 0)
-    return myRaces.value
-      .sort((a, b) => {
-        const aDate = a.date
-        const bDate = b.date
-        if (!aDate || !bDate) {
-          return 0
-        }
-        return new Date(aDate).getTime() - new Date(bDate).getTime()
-      })
-      .filter((race) => {
-        // only return races in future.
-        if (!race.date) {
-          return false
-        }
-        return new Date(race.date).setHours(0, 0, 0, 0) >= fiveDaysAgoMs
-      })
-  })
-
   const userIdentifier = computed<string | false>(() => {
     if (
       !user.value?.first_name ||
@@ -153,7 +154,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
 
   return {
     myRaces,
-    myRacesSorted,
     user,
     filter,
     followingUserDepartures,

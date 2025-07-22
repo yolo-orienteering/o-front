@@ -51,7 +51,7 @@
     },
     {
       name: 'Meine Läufe',
-      icon: 'directions_run',
+      icon: 'bookmark_outline',
       routeName: 'races-my-races',
     },
   ])

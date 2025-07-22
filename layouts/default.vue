@@ -30,5 +30,6 @@
 
   .page {
     max-width: 860px;
+    width: 100%;
   }
 </style>
