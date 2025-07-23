@@ -13,5 +13,15 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint', 'nuxt-quasar-ui', '@pinia/nuxt'],
   quasar: {
     plugins: ['Notify', 'LocalStorage'],
+    components: {
+      defaults: {
+        QBtn: {
+          outline: true,
+        },
+      },
+    },
+    extras: {
+      fontIcons: ['material-icons', 'material-icons-outlined', 'mdi-v7'],
+    },
   },
 })

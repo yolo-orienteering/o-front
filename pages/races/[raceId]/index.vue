@@ -58,88 +58,94 @@
 </script>
 
 <template>
-  <div v-if="race" class="row items-center">
-    <!-- title and favorite -->
-    <div class="col-12 q-pt-md">
-      <div class="row justify-center items-center">
+  <div v-if="race" class="row q-pt-md">
+    <!-- title and race details -->
+    <div class="col-10">
+      <!-- title and favorite -->
+      <div class="col-12">
         <div class="col-10 text-h5" style="line-height: 1.4em">
           {{ race.name }}
         </div>
-        <q-space />
-        <div class="col-2 text-right">
-          <q-btn
-            :outline="
-              !syncCenter.myRaces?.find((myRace) => myRace.id === race?.id)
-            "
-            color="primary"
-            dense
-            round
-            @click="raceCompose.addOrRemoveRace(race)"
-          >
-            <q-icon name="bookmark_outline" />
-          </q-btn>
+      </div>
+      <!-- deadline -->
+      <div
+        v-if="race.deadline && new Date(race.deadline) >= new Date()"
+        class="col-12 q-pt-md"
+      >
+        <q-banner class="bg-secondary text-white" dense rounded>
+          <span class="fal fa-bells" />
+          Anmeldung erforderlich bis am
+          {{ formatDate(race.deadline, 'dd, DD.MMM YYYY') }}
+        </q-banner>
+      </div>
+
+      <!-- date, location, map name -->
+      <div class="col-12 q-pt-md q-pl-sm text-body1">
+        <div class="row">
+          <!-- your departure -->
+          <div v-if="myDeparture" class="col-12 q-pt-xs">
+            <q-icon class="q-mr-xs" name="change_history" />
+            {{ raceCategory?.name ? `${raceCategory.name} | ` : '' }}
+            {{
+              raceCategory?.distanceInMeter
+                ? `${raceCategory.distanceInMeter / 1000} km | `
+                : ''
+            }}
+            {{
+              raceCategory?.equidistanceInMeter
+                ? `${raceCategory.equidistanceInMeter} m | `
+                : ''
+            }}
+            {{
+              raceCategory?.amountOfControls
+                ? `${raceCategory.amountOfControls} p`
+                : ''
+            }}
+          </div>
+
+          <!-- date -->
+          <div class="col-12 q-pt-xs">
+            <q-icon class="q-mr-xs" name="event" />
+            {{ formatDate(race.date!, 'dd, DD.MMM YYYY') }}
+          </div>
+          <!-- location -->
+          <div class="col-12 q-pt-xs">
+            <q-icon class="q-mr-xs" name="location_on" />
+            {{ race.city || race.mapName || 'vakant' }}
+            {{ race.region ? `(${race.region}` : ''
+            }}<span class="text-capitalize">{{
+              race.country
+                ? `,
+            ${race.country})`
+                : ')'
+            }}</span>
+          </div>
+          <!-- map name -->
+          <div class="col-12 q-pt-xs">
+            <q-icon class="q-mr-xs" name="map" />
+            {{ race.mapName }}
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- deadline -->
-    <div
-      v-if="race.deadline && new Date(race.deadline) >= new Date()"
-      class="col-12 q-pt-md"
-    >
-      <q-banner class="bg-secondary text-white" dense rounded>
-        <span class="fal fa-bells" />
-        Anmeldung erforderlich bis am
-        {{ formatDate(race.deadline, 'dd, DD.MMM YYYY') }}
-      </q-banner>
-    </div>
-
-    <!-- date, location, map name -->
-    <div class="col-12 q-pt-md q-pl-sm text-body1">
-      <div class="row">
-        <!-- your departure -->
-        <div v-if="myDeparture" class="col-12 q-pt-xs">
-          <q-icon class="q-mr-xs" name="change_history" />
-          {{ raceCategory?.name ? `${raceCategory.name} | ` : '' }}
-          {{
-            raceCategory?.distanceInMeter
-              ? `${raceCategory.distanceInMeter / 1000} km | `
-              : ''
-          }}
-          {{
-            raceCategory?.equidistanceInMeter
-              ? `${raceCategory.equidistanceInMeter} m | `
-              : ''
-          }}
-          {{
-            raceCategory?.amountOfControls
-              ? `${raceCategory.amountOfControls} p`
-              : ''
-          }}
-        </div>
-
-        <!-- date -->
-        <div class="col-12 q-pt-xs">
-          <q-icon class="q-mr-xs" name="event" />
-          {{ formatDate(race.date!, 'dd, DD.MMM YYYY') }}
-        </div>
-        <!-- location -->
-        <div class="col-12 q-pt-xs">
-          <q-icon class="q-mr-xs" name="location_on" />
-          {{ race.city || race.mapName || 'vakant' }}
-          {{ race.region ? `(${race.region}` : ''
-          }}<span class="text-capitalize">{{
-            race.country
-              ? `,
-            ${race.country})`
-              : ')'
-          }}</span>
-        </div>
-        <!-- map name -->
-        <div class="col-12 q-pt-xs">
-          <q-icon class="q-mr-xs" name="map" />
-          {{ race.mapName }}
-        </div>
+    <!-- share and bookmark btns -->
+    <div class="col-2 text-right">
+      <div>
+        <q-btn
+          :outline="
+            !syncCenter.myRaces?.find((myRace) => myRace.id === race?.id)
+          "
+          color="primary"
+          dense
+          round
+          @click="raceCompose.addOrRemoveRace(race)"
+        >
+          <q-icon name="bookmark_outline" />
+        </q-btn>
+      </div>
+      <div class="q-pt-md">
+        <races-share-race-btn />
       </div>
     </div>
 
@@ -230,7 +236,6 @@
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'instruction' })"
             color="black"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="signpost" />
@@ -252,7 +257,6 @@
           <q-btn
             v-if="race.publicationLink"
             :href="raceCompose.composeLink({ race, linkType: 'publication' })"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="picture_as_pdf" />
@@ -264,7 +268,6 @@
         <div v-if="race.eventLink" class="col-auto">
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'event' })"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="open_in_new" />
@@ -276,7 +279,6 @@
         <div v-if="race.inscriptionLink" class="col-auto">
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'inscription' })"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="play_circle" />
@@ -288,7 +290,6 @@
         <div v-if="race.liveResultLink" class="col-auto">
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'liveResult' })"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="live_tv" />
@@ -300,7 +301,6 @@
         <div v-if="race.rankingLink" class="col-auto">
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'ranking' })"
-            outline
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="list" />

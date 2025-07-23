@@ -36,7 +36,6 @@
                   round
                   size="xs"
                   color="primary"
-                  outline
                   class="q-ml-xs"
                   @click="deleteFollow(followingDeparture)"
                 />

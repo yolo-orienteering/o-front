@@ -1,7 +1,6 @@
 <template>
   <q-btn
     size="md"
-    outline
     rounded
     icon="chevron_left"
     color="primary"

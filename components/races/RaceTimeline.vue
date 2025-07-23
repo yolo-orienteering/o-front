@@ -220,7 +220,7 @@
 
     <!-- pagination -->
     <div v-if="!hideLoadMore" class="col-12 text-center q-pb-lg">
-      <q-btn outline @click="loadMore()"> Mehr Läufe laden </q-btn>
+      <q-btn @click="loadMore()"> Mehr Läufe laden </q-btn>
     </div>
   </div>
 </template>

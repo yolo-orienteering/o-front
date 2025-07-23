@@ -85,7 +85,7 @@
 
           <!-- search button -->
           <div class="col-8 q-py-none">
-            <q-btn outline class="bg-sbb" type="submit">
+            <q-btn class="bg-sbb" type="submit">
               <span class="fal fa-external-link q-mr-sm" />
               Verbindung suchen
             </q-btn>
