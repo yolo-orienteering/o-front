@@ -58,6 +58,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
 
     if (followingDeparturesFromStore) {
       followingUserDepartures.value = followingDeparturesFromStore
+    } else {
+      followingUserDepartures.value = []
     }
   }
 
