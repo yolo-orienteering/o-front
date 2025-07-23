@@ -28,13 +28,6 @@
   import type { Race } from '~/types/DirectusTypes'
 
   const syncCenter = useSyncCenter()
-  const { eventBus } = useEventBus()
-
-  onMounted(async () => {
-    await nextTick(() => {
-      eventBus.emit('scrollToSavedPosition')
-    })
-  })
 
   const myRacesSorted = computed<Race[]>(() => {
     if (!syncCenter.myRaces) {

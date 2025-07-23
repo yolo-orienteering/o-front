@@ -66,7 +66,6 @@
 
   // decide whether to show the back button or not
   const showBackButton = computed<boolean>(() => {
-    console.log(route.name)
     return !menuEntries.value.find((menuEntry: IMenuEntry) => {
       return menuEntry.routeName === route.name
     })

@@ -121,13 +121,13 @@
           </q-timeline-entry>
 
           <!-- newsletter -->
-          <q-timeline-entry
+          <!-- <q-timeline-entry
             v-if="raceIndex === 4 && !isSubscribed()"
             class="bg-dark text-white q-pr-sm"
             color="white"
           >
             <mailchimp />
-          </q-timeline-entry>
+          </q-timeline-entry> -->
 
           <!-- races -->
           <q-timeline-entry

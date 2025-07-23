@@ -15,8 +15,6 @@ export interface RaceFilter {
   page: number
 }
 
-const FILTERS_STORAGE_KEY = 'filters'
-
 export const useRaceFilter = defineStore('useRaceFilter', () => {
   const filter = ref<RaceFilter>({
     deadline: false,
@@ -28,17 +26,6 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
     limit: 25,
     page: 1,
   })
-
-  function initFilter(props?: Partial<RaceFilter>) {
-    filter.value.deadline = props?.deadline || false
-    filter.value.searchString = props?.searchString
-    filter.value.terrain = props?.terrain
-    filter.value.geographicalScale = props?.geographicalScale
-    filter.value.regions = props?.regions || []
-    filter.value.previousDays = props?.previousDays || 0
-    filter.value.limit = props?.limit || 25
-    filter.value.page = props?.page || 1
-  }
 
   function composeRaceQuery({
     initialLoad,
@@ -128,7 +115,6 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
 
   return {
     filter,
-    initFilter,
     composeRaceQuery,
   }
 })
