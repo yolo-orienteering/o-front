@@ -62,22 +62,14 @@
       routeName: 'races-my-races',
     },
   ])
-  const showBackButton = ref<boolean>(false)
-  const router = useRouter()
   const route = useRoute()
 
   // decide whether to show the back button or not
-  router.afterEach((to) => {
-    const insideMenuEntries: boolean = !!menuEntries.value.find(
-      (menuEntry: IMenuEntry) => {
-        return menuEntry.routeName === to.name
-      }
-    )
-    if (!insideMenuEntries) {
-      showBackButton.value = true
-    } else {
-      showBackButton.value = false
-    }
+  const showBackButton = computed<boolean>(() => {
+    console.log(route.name)
+    return !menuEntries.value.find((menuEntry: IMenuEntry) => {
+      return menuEntry.routeName === route.name
+    })
   })
 
   function isActiveRoute(routeName: string): boolean {
