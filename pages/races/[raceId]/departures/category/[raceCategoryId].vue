@@ -33,32 +33,34 @@
         </template>
       </q-table>
     </div>
-  </div>
 
-  <!-- filter </template>-->
-  <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
-    <div
-      class="row no-wrap q-py-sm items-center justify-center"
-      style="overflow-x: scroll"
-    >
-      <div class="col-auto q-px-xs"><back-btn /></div>
+    <!-- filter </template>-->
+    <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
+      <div
+        class="row no-wrap q-py-sm items-center justify-center"
+        style="overflow-x: scroll"
+      >
+        <div class="col-auto q-px-xs"><back-btn /></div>
 
-      <div class="col-6 q-px-xs">
-        <q-select
-          :model-value="
-            categories.find((category) => category.id === params.raceCategoryId)
-          "
-          :options="categories"
-          dense
-          option-label="name"
-          option-value="id"
-          outlined
-          rounded
-          @update:model-value="updateCategoryFilter"
-        />
+        <div class="col-6 q-px-xs">
+          <q-select
+            :model-value="
+              categories.find(
+                (category) => category.id === params.raceCategoryId
+              )
+            "
+            :options="categories"
+            dense
+            option-label="name"
+            option-value="id"
+            outlined
+            rounded
+            @update:model-value="updateCategoryFilter"
+          />
+        </div>
       </div>
-    </div>
-  </Teleport>
+    </Teleport>
+  </div>
 </template>
 
 <script lang="ts" setup>

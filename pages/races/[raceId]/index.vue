@@ -309,13 +309,13 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <q-separator class="q-my-lg" />
+    <!-- sbb -->
+    <div class="col-12">
+      <q-separator class="q-my-lg" />
 
-  <!-- sbb -->
-  <div v-if="race" class="col-12 q-pb-sm">
-    <sbb-timetable :race="race" />
+      <sbb-timetable :race="race" />
+    </div>
   </div>
 </template>
 
