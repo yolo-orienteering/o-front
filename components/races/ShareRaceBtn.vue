@@ -32,7 +32,7 @@
     {
       name: 'X',
       color: '#1DA1F2',
-      href: `https://twitter.com/share?url=${window.location.href}`,
+      href: `https://x.com/share?url=${window.location.href}`,
       icon: 'mdi-twitter',
     },
     {
