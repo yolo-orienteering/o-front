@@ -3,9 +3,16 @@
     <div id="teleport-to-menu" />
 
     <!-- back button -->
-    <div v-if="showBackButton" class="row justify-center border-bottom-primary">
+    <div
+      v-if="showBackButton"
+      class="row justify-center items-center border-bottom-primary"
+      style="overflow-x: scroll"
+    >
       <div class="col-auto q-py-sm">
         <back-btn />
+      </div>
+      <div class="col-auto q-py-sm q-pl-sm">
+        <div id="teleport-right-to-back-btn" />
       </div>
     </div>
     <!-- menu entries -->
@@ -66,8 +73,7 @@
         return menuEntry.routeName === to.name
       }
     )
-    const isDeparturesByCategory = route.name === 'departures-by-category'
-    if (!insideMenuEntries && !isDeparturesByCategory) {
+    if (!insideMenuEntries) {
       showBackButton.value = true
     } else {
       showBackButton.value = false

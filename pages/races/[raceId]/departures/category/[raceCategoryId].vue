@@ -35,30 +35,19 @@
     </div>
 
     <!-- filter </template>-->
-    <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
-      <div
-        class="row no-wrap q-py-sm items-center justify-center"
-        style="overflow-x: scroll"
-      >
-        <div class="col-auto q-px-xs"><back-btn /></div>
-
-        <div class="col-6 q-px-xs">
-          <q-select
-            :model-value="
-              categories.find(
-                (category) => category.id === params.raceCategoryId
-              )
-            "
-            :options="categories"
-            dense
-            option-label="name"
-            option-value="id"
-            outlined
-            rounded
-            @update:model-value="updateCategoryFilter"
-          />
-        </div>
-      </div>
+    <Teleport v-if="teleportRightToBackBtnEl" :to="teleportRightToBackBtnEl">
+      <q-select
+        :model-value="
+          categories.find((category) => category.id === params.raceCategoryId)
+        "
+        :options="categories"
+        dense
+        option-label="name"
+        option-value="id"
+        outlined
+        rounded
+        @update:model-value="updateCategoryFilter"
+      />
     </Teleport>
   </div>
 </template>
@@ -66,7 +55,6 @@
 <script lang="ts" setup>
   import { aggregate, readItem, readItems } from '@directus/sdk'
   import type { QTableColumn } from 'quasar'
-  import BackBtn from '@/components/helper/BackBtn.vue'
   import FollowUserDepartureBtn from '~/components/races/FollowUserDepartureBtn.vue'
   import { useDeparture } from '@/composables/useDeparture'
   import { useApi } from '@/stores/useApi'
@@ -120,10 +108,12 @@
   const departures = ref<UserDeparture[]>([])
   const categories = ref<Pick<RaceCategory, 'id' | 'name'>[]>([])
   const race = ref<Race | undefined>(undefined)
-  const teleportToMenuEl = ref<HTMLElement | null>(null)
+  const teleportRightToBackBtnEl = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
-    teleportToMenuEl.value = document.getElementById('teleport-to-menu')
+    teleportRightToBackBtnEl.value = document.getElementById(
+      'teleport-right-to-back-btn'
+    )
 
     const [tmpDepartures, tmpCategories, tmpRace] = await Promise.all([
       getDepartures(),
