@@ -74,7 +74,7 @@
       >
         <q-banner class="bg-secondary text-white" dense rounded>
           <span class="fal fa-bells" />
-          Anmeldung erforderlich bis am
+          Anmelden bis am
           {{ formatDate(race.deadline, 'dd, DD.MMM YYYY') }}
         </q-banner>
       </div>
