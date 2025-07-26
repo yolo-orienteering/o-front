@@ -15,6 +15,9 @@
       :loading="status !== 'success'"
       @load-more="loadMore()"
     />
+
+    <div v-if="status">Status: {{ status }}</div>
+    <div v-if="error">Error: {{ error }}</div>
   </div>
 </template>
 
@@ -36,13 +39,14 @@
     teleportToMenuEl.value = document.getElementById('teleport-to-menu')
   })
 
-  const { data: races, status } = await useAsyncData<Race[]>(
-    'fetchRaces',
-    () => {
-      const query = filter.composeRaceQuery({ initialLoad: true })
-      return directus.request<Race[]>(readItems('Race', query))
-    }
-  )
+  const {
+    data: races,
+    status,
+    error,
+  } = await useAsyncData<Race[]>('fetchRaces', () => {
+    const query = filter.composeRaceQuery({ initialLoad: true })
+    return directus.request<Race[]>(readItems('Race', query))
+  })
 
   async function updateFilter(): Promise<void> {
     window.scrollTo({
