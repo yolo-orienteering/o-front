@@ -13,7 +13,7 @@
 </script>
 
 <template>
-  <div class="row q-pt-lg">
+  <div class="row">
     <div v-show="subscribed" class="col-12">
       <h6>Cool. Du bist dabei!</h6>
     </div>

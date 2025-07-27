@@ -11,7 +11,7 @@
   const syncCenter = useSyncCenter()
   const raceCompose = useRace()
   const { getTerrainIcon } = useRaceTerrain()
-  const { isSubscribed } = useNewsletter()
+  const { isSubscribed, rememberSubscription } = useNewsletter()
 
   const props = withDefaults(
     defineProps<{
@@ -48,6 +48,9 @@
     raceId: string,
     firstMonth: boolean = true
   ): boolean {
+    if (!props.races) {
+      return false
+    }
     const foundIndex = props.races.findIndex((tmpRace) => tmpRace.id === raceId)
     // race doesn't exist
     if (foundIndex < 0 || !props.races) {
@@ -121,13 +124,25 @@
           </q-timeline-entry>
 
           <!-- newsletter -->
-          <!-- <q-timeline-entry
+          <q-timeline-entry
             v-if="raceIndex === 4 && !isSubscribed()"
-            class="bg-dark text-white q-pr-sm"
+            class="bg-dark text-white q-pr-sm newsletter-container"
             color="white"
           >
-            <mailchimp />
-          </q-timeline-entry> -->
+            <template #subtitle>
+              <div class="text-right q-pt-sm">
+                <q-btn
+                  icon="close"
+                  size="x-small"
+                  round
+                  color="white"
+                  text-color="white"
+                  @click="rememberSubscription()"
+                />
+              </div>
+            </template>
+            <mailchimp style="margin-top: -16px" />
+          </q-timeline-entry>
 
           <!-- races -->
           <q-timeline-entry
@@ -224,3 +239,18 @@
     </div>
   </div>
 </template>
+
+<style lang="scss">
+  .newsletter-container {
+    margin-left: -8px;
+    margin-right: -8px;
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+
+  .newsletter-container > .q-timeline__dot {
+    left: 8px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+</style>
