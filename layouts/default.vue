@@ -16,7 +16,7 @@
     <myol-header :reveal="true" @click="router.push('/')" />
 
     <!-- desktop menu -->
-    <q-drawer
+    <!-- <q-drawer
       :model-value="desktopMenuOpen"
       side="left"
       touchless
@@ -25,7 +25,7 @@
       :overlay="false"
     >
       <layout-menu-content />
-    </q-drawer>
+    </q-drawer> -->
 
     <!-- content -->
     <q-page-container class="page-container">

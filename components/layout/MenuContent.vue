@@ -57,7 +57,7 @@
     </div>
   </div>
   <!-- menu entries -->
-  <!-- <div class="desktop-only">
+  <div class="desktop-only">
     <q-list>
       <q-item
         v-for="(menuEntry, menuEntryId) in menuEntries"
@@ -72,7 +72,7 @@
         <q-item-section>{{ menuEntry.name }}</q-item-section>
       </q-item>
     </q-list>
-  </div> -->
+  </div>
 
   <div class="row text-primary mobile-only">
     <div
