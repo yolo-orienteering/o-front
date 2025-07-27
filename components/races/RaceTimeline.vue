@@ -15,7 +15,7 @@
 
   const props = withDefaults(
     defineProps<{
-      races: Race[]
+      races?: Race[] | null
       hideLoadMore?: boolean
       loading: boolean
     }>(),

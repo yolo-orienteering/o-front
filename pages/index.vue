@@ -10,13 +10,11 @@
     </Teleport>
 
     <race-timeline
-      v-if="races"
       :races="races"
       :loading="status !== 'success'"
       @load-more="loadMore()"
     />
 
-    <div v-if="status">Status: {{ status }}</div>
     <div v-if="error">Error: {{ error }}</div>
   </div>
 </template>
