@@ -1,5 +1,16 @@
+<script lang="ts" setup>
+  const props = defineProps<{
+    reveal: boolean
+  }>()
+</script>
+
 <template>
-  <q-header class="text-primary bg-white" elevated reveal :reveal-offset="5">
+  <q-header
+    class="text-primary bg-white"
+    elevated
+    :reveal="props.reveal"
+    :reveal-offset="5"
+  >
     <div class="row items-center q-ma-sm">
       <div class="col-auto">
         <img
