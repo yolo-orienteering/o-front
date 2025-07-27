@@ -57,7 +57,24 @@
     </div>
   </div>
   <!-- menu entries -->
-  <div class="row text-primary">
+  <!-- <div class="desktop-only">
+    <q-list>
+      <q-item
+        v-for="(menuEntry, menuEntryId) in menuEntries"
+        :key="menuEntryId"
+        v-ripple
+        clickable
+      >
+        <q-item-section avatar>
+          <q-icon :name="menuEntry.icon" size="sm" />
+        </q-item-section>
+
+        <q-item-section>{{ menuEntry.name }}</q-item-section>
+      </q-item>
+    </q-list>
+  </div> -->
+
+  <div class="row text-primary mobile-only">
     <div
       v-for="(menuEntry, menuEntryId) in menuEntries"
       :key="menuEntryId"
