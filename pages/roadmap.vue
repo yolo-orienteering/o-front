@@ -37,6 +37,10 @@
       done: true,
     },
     {
+      text: 'Desktop-Version programmieren. (28.07.2025)',
+      done: true,
+    },
+    {
       text: 'Teile-Button für Läufe > SSR',
       done: true,
     },
@@ -50,10 +54,6 @@
     },
     {
       text: 'Social-App-Elemente (Fahrgemeinschaften, Posts, Following, Freundeskreise usw.)',
-      done: false,
-    },
-    {
-      text: 'Desktop-Version programmieren.',
       done: false,
     },
     {
