@@ -35,7 +35,7 @@
       </div>
     </q-list>
 
-    <q-separator class="q-my-lg" />
+    <q-separator spaced inset />
   </div>
 
   <!-- mobile view -->
