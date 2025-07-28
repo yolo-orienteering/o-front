@@ -48,7 +48,7 @@
     <!-- back btn -->
     <div v-if="showBackButton" class="col-12 q-px-md-md">
       <div
-        class="row justify-cente items-center items-md-start"
+        class="row justify-center items-center items-md-start"
         :class="isDesktop ? '' : 'border-bottom-primary'"
         :style="isDesktop ? {} : { overflowX: 'scroll' }"
       >
