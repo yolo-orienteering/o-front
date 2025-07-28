@@ -1,11 +1,19 @@
 <template>
   <div class="q-pt-md">
+    <!-- filter -->
+    <Teleport v-if="teleportElement" :to="teleportElement">
+      <races-filter
+        v-show="races"
+        :loading="status !== 'success'"
+        @update:filter="updateFilter()"
+      />
+    </Teleport>
+
     <race-timeline
       :races="races"
       :loading="status !== 'success'"
       @load-more="loadMore()"
     />
-
     <div v-if="error">Error: {{ error }}</div>
   </div>
 </template>
@@ -19,6 +27,8 @@
   // initially loads races with onMounted hook within composable
   const filter = useRaceFilter()
   const { directus } = useApi()
+
+  const { teleportElement } = useTeleport('teleport-to-menu')
 
   const {
     data: races,

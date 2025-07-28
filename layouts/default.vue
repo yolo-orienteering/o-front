@@ -1,12 +1,32 @@
 <script setup lang="ts">
   import MyolHeader from '@/components/layout/MyolHeader.vue'
-  import { useQuasar } from 'quasar'
+  import { QDrawer, QFooter, useQuasar } from 'quasar'
 
   const router = useRouter()
   const $q = useQuasar()
 
   const isDesktop = computed<boolean>(() => {
     return $q.screen.gt.md
+  })
+
+  const menuProps = computed(() => {
+    if (isDesktop.value) {
+      return {
+        'model-value': true,
+        side: 'left',
+        touchless: true,
+        bordered: true,
+        'no-swipe-open': true,
+        overlay: false,
+        'show-if-above': true,
+      }
+    } else {
+      return {
+        'model-value': true,
+        class: 'bg-white',
+        elevated: true,
+      }
+    }
   })
 </script>
 
@@ -15,19 +35,11 @@
     <!-- header -->
     <myol-header :reveal="!isDesktop" @click="router.push('/')" />
 
-    <!-- desktop menu -->
+    <!-- menu (mobile and desktop) -->
     <client-only>
-      <q-drawer
-        :model-value="isDesktop"
-        side="left"
-        touchless
-        bordered
-        no-swipe-open
-        :overlay="false"
-        show-if-above
-      >
+      <component :is="isDesktop ? QDrawer : QFooter" v-bind="menuProps">
         <layout-menu-content />
-      </q-drawer>
+      </component>
     </client-only>
 
     <!-- content -->
@@ -36,13 +48,6 @@
         <slot />
       </q-page>
     </q-page-container>
-
-    <!-- mobile menu -->
-    <client-only>
-      <q-footer :model-value="!isDesktop" elevated class="bg-white">
-        <layout-menu-content />
-      </q-footer>
-    </client-only>
   </q-layout>
 </template>
 

@@ -35,7 +35,7 @@
     </div>
 
     <!-- filter </template>-->
-    <Teleport v-if="teleportRightToBackBtnEl" :to="teleportRightToBackBtnEl">
+    <Teleport v-if="teleportElement" :to="teleportElement">
       <q-select
         :model-value="
           categories.find((category) => category.id === params.raceCategoryId)
@@ -71,6 +71,7 @@
   const { params } = useRoute()
   const router = useRouter()
   const { formatDepartureTime } = useDeparture()
+  const { teleportElement } = useTeleport('teleport-right-to-back-btn')
 
   const columns: QTableColumn[] = [
     {
@@ -108,13 +109,8 @@
   const departures = ref<UserDeparture[]>([])
   const categories = ref<Pick<RaceCategory, 'id' | 'name'>[]>([])
   const race = ref<Race | undefined>(undefined)
-  const teleportRightToBackBtnEl = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
-    teleportRightToBackBtnEl.value = document.getElementById(
-      'teleport-right-to-back-btn'
-    )
-
     const [tmpDepartures, tmpCategories, tmpRace] = await Promise.all([
       getDepartures(),
       getRaceCategories(),

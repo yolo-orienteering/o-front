@@ -39,13 +39,9 @@
 
 <template>
   <div class="row">
-    <!-- races filter -->
+    <!-- teleport (e.g. races filter ) -->
     <div class="col-12">
-      <!-- <races-filter
-        v-show="races"
-        :loading="status !== 'success'"
-        @update:filter="updateFilter()"
-      /> -->
+      <div id="teleport-to-menu" />
     </div>
 
     <!-- back btn -->
@@ -57,6 +53,8 @@
         <div class="col-auto q-py-sm">
           <back-btn />
         </div>
+
+        <!-- teleport (e.g. category selection) -->
         <div class="col-auto q-py-sm q-pl-sm">
           <div id="teleport-right-to-back-btn" />
         </div>
