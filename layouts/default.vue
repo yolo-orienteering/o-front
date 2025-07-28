@@ -5,7 +5,7 @@
   const router = useRouter()
   const $q = useQuasar()
 
-  const desktopMenuOpen = computed<boolean>(() => {
+  const isDesktop = computed<boolean>(() => {
     return $q.screen.gt.md
   })
 </script>
@@ -13,19 +13,22 @@
 <template>
   <q-layout view="hHh lpR fFf" class="background">
     <!-- header -->
-    <myol-header :reveal="true" @click="router.push('/')" />
+    <myol-header :reveal="!isDesktop" @click="router.push('/')" />
 
     <!-- desktop menu -->
-    <!-- <q-drawer
-      :model-value="desktopMenuOpen"
-      side="left"
-      touchless
-      bordered
-      no-swipe-open
-      :overlay="false"
-    >
-      <layout-menu-content />
-    </q-drawer> -->
+    <client-only>
+      <q-drawer
+        :model-value="isDesktop"
+        side="left"
+        touchless
+        bordered
+        no-swipe-open
+        :overlay="false"
+        show-if-above
+      >
+        <layout-menu-content />
+      </q-drawer>
+    </client-only>
 
     <!-- content -->
     <q-page-container class="page-container">
@@ -35,9 +38,11 @@
     </q-page-container>
 
     <!-- mobile menu -->
-    <q-footer :model-value="!desktopMenuOpen" elevated class="bg-white">
-      <layout-menu-content />
-    </q-footer>
+    <client-only>
+      <q-footer :model-value="!isDesktop" elevated class="bg-white">
+        <layout-menu-content />
+      </q-footer>
+    </client-only>
   </q-layout>
 </template>
 
@@ -50,5 +55,10 @@
   .page {
     max-width: 860px;
     width: 100%;
+  }
+
+  .q-drawer-container {
+    position: fixed;
+    height: 100vh;
   }
 </style>

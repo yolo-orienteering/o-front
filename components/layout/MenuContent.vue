@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router'
   import BackBtn from '../helper/BackBtn.vue'
 
-  interface IMenuEntry {
+  export interface IMenuEntry {
     name: string
     icon: string
     routeName: string
@@ -26,6 +26,7 @@
       routeName: 'races-my-races',
     },
   ])
+
   const route = useRoute()
 
   // decide whether to show the back button or not
@@ -34,59 +35,37 @@
       return menuEntry.routeName === route.name
     })
   })
-
-  function isActiveRoute(routeName: string): boolean {
-    return route.name === routeName
-  }
 </script>
 
 <template>
-  <div id="teleport-to-menu" />
+  <div class="row">
+    <!-- races filter -->
+    <div class="col-12">
+      <!-- <races-filter
+        v-show="races"
+        :loading="status !== 'success'"
+        @update:filter="updateFilter()"
+      /> -->
+    </div>
 
-  <!-- back button -->
-  <div
-    v-if="showBackButton"
-    class="row justify-center items-center border-bottom-primary"
-    style="overflow-x: scroll"
-  >
-    <div class="col-auto q-py-sm">
-      <back-btn />
-    </div>
-    <div class="col-auto q-py-sm q-pl-sm">
-      <div id="teleport-right-to-back-btn" />
-    </div>
-  </div>
-  <!-- menu entries -->
-  <div class="desktop-only">
-    <q-list>
-      <q-item
-        v-for="(menuEntry, menuEntryId) in menuEntries"
-        :key="menuEntryId"
-        v-ripple
-        clickable
+    <!-- back btn -->
+    <div v-if="showBackButton" class="col-12">
+      <div
+        class="row justify-center items-center border-bottom-primary"
+        style="overflow-x: scroll"
       >
-        <q-item-section avatar>
-          <q-icon :name="menuEntry.icon" size="sm" />
-        </q-item-section>
-
-        <q-item-section>{{ menuEntry.name }}</q-item-section>
-      </q-item>
-    </q-list>
-  </div>
-
-  <div class="row text-primary mobile-only">
-    <div
-      v-for="(menuEntry, menuEntryId) in menuEntries"
-      :key="menuEntryId"
-      class="col-4 q-pt-sm text-center text-caption"
-      :class="[{ 'active-menu-border': isActiveRoute(menuEntry.routeName) }]"
-    >
-      <nuxt-link :to="{ name: menuEntry.routeName }">
-        <div>
-          <q-icon :name="menuEntry.icon" size="sm" />
+        <div class="col-auto q-py-sm">
+          <back-btn />
         </div>
-        {{ menuEntry.name }}
-      </nuxt-link>
+        <div class="col-auto q-py-sm q-pl-sm">
+          <div id="teleport-right-to-back-btn" />
+        </div>
+      </div>
+    </div>
+
+    <!-- menu entries (routing) -->
+    <div class="col-12">
+      <layout-menu-entries :menu-entries="menuEntries" />
     </div>
   </div>
 </template>

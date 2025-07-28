@@ -1,0 +1,48 @@
+<script lang="ts" setup>
+  import type { IMenuEntry } from './MenuContent.vue'
+
+  const route = useRoute()
+
+  const props = defineProps<{ menuEntries: IMenuEntry[] }>()
+
+  function isActiveRoute(routeName: string): boolean {
+    return route.name === routeName
+  }
+</script>
+
+<template>
+  <div class="desktop-only">
+    <q-list>
+      <q-item
+        v-for="(menuEntry, menuEntryId) in props.menuEntries"
+        :key="menuEntryId"
+        v-ripple
+        clickable
+      >
+        <q-item-section avatar>
+          <q-icon :name="menuEntry.icon" size="sm" />
+        </q-item-section>
+
+        <q-item-section>{{ menuEntry.name }}</q-item-section>
+      </q-item>
+    </q-list>
+  </div>
+
+  <div class="row text-primary mobile-only">
+    <div
+      v-for="(menuEntry, menuEntryId) in props.menuEntries"
+      :key="menuEntryId"
+      class="col-4 q-pt-sm text-center text-caption"
+      :class="[{ 'active-menu-border': isActiveRoute(menuEntry.routeName) }]"
+    >
+      <nuxt-link :to="{ name: menuEntry.routeName }">
+        <div>
+          <q-icon :name="menuEntry.icon" size="sm" />
+        </div>
+        {{ menuEntry.name }}
+      </nuxt-link>
+    </div>
+  </div>
+</template>
+
+<style></style>
