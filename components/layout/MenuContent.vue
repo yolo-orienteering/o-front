@@ -3,6 +3,9 @@
   import { useRoute } from 'vue-router'
   import BackBtn from '../helper/BackBtn.vue'
 
+  const route = useRoute()
+  const isDesktop = useIsDesktop()
+
   export interface IMenuEntry {
     name: string
     icon: string
@@ -27,8 +30,6 @@
     },
   ])
 
-  const route = useRoute()
-
   // decide whether to show the back button or not
   const showBackButton = computed<boolean>(() => {
     return !menuEntries.value.find((menuEntry: IMenuEntry) => {
@@ -45,17 +46,18 @@
     </div>
 
     <!-- back btn -->
-    <div v-if="showBackButton" class="col-12">
+    <div v-if="showBackButton" class="col-12 q-px-md-md">
       <div
-        class="row justify-center items-center border-bottom-primary"
-        style="overflow-x: scroll"
+        class="row justify-cente items-center items-md-start"
+        :class="isDesktop ? '' : 'border-bottom-primary'"
+        :style="isDesktop ? {} : { overflowX: 'scroll' }"
       >
-        <div class="col-auto q-py-sm">
+        <div class="col-auto col-md-12 q-py-sm">
           <back-btn />
         </div>
 
         <!-- teleport (e.g. category selection) -->
-        <div class="col-auto q-py-sm q-pl-sm">
+        <div class="col-auto col-md-12 q-py-sm q-pl-sm q-pl-md-none">
           <div id="teleport-right-to-back-btn" />
         </div>
       </div>

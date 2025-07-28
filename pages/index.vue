@@ -27,7 +27,6 @@
   // initially loads races with onMounted hook within composable
   const filter = useRaceFilter()
   const { directus } = useApi()
-
   const { teleportElement } = useTeleport('teleport-to-menu')
 
   const {

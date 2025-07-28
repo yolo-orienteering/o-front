@@ -6,11 +6,11 @@
   const regionStore = useRegion()
   const filter = useRaceFilter()
   const { getTerrainIcon, getTerrainText } = useRaceTerrain()
+  const isDesktop = useIsDesktop()
 
   const props = withDefaults(
     defineProps<{
       loading?: boolean
-      desktop?: boolean
     }>(),
     {
       loading: false,
@@ -92,8 +92,11 @@
 <template>
   <div
     v-if="filter"
-    class="row bg-white races-filter-container q-py-sm q-px-sm border-bottom-primary"
-    :class="props.desktop ? 'q-gutter-sm' : 'no-wrap items-center'"
+    class="row bg-white q-py-sm q-px-sm"
+    :class="
+      isDesktop ? 'q-gutter-xs' : 'no-wrap items-center border-bottom-primary'
+    "
+    :style="isDesktop ? {} : { overflowX: 'scroll' }"
   >
     <!-- deadline -->
     <div class="col-auto">
@@ -237,8 +240,8 @@
     <div
       class="q-mr-xs"
       :class="[
-        props.desktop
-          ? 'col-12'
+        isDesktop
+          ? 'col-11'
           : !!filter?.filter.searchString
           ? 'col-6'
           : 'col-4',
@@ -261,7 +264,11 @@
     <!-- region -->
     <div
       :class="[
-        props.desktop ? 'col-12' : filter.filter.regions ? 'col-7' : 'col-5',
+        isDesktop
+          ? 'col-11 q-pt-xs'
+          : filter.filter.regions
+          ? 'col-7'
+          : 'col-5',
       ]"
     >
       <q-select
@@ -281,9 +288,3 @@
     </div>
   </div>
 </template>
-
-<style lang="scss">
-  .races-filter-container {
-    overflow-x: scroll;
-  }
-</style>

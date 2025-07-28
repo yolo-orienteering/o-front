@@ -1,13 +1,10 @@
 <script setup lang="ts">
   import MyolHeader from '@/components/layout/MyolHeader.vue'
-  import { QDrawer, QFooter, useQuasar } from 'quasar'
+  import { QDrawer, QFooter } from 'quasar'
 
   const router = useRouter()
-  const $q = useQuasar()
 
-  const isDesktop = computed<boolean>(() => {
-    return $q.screen.gt.md
-  })
+  const isDesktop = useIsDesktop()
 
   const menuProps = computed(() => {
     if (isDesktop.value) {
