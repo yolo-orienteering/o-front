@@ -4,6 +4,7 @@
     rounded
     icon="chevron_left"
     color="primary"
+    class="full-width"
     @click="props.to ? $router.push(props.to) : $router.go(-1)"
   >
     Zurück

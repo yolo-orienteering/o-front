@@ -49,6 +49,9 @@ export function useRace() {
   }
 
   function addOrRemoveRace(race: Race) {
+    if (!syncCenter.myRaces) {
+      return
+    }
     const index = syncCenter.myRaces.findIndex((r) => r.id === race.id)
     if (index === -1) {
       syncCenter.myRaces.push(race)

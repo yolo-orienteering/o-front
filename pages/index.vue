@@ -1,7 +1,7 @@
 <template>
   <div class="q-pt-md">
     <!-- filter -->
-    <Teleport v-if="teleportToMenuEl" :to="teleportToMenuEl">
+    <Teleport v-if="teleportElement" :to="teleportElement">
       <races-filter
         v-show="races"
         :loading="status !== 'success'"
@@ -14,28 +14,20 @@
       :loading="status !== 'success'"
       @load-more="loadMore()"
     />
-
     <div v-if="error">Error: {{ error }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
   import { readItems } from '@directus/sdk'
   import { Notify } from 'quasar'
   import type { Race } from '~/types/DirectusTypes'
   import RaceTimeline from '~/components/races/RaceTimeline.vue'
 
-  // defining races
-  const teleportToMenuEl = ref<HTMLElement | null>(null)
-
   // initially loads races with onMounted hook within composable
   const filter = useRaceFilter()
   const { directus } = useApi()
-
-  onMounted(async () => {
-    teleportToMenuEl.value = document.getElementById('teleport-to-menu')
-  })
+  const { teleportElement } = useTeleport('teleport-to-menu')
 
   const {
     data: races,

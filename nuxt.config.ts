@@ -23,5 +23,6 @@ export default defineNuxtConfig({
     extras: {
       fontIcons: ['material-icons', 'material-icons-outlined', 'mdi-v7'],
     },
+    cssAddon: true,
   },
 })

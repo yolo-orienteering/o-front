@@ -1,7 +1,43 @@
+<script setup lang="ts">
+  import MyolHeader from '@/components/layout/MyolHeader.vue'
+  import { QDrawer, QFooter } from 'quasar'
+
+  const router = useRouter()
+
+  const isDesktop = useIsDesktop()
+
+  const menuProps = computed(() => {
+    if (isDesktop.value) {
+      return {
+        'model-value': true,
+        side: 'left',
+        touchless: true,
+        bordered: true,
+        'no-swipe-open': true,
+        overlay: false,
+        'show-if-above': true,
+      }
+    } else {
+      return {
+        'model-value': true,
+        class: 'bg-white',
+        elevated: true,
+      }
+    }
+  })
+</script>
+
 <template>
-  <q-layout view="lHh Lpr lFf" class="background">
+  <q-layout view="hHh lpR fFf" class="background">
     <!-- header -->
-    <myol-header @click="router.push('/')" />
+    <myol-header :reveal="!isDesktop" @click="router.push('/')" />
+
+    <!-- menu (mobile and desktop) -->
+    <client-only>
+      <component :is="isDesktop ? QDrawer : QFooter" v-bind="menuProps">
+        <layout-menu-content />
+      </component>
+    </client-only>
 
     <!-- content -->
     <q-page-container class="page-container">
@@ -9,18 +45,8 @@
         <slot />
       </q-page>
     </q-page-container>
-
-    <!-- mobile bottom menu -->
-    <mobile-menu />
   </q-layout>
 </template>
-
-<script setup lang="ts">
-  import MobileMenu from '@/components/layout/MobileMenu.vue'
-  import MyolHeader from '@/components/layout/MyolHeader.vue'
-
-  const router = useRouter()
-</script>
 
 <style lang="scss">
   .page-container {
@@ -31,5 +57,10 @@
   .page {
     max-width: 860px;
     width: 100%;
+  }
+
+  .q-drawer-container {
+    position: fixed;
+    height: 100vh;
   }
 </style>

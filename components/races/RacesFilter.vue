@@ -1,8 +1,109 @@
+<script setup lang="ts">
+  import { onMounted, ref } from 'vue'
+  import { useRegion } from '@/stores/useRegion'
+  import { useRaceTerrain } from '@/composables/useRaceTerrain'
+
+  const regionStore = useRegion()
+  const filter = useRaceFilter()
+  const { getTerrainIcon, getTerrainText } = useRaceTerrain()
+  const isDesktop = useIsDesktop()
+
+  const props = withDefaults(
+    defineProps<{
+      loading?: boolean
+    }>(),
+    {
+      loading: false,
+    }
+  )
+
+  const emits = defineEmits<{
+    (e: 'update:filter'): void
+  }>()
+
+  onMounted(() => {
+    searchEngine()
+  })
+
+  // text search helpers
+  const lastSearchString = ref<string | undefined>(filter.filter.searchString)
+
+  /**
+   * handles user search input
+   */
+  function searchEngine() {
+    setInterval(() => {
+      if (filter && filter?.filter.searchString !== lastSearchString.value) {
+        lastSearchString.value = filter.filter.searchString
+        emits('update:filter')
+      }
+    }, 1000)
+  }
+
+  function updateFilter({
+    deadline,
+    geographicalScale,
+    previousDays,
+    terrain,
+  }: {
+    deadline?: boolean
+    geographicalScale?: string | null
+    previousDays?: 'add' | 'reset'
+    terrain?: RaceTerrain | null
+  }) {
+    if (deadline !== undefined) {
+      filter.filter.deadline = deadline
+    }
+
+    if (geographicalScale !== undefined) {
+      filter.filter.geographicalScale = geographicalScale || undefined
+    }
+
+    if (previousDays !== undefined) {
+      if (previousDays === 'reset') {
+        filter.filter.previousDays = 0
+      } else if (previousDays === 'add') {
+        graduallyIncreasePreviousDays()
+      }
+    }
+
+    if (terrain !== undefined) {
+      filter.filter.terrain = terrain || undefined
+    }
+
+    emits('update:filter')
+  }
+
+  function graduallyIncreasePreviousDays() {
+    let daysToChange = 7
+    const previousDays = filter.filter.previousDays
+    if (previousDays === 0 || previousDays === 1) {
+      daysToChange = 1
+    }
+
+    if (previousDays === 2) {
+      daysToChange = 5
+    }
+
+    filter.filter.previousDays += daysToChange
+  }
+</script>
+
 <template>
   <div
     v-if="filter"
-    class="row bg-white items-center races-filter-container q-py-sm no-wrap q-px-sm border-bottom-primary"
+    class="row bg-white q-py-sm q-px-sm q-px-md-none"
+    :class="
+      isDesktop ? 'q-gutter-xs' : 'no-wrap items-center border-bottom-primary'
+    "
+    :style="isDesktop ? {} : { overflowX: 'scroll' }"
   >
+    <div class="col-12 desktop-only">
+      <p class="text-h6 q-mt-sm q-mb-xs q-pl-xs text-primary">
+        <q-icon name="filter_alt" class="q-mb-xs q-mr-xs" />Läufe filtern
+      </p>
+    </div>
+
     <!-- deadline -->
     <div class="col-auto">
       <q-chip
@@ -144,7 +245,13 @@
     <!-- search -->
     <div
       class="q-mr-xs"
-      :class="[!!filter?.filter.searchString ? 'col-6' : 'col-4']"
+      :class="[
+        isDesktop
+          ? 'col-11'
+          : !!filter?.filter.searchString
+          ? 'col-6'
+          : 'col-4',
+      ]"
     >
       <q-input
         v-model="filter.filter.searchString"
@@ -161,7 +268,15 @@
     </div>
 
     <!-- region -->
-    <div :class="[filter.filter.regions ? 'col-7' : 'col-5']">
+    <div
+      :class="[
+        isDesktop
+          ? 'col-11 q-pt-xs'
+          : filter.filter.regions
+          ? 'col-7'
+          : 'col-5',
+      ]"
+    >
       <q-select
         v-model="filter.filter.regions"
         :options="regionStore.regions.map((region) => region.region)"
@@ -179,99 +294,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-  import { onMounted, ref } from 'vue'
-  import { useRegion } from '@/stores/useRegion'
-  import { useRaceTerrain } from '@/composables/useRaceTerrain'
-
-  const regionStore = useRegion()
-  const filter = useRaceFilter()
-  const { getTerrainIcon, getTerrainText } = useRaceTerrain()
-
-  const props = withDefaults(
-    defineProps<{
-      loading?: boolean
-    }>(),
-    {
-      loading: false,
-    }
-  )
-
-  const emits = defineEmits<{
-    (e: 'update:filter'): void
-  }>()
-
-  onMounted(() => {
-    searchEngine()
-  })
-
-  // text search helpers
-  const lastSearchString = ref<string | undefined>(filter.filter.searchString)
-
-  /**
-   * handles user search input
-   */
-  function searchEngine() {
-    setInterval(() => {
-      if (filter && filter?.filter.searchString !== lastSearchString.value) {
-        lastSearchString.value = filter.filter.searchString
-        emits('update:filter')
-      }
-    }, 1000)
-  }
-
-  function updateFilter({
-    deadline,
-    geographicalScale,
-    previousDays,
-    terrain,
-  }: {
-    deadline?: boolean
-    geographicalScale?: string | null
-    previousDays?: 'add' | 'reset'
-    terrain?: RaceTerrain | null
-  }) {
-    if (deadline !== undefined) {
-      filter.filter.deadline = deadline
-    }
-
-    if (geographicalScale !== undefined) {
-      filter.filter.geographicalScale = geographicalScale || undefined
-    }
-
-    if (previousDays !== undefined) {
-      if (previousDays === 'reset') {
-        filter.filter.previousDays = 0
-      } else if (previousDays === 'add') {
-        graduallyIncreasePreviousDays()
-      }
-    }
-
-    if (terrain !== undefined) {
-      filter.filter.terrain = terrain || undefined
-    }
-
-    emits('update:filter')
-  }
-
-  function graduallyIncreasePreviousDays() {
-    let daysToChange = 7
-    const previousDays = filter.filter.previousDays
-    if (previousDays === 0 || previousDays === 1) {
-      daysToChange = 1
-    }
-
-    if (previousDays === 2) {
-      daysToChange = 5
-    }
-
-    filter.filter.previousDays += daysToChange
-  }
-</script>
-
-<style lang="scss">
-  .races-filter-container {
-    overflow-x: scroll;
-  }
-</style>
