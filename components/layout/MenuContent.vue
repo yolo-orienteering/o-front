@@ -62,13 +62,27 @@
     </div>
 
     <!-- menu entries (routing) -->
-    <div class="col-12">
+    <div class="col-12 sort-order-md-first">
       <layout-menu-entries :menu-entries="menuEntries" />
     </div>
   </div>
 </template>
 
 <style lang="scss">
+  @use 'quasar/src/css/variables' as *;
+
+  @mixin mq-min($breakpoint) {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  }
+
+  .sort-order-md-first {
+    @include mq-min($breakpoint-md) {
+      order: -1;
+    }
+  }
+
   .active-menu-border {
     border-bottom: 2px solid var(--q-primary);
   }

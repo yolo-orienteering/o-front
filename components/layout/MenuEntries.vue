@@ -11,23 +11,27 @@
 </script>
 
 <template>
+  <!-- desktop view -->
   <div class="desktop-only">
     <q-list>
-      <q-item
+      <div
         v-for="(menuEntry, menuEntryId) in props.menuEntries"
         :key="menuEntryId"
-        v-ripple
-        clickable
       >
-        <q-item-section avatar>
-          <q-icon :name="menuEntry.icon" size="sm" />
-        </q-item-section>
+        <nuxt-link :to="{ name: menuEntry.routeName }">
+          <q-item v-ripple clickable>
+            <q-item-section avatar>
+              <q-icon :name="menuEntry.icon" size="sm" />
+            </q-item-section>
 
-        <q-item-section>{{ menuEntry.name }}</q-item-section>
-      </q-item>
+            <q-item-section>{{ menuEntry.name }}</q-item-section>
+          </q-item>
+        </nuxt-link>
+      </div>
     </q-list>
   </div>
 
+  <!-- mobile view -->
   <div class="row text-primary mobile-only">
     <div
       v-for="(menuEntry, menuEntryId) in props.menuEntries"
