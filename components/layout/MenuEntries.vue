@@ -13,13 +13,18 @@
 <template>
   <!-- desktop view -->
   <div class="desktop-only">
-    <q-list>
+    <q-list class="q-pt-md">
       <div
         v-for="(menuEntry, menuEntryId) in props.menuEntries"
         :key="menuEntryId"
       >
         <nuxt-link :to="{ name: menuEntry.routeName }">
-          <q-item v-ripple clickable>
+          <q-item
+            v-ripple
+            clickable
+            :active="isActiveRoute(menuEntry.routeName)"
+            active-class="bg-primary text-white"
+          >
             <q-item-section avatar>
               <q-icon :name="menuEntry.icon" size="sm" />
             </q-item-section>
@@ -29,6 +34,8 @@
         </nuxt-link>
       </div>
     </q-list>
+
+    <q-separator class="q-my-lg" />
   </div>
 
   <!-- mobile view -->
