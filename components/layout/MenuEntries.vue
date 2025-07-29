@@ -5,8 +5,11 @@
 
   const props = defineProps<{ menuEntries: IMenuEntry[] }>()
 
-  function isActiveRoute(routeName: string): boolean {
-    return route.name === routeName
+  function isActiveRoute(menuEntry: IMenuEntry): boolean {
+    return (
+      route.name === menuEntry.routeName ||
+      !!menuEntry.subRoutes?.find((subRoute) => route.path.includes(subRoute))
+    )
   }
 </script>
 
@@ -22,7 +25,7 @@
           <q-item
             v-ripple
             clickable
-            :active="isActiveRoute(menuEntry.routeName)"
+            :active="isActiveRoute(menuEntry)"
             active-class="bg-primary text-white"
           >
             <q-item-section avatar>
@@ -44,7 +47,7 @@
       v-for="(menuEntry, menuEntryId) in props.menuEntries"
       :key="menuEntryId"
       class="col-4 q-pt-sm text-center text-caption"
-      :class="[{ 'active-menu-border': isActiveRoute(menuEntry.routeName) }]"
+      :class="[{ 'active-menu-border': isActiveRoute(menuEntry) }]"
     >
       <nuxt-link :to="{ name: menuEntry.routeName }">
         <div>
