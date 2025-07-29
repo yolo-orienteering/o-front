@@ -41,7 +41,7 @@
       done: true,
     },
     {
-      text: 'Teile-Button für Läufe > SSR',
+      text: 'Teile-Button für Läufe > SSR. (29.07.2025)',
       done: true,
     },
     {
