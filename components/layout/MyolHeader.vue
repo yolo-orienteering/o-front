@@ -1,11 +1,18 @@
 <script lang="ts" setup>
+  const route = useRoute()
+
   const props = defineProps<{
     reveal: boolean
   }>()
+
+  const hideHeader = computed<boolean>(() =>
+    route.path.includes('/games/external')
+  )
 </script>
 
 <template>
   <q-header
+    v-show="!hideHeader"
     class="text-primary bg-white"
     elevated
     :reveal="props.reveal"

@@ -46,7 +46,7 @@
     <div
       v-for="(menuEntry, menuEntryId) in props.menuEntries"
       :key="menuEntryId"
-      class="col-4 q-pt-sm text-center text-caption"
+      class="col-3 q-pt-sm text-center text-caption"
       :class="[{ 'active-menu-border': isActiveRoute(menuEntry) }]"
     >
       <nuxt-link :to="{ name: menuEntry.routeName }">

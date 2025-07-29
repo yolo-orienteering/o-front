@@ -21,6 +21,12 @@
       subRoutes: ['/roadmap'],
     },
     {
+      name: 'Games',
+      icon: 'casino',
+      routeName: 'games',
+      subRoutes: ['/games/'],
+    },
+    {
       name: 'Entdecken',
       icon: 'search',
       routeName: 'index',
@@ -33,11 +39,16 @@
     },
   ])
 
+  const hideBackBtnRoutes = ['/games/external']
+
   // decide whether to show the back button or not
   const showBackButton = computed<boolean>(() => {
-    return !menuEntries.value.find((menuEntry: IMenuEntry) => {
-      return menuEntry.routeName === route.name
-    })
+    return (
+      !menuEntries.value.find((menuEntry: IMenuEntry) => {
+        return menuEntry.routeName === route.name
+      }) &&
+      !hideBackBtnRoutes.find((hideRoute) => route.path.includes(hideRoute))
+    )
   })
 </script>
 
