@@ -1,8 +1,11 @@
 <script setup lang="ts">
+  import photoMemoryImage from '@/assets/img/games/external/benBrown/photoMemory.png'
+
   interface GameDescription {
     title: string
     subtitle: string
     description: string
+    img: string
     externalUrl: string
     credits: GameCredit
   }
@@ -18,6 +21,7 @@
       subtitle: 'Remember the Map!',
       description: `Du siehst eine Karte mit einem Kontrollpunkt und der Laufrichtung. Erinnere dich auf der nächsten Seite,
       welches der vier Bilder die Karte zeigt.`,
+      img: photoMemoryImage,
       externalUrl:
         'https://orienteering-games.vercel.app/game/photomemory/play',
       credits: {
@@ -32,6 +36,8 @@
   <div class="row">
     <div v-for="(game, gameIndex) in games" :key="gameIndex" class="col-12">
       <q-card bordered flat>
+        <q-img :src="game.img" :ratio="1" />
+
         <q-card-section>
           <div class="text-h6">{{ game.title }}</div>
           <div class="text-subtitle2">{{ game.subtitle }}</div>
