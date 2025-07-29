@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import oMateLogo from '~/assets/img/o-mate-logo.webp'
+  import oMateLogo from '~/assets/img/seo.webp'
 
   const route = useRoute()
 
@@ -10,13 +10,17 @@
   })
 
   useSeoMeta({
-    ogTitle: 'o-mate',
-    ogDescription: 'Die o-mate App bringt dich an den Start.',
+    ogTitle: 'O-MATE ORIENTEERING APP',
+    ogDescription:
+      'Alle wichtigen News aus dem OL. Alle Wettkämpfe und deine Startzeit auf einen Blick. Das Wichtigste aus den Weisungen zusammengefasst. Entdecke o-mate.',
+    ogType: 'website',
     ogImage: `${baseUrl.value}${oMateLogo}`,
     ogUrl:
       typeof window === 'undefined'
         ? `${baseUrl.value}${route.fullPath}`
         : window.location.href,
+    ogLocale: 'de_CH',
+    ogSiteName: 'o-mate orienteering',
   })
 </script>
 

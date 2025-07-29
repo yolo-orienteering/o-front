@@ -18,15 +18,14 @@
   const syncCenter = useSyncCenter()
   const { getFollowingUserDeparturesbyRace } = useFollowingUserDepartures()
 
-  const race = ref<Race | null>(null)
   const followingDepartures = ref<UserDeparture[] | false>([])
   const expandedInstructions = ref<boolean>(false)
 
   const raceId = computed<string>(() => route.params.raceId as string)
 
   // load race
-  onMounted(async () => {
-    race.value = await directus.request<Race>(
+  const { data: race } = await useAsyncData('race-id', () => {
+    return directus.request<Race>(
       readItem('Race', raceId.value, {
         fields: [
           '*',
@@ -36,6 +35,20 @@
         ],
       })
     )
+  })
+
+  useSeoMeta({
+    ogTitle: `${race.value?.name}${
+      race.value?.date
+        ? ` | ${formatDate(race.value?.date, 'dd, DD.MM.YY')}`
+        : ''
+    }`,
+    ogDescription: `${
+      race.value?.city || race.value?.mapName
+    } | Alle Informationen zum Anlass findest du in der o-mate app.`,
+  })
+
+  onMounted(async () => {
     await loadFollowing()
   })
 
@@ -145,7 +158,9 @@
         </q-btn>
       </div>
       <div class="q-pt-md">
-        <races-share-race-btn />
+        <client-only>
+          <races-share-race-btn />
+        </client-only>
       </div>
     </div>
 
