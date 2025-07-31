@@ -413,18 +413,29 @@ export type DirectusWebhooks = {
 }
 
 export type Game = {
-  creditName?: string | null
-  creditUrl?: string | null
+  author?: string | GameAuthor | null
   date_created?: string | null
   date_updated?: string | null
   description?: string | null
   externalUrl?: string | null
   id: string
   image?: string | DirectusFiles | null
+  openOutsideApp?: boolean | null
   sort?: number | null
   status: string
   subtitle?: string | null
   title?: string | null
+  user_created?: string | DirectusUsers | null
+  user_updated?: string | DirectusUsers | null
+}
+
+export type GameAuthor = {
+  date_created?: string | null
+  date_updated?: string | null
+  id: string
+  name?: string | null
+  sort?: number | null
+  url?: string | null
   user_created?: string | DirectusUsers | null
   user_updated?: string | DirectusUsers | null
 }
@@ -546,6 +557,7 @@ export type CustomDirectusTypes = {
   directus_versions: DirectusVersions[]
   directus_webhooks: DirectusWebhooks[]
   Game: Game[]
+  GameAuthor: GameAuthor[]
   Job: Job[]
   Race: Race[]
   RaceCategory: RaceCategory[]

@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { readItems } from '@directus/sdk'
+  import type { Game, GameAuthor } from '~/types/DirectusTypes'
 
   const api = useApi()
 
@@ -11,16 +12,23 @@
             _eq: 'published',
           },
         },
-        fields: ['*', { image: ['*'] }],
+        fields: ['*', { image: ['*'], author: ['id', 'name', 'url'] }],
         limit: -1,
       })
     )
   })
+
+  function composeGameLink(game: Game): string {
+    if (game.openOutsideApp) {
+      return game.externalUrl!
+    }
+    return `/games/external?url=${game.externalUrl}`
+  }
 </script>
 
 <template>
   <div class="row">
-    {{ error }}
+    <div v-if="error">{{ JSON.stringify(error) }}</div>
     <div
       v-for="(game, gameIndex) in games"
       :key="gameIndex"
@@ -41,16 +49,23 @@
         <q-separator dark />
 
         <q-card-actions class="justify-between">
-          <nuxt-link :to="game.creditUrl as string" target="_blank">
-            <q-btn flat size="x-small">By {{ game.creditName }}</q-btn>
+          <nuxt-link :to="(game.author as GameAuthor).url!" target="_blank">
+            <q-btn flat size="x-small"
+              >By {{ (game.author as GameAuthor).name }}</q-btn
+            >
           </nuxt-link>
           <nuxt-link
-            :to="`/games/external?url=${game.externalUrl}`"
+            :to="composeGameLink(game)"
+            :target="game.openOutsideApp ? '_blank' : ''"
             class="col-6"
           >
             <q-btn class="full-width">
-              <q-icon name="play_arrow" class="q-pr-xs" /> Spielen</q-btn
-            >
+              <q-icon
+                :name="game.openOutsideApp ? 'open_in_new' : 'play_arrow'"
+                class="q-mr-sm"
+              />
+              {{ game.openOutsideApp ? 'Öffnen' : 'Spielen' }}
+            </q-btn>
           </nuxt-link>
         </q-card-actions>
       </q-card>
