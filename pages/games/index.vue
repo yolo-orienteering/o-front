@@ -24,7 +24,7 @@
     <div
       v-for="(game, gameIndex) in games"
       :key="gameIndex"
-      class="col-12 col-md-4"
+      class="col-12 col-md-4 q-py-sm q-pa-md-sm"
     >
       <q-card bordered flat>
         <q-img :src="api.getImgUrl(game.image)" :ratio="16 / 9" />

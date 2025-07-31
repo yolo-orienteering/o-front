@@ -3,6 +3,7 @@
   import { QDrawer, QFooter } from 'quasar'
 
   const router = useRouter()
+  const route = useRoute()
 
   const isDesktop = useIsDesktop()
 
@@ -41,7 +42,11 @@
 
     <!-- content -->
     <q-page-container class="page-container">
-      <q-page padding class="page">
+      <q-page
+        padding
+        class="page"
+        :class="route.path.includes('/games/external') ? 'full-page-width' : ''"
+      >
         <slot />
       </q-page>
     </q-page-container>
@@ -57,6 +62,10 @@
   .page {
     max-width: 860px;
     width: 100%;
+  }
+
+  .full-page-width {
+    max-width: 100%;
   }
 
   .q-drawer-container {
