@@ -59,7 +59,7 @@
     }
 
     // game categories
-    if (filter.value.categories) {
+    if (filter.value.categories?.length) {
       composedQuery.filter = {
         ...composedQuery.filter,
         categories: {
@@ -118,7 +118,22 @@
             color="primary"
             label="Kategorien"
             :loading="pending"
-          />
+          >
+            <template #option="{ opt, selected, toggleOption }">
+              <q-item
+                clickable
+                :class="selected ? 'bg-primary text-white' : ''"
+                @click="toggleOption(opt)"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="opt.icon" />
+                </q-item-section>
+                <q-item-section>
+                  {{ opt.name }}
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
 
         <div class="col-6 col-md-12 q-pr-xs">
@@ -142,11 +157,11 @@
     <div
       v-for="(game, gameIndex) in games || []"
       :key="gameIndex"
-      class="col-12 col-md-4 q-py-md q-pa-md-sm"
+      class="col-12 col-md-6 q-py-md q-pa-md-sm"
     >
       <game-card :game="game as Game" />
     </div>
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-6">
       <q-card bordered flat>
         <q-card-section>
           <div class="text-h5 text-center">Spiel fehlt? Jetzt hinzufügen.</div>
