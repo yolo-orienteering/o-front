@@ -8,7 +8,7 @@
   <div
     class="row bg-white q-py-sm q-px-sm q-px-md-none"
     :class="
-      isDesktop ? 'q-gutter-xs' : 'no-wrap items-center border-bottom-primary'
+      isDesktop ? 'q-gutter-sm' : 'no-wrap items-center border-bottom-primary'
     "
     :style="isDesktop ? {} : { overflowX: 'scroll' }"
   >

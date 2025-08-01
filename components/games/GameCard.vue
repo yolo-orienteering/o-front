@@ -1,19 +1,16 @@
 <script lang="ts" setup>
-  import type { Game, GameAuthor } from '~/types/DirectusTypes'
+  import type {
+    Game,
+    GameAuthor,
+    GameCategory,
+    GameGameCategory,
+  } from '~/types/DirectusTypes'
 
   const api = useApi()
 
   defineProps<{
     game: Game
   }>()
-
-  const iconMap: Record<string, string> = {
-    desktop: 'desktop_windows',
-    retro: 'atm',
-    simulator: 'videogame_asset',
-    route: 'alt_route',
-    symbols: 'emoji_symbols',
-  }
 
   function composeGameLink(game: Game): string {
     if (game.openOutsideApp) {
@@ -38,11 +35,11 @@
 
     <q-card-section class="q-py-none">
       <q-chip
-        v-for="category in game.categories"
-        :key="category"
-        :icon="iconMap[category]"
+        v-for="category in (game.categories.map(category => (category as GameGameCategory).GameCategory_id) as GameCategory[])"
+        :key="category.id"
+        :icon="category.icon"
         size="sm"
-        >{{ category }}</q-chip
+        >{{ category.name }}</q-chip
       >
     </q-card-section>
 

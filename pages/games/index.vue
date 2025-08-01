@@ -1,7 +1,12 @@
 <script setup lang="ts">
   import { readItems, type Query } from '@directus/sdk'
   import GameCard from '~/components/games/GameCard.vue'
-  import type { Game, Schema } from '~/types/DirectusTypes'
+  import type {
+    Game,
+    GameAuthor,
+    GameCategory,
+    Schema,
+  } from '~/types/DirectusTypes'
 
   type GameQuery = Query<Schema, Game>
 
@@ -10,8 +15,8 @@
 
   const filter = ref<{
     inApp?: boolean
-    categories?: Game['categories']
-    author?: string
+    categories?: GameCategory[]
+    author?: GameAuthor
   }>({})
 
   const gameQuery = computed<GameQuery>(() => {
@@ -21,6 +26,11 @@
         {
           author: ['*'],
           image: ['*'],
+          categories: [
+            {
+              GameCategory_id: ['*'],
+            },
+          ],
         },
       ],
       filter: {
@@ -31,6 +41,7 @@
       limit: -1,
     } as GameQuery
 
+    // inside app
     if (filter.value.inApp) {
       composedQuery.filter = {
         ...composedQuery.filter,
@@ -39,16 +50,56 @@
         },
       }
     }
+
+    // game author
+    if (filter.value.author) {
+      composedQuery.filter = {
+        ...composedQuery.filter,
+        author: {
+          _eq: filter.value.author.id,
+        },
+      }
+    }
+
+    // game categories
+    if (filter.value.categories) {
+      composedQuery.filter = {
+        ...composedQuery.filter,
+        categories: {
+          GameCategory_id: {
+            _in: filter.value.categories.map((category) => category.id),
+          },
+        },
+      }
+    }
+
     return composedQuery
   })
 
-  const { data: games, error } = await useLazyAsyncData(
+  const { data: games, error } = await useAsyncData(
     'games',
     () => {
-      return api.directus.request(readItems('Game', gameQuery.value))
+      return api.directus.request<Game[]>(readItems('Game', gameQuery.value))
     },
     {
       watch: [gameQuery],
+    }
+  )
+
+  const { data: options, pending } = await useAsyncData(
+    'game-authors',
+    () =>
+      Promise.all([
+        api.directus.request<GameAuthor>(
+          readItems('GameAuthor', { fields: ['*'] })
+        ),
+        api.directus.request<GameCategory>(
+          readItems('GameCategory', { fields: ['*'] })
+        ),
+      ]),
+    {
+      server: false,
+      lazy: true,
     }
   )
 </script>
@@ -57,25 +108,65 @@
   <div class="row">
     <teleport v-if="teleportElement" :to="teleportElement">
       <filter-container filter-name="Games filtern">
+        <div class="col-6 col-md-12 q-pr-xs">
+          <q-select
+            v-model="filter.categories"
+            :options="options?.[1] || []"
+            option-label="name"
+            multiple
+            clearable
+            outlined
+            dense
+            rounded
+            color="primary"
+            label="Kategorien"
+            :loading="pending"
+          />
+        </div>
+
+        <div class="col-6 col-md-12 q-pr-xs">
+          <q-select
+            v-model="filter.author"
+            :options="options?.[0] || []"
+            option-label="name"
+            clearable
+            outlined
+            dense
+            rounded
+            color="primary"
+            label="Autor"
+            :loading="pending"
+          />
+        </div>
+
         <div class="col-auto">
           <q-chip
             :outline="!filter.inApp"
             :text-color="filter.inApp ? 'white' : ''"
             color="primary"
-            icon="mobile_friendly"
             icon-selected="mobile_friendly"
             :selected="filter.inApp"
             clickable
+            size="lg"
             @click="filter.inApp = filter.inApp ? undefined : true"
-            >In-App</q-chip
           >
+            <span class="text-body2">
+              <q-icon
+                v-if="!filter.inApp"
+                name="mobile_friendly"
+                class="q-mr-xs"
+                size="sm"
+              />
+              In-App
+            </span>
+          </q-chip>
         </div>
       </filter-container>
     </teleport>
 
     <div v-if="error">{{ JSON.stringify(error) }}</div>
     <div
-      v-for="(game, gameIndex) in games"
+      v-for="(game, gameIndex) in games || []"
       :key="gameIndex"
       class="col-12 col-md-4 q-py-md q-pa-md-sm"
     >

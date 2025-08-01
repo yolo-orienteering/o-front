@@ -3,6 +3,8 @@ import type { DirectusUser, DirectusFile } from '@directus/sdk'
 export interface Schema {
   Game: Game[]
   GameAuthor: GameAuthor[]
+  GameCategory: GameCategory[]
+  Game_GameCategory: GameGameCategory[]
   Race: Race[]
   RaceCategory: RaceCategory[]
   RaceInstruction: RaceInstruction[]
@@ -26,9 +28,7 @@ export interface Game {
   externalUrl: string | null
   openOutsideApp: boolean | null
   author: string | GameAuthor
-  categories: Array<
-    'desktop' | 'retro' | 'simulator' | 'route' | 'symbols'
-  > | null
+  categories: string[] | GameGameCategory[]
 }
 
 export interface GameAuthor {
@@ -40,6 +40,24 @@ export interface GameAuthor {
   date_updated: string | null
   name: string
   url: string
+}
+
+export interface GameCategory {
+  id: string
+  status: 'published' | 'draft' | 'archived'
+  sort: number | null
+  user_created: string | DirectusUser<Schema> | null
+  date_created: string | null
+  user_updated: string | DirectusUser<Schema> | null
+  date_updated: string | null
+  name: string
+  icon: string
+}
+
+export interface GameGameCategory {
+  id: number
+  Game_id: string | Game | null
+  GameCategory_id: string | GameCategory | null
 }
 
 export interface Race {
