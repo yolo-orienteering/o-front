@@ -2,6 +2,8 @@
   import { onMounted, ref } from 'vue'
   import { useRegion } from '@/stores/useRegion'
   import { useRaceTerrain } from '@/composables/useRaceTerrain'
+  import FilterContainer from '../filter/FilterContainer.vue'
+  import type { Race } from '~/types/DirectusTypes'
 
   const regionStore = useRegion()
   const filter = useRaceFilter()
@@ -47,7 +49,7 @@
     terrain,
   }: {
     deadline?: boolean
-    geographicalScale?: string | null
+    geographicalScale?: Race['geographicalScale'] | null
     previousDays?: 'add' | 'reset'
     terrain?: RaceTerrain | null
   }) {
@@ -90,20 +92,7 @@
 </script>
 
 <template>
-  <div
-    v-if="filter"
-    class="row bg-white q-py-sm q-px-sm q-px-md-none"
-    :class="
-      isDesktop ? 'q-gutter-xs' : 'no-wrap items-center border-bottom-primary'
-    "
-    :style="isDesktop ? {} : { overflowX: 'scroll' }"
-  >
-    <div class="col-12 desktop-only">
-      <p class="text-h6 q-mt-sm q-mb-xs q-pl-xs text-primary">
-        <q-icon name="filter_alt" class="q-mb-xs q-mr-xs" />Läufe filtern
-      </p>
-    </div>
-
+  <filter-container v-if="filter" filter-name="Läufe filtern">
     <!-- deadline -->
     <div class="col-auto">
       <q-chip
@@ -292,5 +281,5 @@
         @clear="emits('update:filter')"
       />
     </div>
-  </div>
+  </filter-container>
 </template>

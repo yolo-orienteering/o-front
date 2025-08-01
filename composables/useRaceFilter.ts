@@ -1,14 +1,14 @@
 import type { Query, QueryFilter } from '@directus/sdk'
-import type { CustomDirectusTypes, Race } from '@/types/DirectusTypes'
+import type { Schema, Race } from '@/types/DirectusTypes'
 
-export type RaceQuery = Query<CustomDirectusTypes, Race>
+export type RaceQuery = Query<Schema, Race>
 export type RaceTerrain = 'forest' | 'urban' | 'mix' | undefined | null
 
 export interface RaceFilter {
   deadline: boolean
   searchString: string | undefined
   terrain?: RaceTerrain
-  geographicalScale: string | undefined
+  geographicalScale: Race['geographicalScale'] | undefined
   regions?: string[]
   previousDays: number
   limit: number
@@ -78,7 +78,7 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
         ],
         // reset date filter
         date: {},
-      } as QueryFilter<CustomDirectusTypes, Race>
+      } as QueryFilter<Schema, Race>
 
       composedFilter.sort = 'deadline'
     }

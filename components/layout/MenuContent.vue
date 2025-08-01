@@ -56,7 +56,7 @@
   <div class="row">
     <!-- teleport (e.g. races filter ) -->
     <div class="col-12 q-px-md-md">
-      <div id="teleport-to-menu" />
+      <div id="teleport-to-filter-menu" />
     </div>
 
     <!-- back btn -->
