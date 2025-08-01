@@ -21,13 +21,13 @@ export interface Game {
   date_created: string | null
   user_updated: string | DirectusUser<Schema> | null
   date_updated: string | null
-  subtitle: string
-  title: string
-  description: string
-  image: string | DirectusFile<Schema>
+  subtitle: string | null
+  title: string | null
+  description: string | null
+  image: string | DirectusFile<Schema> | null
   externalUrl: string | null
   openOutsideApp: boolean | null
-  author: string | GameAuthor
+  author: string | GameAuthor | null
   categories: string[] | GameGameCategory[]
 }
 
@@ -58,11 +58,12 @@ export interface GameGameCategory {
   id: number
   Game_id: string | Game | null
   GameCategory_id: string | GameCategory | null
+  sort: number | null
 }
 
 export interface Race {
-  city: string
-  country: string
+  city: string | null
+  country: string | null
   date: string | null
   date_created: string | null
   date_updated: string | null
@@ -75,13 +76,13 @@ export interface Race {
   instructionLink: string | null
   liveResultLink: string | null
   mapName: string | null
-  name: string
+  name: string | null
   originalDataFull: unknown | null
-  originalDataId: string
-  originalDataSource: 'solv'
+  originalDataId: string | null
+  originalDataSource: 'solv' | null
   publicationLink: string | null
   rankingLink: string | null
-  region: string
+  region: string | null
   sort: number | null
   status: 'published' | 'draft' | 'archived'
   user_created: string | DirectusUser<Schema> | null
@@ -99,8 +100,8 @@ export interface RaceCategory {
   distanceInMeter: number | null
   equidistanceInMeter: number | null
   id: string
-  name: string
-  race: string | Race
+  name: string | null
+  race: string | Race | null
   sort: number | null
   status: 'published' | 'draft' | 'archived'
   user_created: string | DirectusUser<Schema> | null
@@ -127,12 +128,12 @@ export interface UserDeparture {
   date_created: string | null
   date_updated: string | null
   id: string
-  race: string | Race
+  race: string | Race | null
   raceCategory: string | RaceCategory | null
   sort: number | null
   startTimeInMinutes: number | null
   status: 'published' | 'draft' | 'archived'
-  user: string | DirectusUser<Schema>
+  user: string | DirectusUser<Schema> | null
   user_created: string | DirectusUser<Schema> | null
   user_updated: string | DirectusUser<Schema> | null
 }

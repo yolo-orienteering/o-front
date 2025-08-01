@@ -38,6 +38,11 @@
           _eq: 'published',
         },
       },
+      deep: {
+        categories: {
+          _sort: ['sort'],
+        },
+      },
       limit: -1,
     } as GameQuery
 
