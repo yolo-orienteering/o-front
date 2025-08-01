@@ -31,6 +31,7 @@
               GameCategory_id: ['*'],
             },
           ],
+          variants: ['*'],
         },
       ],
       filter: {
@@ -45,16 +46,6 @@
       },
       limit: -1,
     } as GameQuery
-
-    // inside app
-    if (filter.value.inApp) {
-      composedQuery.filter = {
-        ...composedQuery.filter,
-        openOutsideApp: {
-          _eq: true,
-        },
-      }
-    }
 
     // game author
     if (filter.value.author) {
@@ -142,29 +133,6 @@
             label="Autor"
             :loading="pending"
           />
-        </div>
-
-        <div class="col-auto">
-          <q-chip
-            :outline="!filter.inApp"
-            :text-color="filter.inApp ? 'white' : ''"
-            color="primary"
-            icon-selected="mobile_friendly"
-            :selected="filter.inApp"
-            clickable
-            size="lg"
-            @click="filter.inApp = filter.inApp ? undefined : true"
-          >
-            <span class="text-body2">
-              <q-icon
-                v-if="!filter.inApp"
-                name="mobile_friendly"
-                class="q-mr-xs"
-                size="sm"
-              />
-              In-App
-            </span>
-          </q-chip>
         </div>
       </filter-container>
     </teleport>

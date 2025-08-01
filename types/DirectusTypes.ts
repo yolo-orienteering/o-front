@@ -4,6 +4,7 @@ export interface Schema {
   Game: Game[]
   GameAuthor: GameAuthor[]
   GameCategory: GameCategory[]
+  GameVariant: GameVariant[]
   Game_GameCategory: GameGameCategory[]
   Race: Race[]
   RaceCategory: RaceCategory[]
@@ -25,10 +26,9 @@ export interface Game {
   title: string | null
   description: string | null
   image: string | DirectusFile<Schema> | null
-  externalUrl: string | null
-  openOutsideApp: boolean | null
   author: string | GameAuthor | null
   categories: string[] | GameGameCategory[]
+  variants: string[] | GameVariant[]
 }
 
 export interface GameAuthor {
@@ -52,6 +52,20 @@ export interface GameCategory {
   date_updated: string | null
   name: string
   icon: string
+}
+
+export interface GameVariant {
+  id: string
+  status: 'published' | 'draft' | 'archived'
+  sort: number | null
+  user_created: string | DirectusUser<Schema> | null
+  date_created: string | null
+  user_updated: string | DirectusUser<Schema> | null
+  date_updated: string | null
+  title: string
+  externalUrl: string | null
+  openOutsideApp: boolean | null
+  game: string | Game | null
 }
 
 export interface GameGameCategory {
