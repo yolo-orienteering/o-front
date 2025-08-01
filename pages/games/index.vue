@@ -12,7 +12,13 @@
             _eq: 'published',
           },
         },
-        fields: ['*', { image: ['*'], author: ['id', 'name', 'url'] }],
+        fields: [
+          '*',
+          {
+            image: ['*'],
+            author: ['*'],
+          },
+        ],
         limit: -1,
       })
     )
