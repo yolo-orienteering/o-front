@@ -145,5 +145,21 @@
     >
       <game-card :game="game as Game" />
     </div>
+    <div class="col-12 col-md-4">
+      <q-card bordered flat>
+        <q-card-section>
+          <div class="text-h5 text-center">Spiel fehlt? Jetzt hinzufügen.</div>
+        </q-card-section>
+
+        <q-card-section class="text-center">
+          <q-btn
+            icon="add"
+            fab
+            color="primary"
+            href="mailto:scheurer.michael@pm.me"
+          />
+        </q-card-section>
+      </q-card>
+    </div>
   </div>
 </template>
