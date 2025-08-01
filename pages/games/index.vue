@@ -44,6 +44,7 @@
           _sort: ['sort'],
         },
       },
+      sort: ['-date_created'],
       limit: -1,
     } as GameQuery
 
