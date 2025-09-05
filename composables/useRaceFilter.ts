@@ -35,8 +35,9 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
     let limit = filter.value.limit
     let page = filter.value.page
 
-    const filterDate = new Date(new Date().setHours(0, 0, 0, 0))
-    filterDate.setDate(filterDate.getDate() - filter.value.previousDays + 1)
+    const now = new Date()
+    const filterDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+    filterDate.setDate(filterDate.getDate() - filter.value.previousDays)
     const filterDateIso = filterDate.toISOString()
 
     // in case of initial load
