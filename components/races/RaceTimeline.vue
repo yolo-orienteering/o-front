@@ -26,11 +26,16 @@
   )
 
   const emit = defineEmits<{
-    (e: 'loadMore'): void
+    (e: 'loadMore' | 'update:filter'): void
   }>()
 
   function loadMore() {
     emit('loadMore')
+  }
+
+  function resetFilter (): void {
+    filter.resetFilter()
+    emit('update:filter')
   }
 
   function shouldAddUser(race: Race): boolean {
@@ -122,6 +127,17 @@
               </div>
             </div>
           </q-timeline-entry>
+
+          <!-- no bookmarked races -->
+          <div v-if="raceIndex === 0 && filter.filter.myRaces && !syncCenter.myRaces?.length" class="col-12 q-pb-lg">
+            <q-banner dark>
+              Du hast noch keine Läufe vorgemerkt. Klicke auf die <q-icon name="bookmark"/>-Symbole, um Dir Deine Liste
+              zusammenzustellen.
+              <template #avatar>
+                <q-icon name="bookmark" size="md" class="q-pr-sm" />
+              </template>
+            </q-banner>
+          </div>
 
           <!-- newsletter -->
           <q-timeline-entry
@@ -233,8 +249,21 @@
       </q-timeline>
     </div>
 
+    <!-- no results -->
+    <div v-if="!races?.length" class="col-12">
+      <q-banner dark>
+        Keine Läufe gefunden. Das liegt womöglich an Deiner Filterung.
+        <template #avatar>
+          <q-icon name="battery_0_bar" size="md" class="q-pr-sm" />
+        </template>
+        <template #action>
+          <q-btn icon="replay" @click="resetFilter()">Filter zurücksetzen</q-btn>
+        </template>
+      </q-banner>
+    </div>
+
     <!-- pagination -->
-    <div v-if="!hideLoadMore" class="col-12 text-center q-pb-lg">
+    <div v-else-if="!hideLoadMore && !!races?.length" class="col-12 text-center q-pb-lg">
       <q-btn @click="loadMore()"> Mehr Läufe laden </q-btn>
     </div>
   </div>

@@ -13,6 +13,7 @@
       :races="races"
       :loading="status !== 'success'"
       @load-more="loadMore()"
+      @update:filter="updateFilter()"
     />
     <div v-if="error">Error: {{ error }}</div>
   </div>

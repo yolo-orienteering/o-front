@@ -5,6 +5,7 @@ export type RaceQuery = Query<Schema, Race>
 export type RaceTerrain = 'forest' | 'urban' | 'mix' | undefined | null
 
 export interface RaceFilter {
+  myRaces: boolean
   deadline: boolean
   searchString: string | undefined
   terrain?: RaceTerrain
@@ -16,7 +17,10 @@ export interface RaceFilter {
 }
 
 export const useRaceFilter = defineStore('useRaceFilter', () => {
-  const filter = ref<RaceFilter>({
+  const syncCenter = useSyncCenter()
+
+  const defaultRaceFilter: RaceFilter = {
+    myRaces: false,
     deadline: false,
     searchString: undefined,
     terrain: undefined,
@@ -25,7 +29,13 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
     previousDays: 0,
     limit: 25,
     page: 1,
-  })
+  }
+
+  const filter = ref<RaceFilter>({ ...defaultRaceFilter })
+
+  function resetFilter(): void {
+    filter.value = { ...defaultRaceFilter }
+  }
 
   function composeRaceQuery({
     initialLoad,
@@ -60,6 +70,21 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
         },
       },
     } as RaceQuery
+
+    // add my races filter
+    if (filter.value.myRaces) {
+      const myRaces = syncCenter.myRaces
+      composedFilter.filter = {
+        ...composedFilter.filter,
+        _and: [
+          {
+            id: {
+              _in: myRaces?.map(myRace => myRace.id) || undefined
+            }
+          }
+        ]
+      }
+    }
 
     // add deadline filter
     if (filter.value.deadline) {
@@ -117,5 +142,6 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
   return {
     filter,
     composeRaceQuery,
+    resetFilter
   }
 })

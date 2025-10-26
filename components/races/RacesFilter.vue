@@ -43,16 +43,22 @@
   }
 
   function updateFilter({
+    myRaces,
     deadline,
     geographicalScale,
     previousDays,
-    terrain,
+    terrain
   }: {
+    myRaces?: boolean
     deadline?: boolean
     geographicalScale?: Race['geographicalScale'] | null
     previousDays?: 'add' | 'reset'
     terrain?: RaceTerrain | null
   }) {
+    if (myRaces !== undefined) {
+      filter.filter.myRaces = myRaces
+    }
+
     if (deadline !== undefined) {
       filter.filter.deadline = deadline
     }
@@ -93,6 +99,30 @@
 
 <template>
   <filter-container v-if="filter" filter-name="Läufe filtern">
+    <!-- my races -->
+    <div class="col-auto">
+      <q-chip
+        :selected="filter.filter.myRaces"
+        outline
+        class="q-ml-none"
+        color="primary"
+        dense
+        size="xl"
+        icon-selected="bookmark"
+        :class="filter.filter.myRaces ? 'bg-primary text-white' : 'bg-white'"
+        @click="updateFilter({ myRaces: !filter.filter.myRaces })"
+      >
+        <span class="text-body2">
+          <q-icon
+            v-if="!filter.filter.myRaces"
+            name="bookmark_outline"
+            size="sm"
+          />
+          Gemerkt
+        </span>
+      </q-chip>
+    </div>
+
     <!-- deadline -->
     <div class="col-auto">
       <q-chip
