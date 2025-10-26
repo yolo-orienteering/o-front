@@ -78,7 +78,7 @@
     </div>
 
     <!-- menu entries (routing) -->
-    <div class="col-12 sort-order-md-first">
+    <div class="col-12 sort-order-sm-first">
       <layout-menu-entries :menu-entries="menuEntries" />
     </div>
   </div>
@@ -93,8 +93,8 @@
     }
   }
 
-  .sort-order-md-first {
-    @include mq-min($breakpoint-md) {
+  .sort-order-sm-first {
+    @include mq-min($breakpoint-sm) {
       order: -1;
     }
   }

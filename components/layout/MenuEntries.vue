@@ -15,7 +15,7 @@
 
 <template>
   <!-- desktop view -->
-  <div class="desktop-only">
+  <div class="xs-hide sm-hide">
     <q-list class="q-pt-md">
       <div
         v-for="(menuEntry, menuEntryId) in props.menuEntries"
@@ -42,7 +42,7 @@
   </div>
 
   <!-- mobile view -->
-  <div class="row text-primary mobile-only">
+  <div class="row text-primary md-hide lg-hide xl-hide">
     <div
       v-for="(menuEntry, menuEntryId) in props.menuEntries"
       :key="menuEntryId"

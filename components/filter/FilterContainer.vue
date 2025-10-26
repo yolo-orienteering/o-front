@@ -12,7 +12,7 @@
     "
     :style="isDesktop ? {} : { overflowX: 'scroll' }"
   >
-    <div class="col-12 desktop-only">
+    <div class="col-12 xs-hide sm-hide">
       <p class="text-h6 q-mt-sm q-mb-xs q-pl-xs text-primary">
         <q-icon name="filter_alt" class="q-mb-xs q-mr-xs" />{{ filterName }}
       </p>
