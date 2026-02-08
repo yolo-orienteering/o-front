@@ -5,6 +5,7 @@
   import solv from '@/assets/img/solv_logo.jpg'
 
   const { directus } = useApi()
+  const { notify } = useQuasar()
 
   const { data: posts } = await useAsyncData<Post[]>('fetchPosts', () => {
     return directus.request<Post[]>(
@@ -18,6 +19,16 @@
       })
     )
   })
+
+  function notifyNotImplemented() {
+    notify({
+      message: 'Funktioniert bald.',
+      caption:
+        'o-mate ist ein Freizeitprojekt. Es gibt also mehr Ideen als Zeit, sie in Programmiercode zu giessen. Lust und Zeit mitzuhelfen? Schreib mir: scheurer.michael@pm.me Oder schauf auf Github vorbei.',
+      color: 'accent',
+      closeBtn: true
+    })
+  }
 </script>
 
 <template>
@@ -48,13 +59,16 @@
               </div>
             </div>
           </div>
-          <div v-if="post.medias.length" class="col-12">
+          <div v-if="post.medias.length" class="col-12 text-center">
             <img
               :src="(post.medias[0] as PostMedia).imageUrl as string"
               style="
-                max-width: calc(100% + (2 * 8px));
+                width: calc(100% + (2 * 8px));
+                max-height: calc(70vh);
                 margin-left: -8px;
                 margin-right: -8px;
+                object-fit: cover;
+                object-position: center center;
               "
             />
           </div>
@@ -69,9 +83,23 @@
             />
           </div> -->
           <div class="col-12 q-py-sm">
-            <q-icon name="favorite_outline" size="sm" />
-            <q-icon name="chat_bubble_outline" size="sm" class="q-ml-sm" />
-            <q-icon name="mdi-share-outline" size="sm" class="q-ml-sm" />
+            <q-icon
+              name="favorite_outline"
+              size="sm"
+              @click.prevent="notifyNotImplemented()"
+            />
+            <q-icon
+              name="chat_bubble_outline"
+              size="sm"
+              class="q-ml-sm"
+              @click.prevent="notifyNotImplemented()"
+            />
+            <q-icon
+              name="mdi-share-outline"
+              size="sm"
+              class="q-ml-sm"
+              @click.prevent="notifyNotImplemented()"
+            />
           </div>
           <div class="col-12">
             <p class="text-subtitle1 q-mb-none">{{ post.title }}</p>
