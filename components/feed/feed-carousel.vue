@@ -6,18 +6,53 @@
   }>()
 
   const slide = ref<number>(1)
+  const carousel = ref()
 </script>
 
 <template>
   <q-carousel
+    ref="carousel"
     v-model="slide"
     animated
-    arrows
     infinite
     swipeable
     navigation
     style="margin-left: -8px; margin-right: -8px"
   >
+    <template v-slot:control>
+      <q-carousel-control
+        v-if="medias.length > 1"
+        position="left"
+        class="content-center"
+      >
+        <q-btn
+          round
+          dense
+          flat
+          color="white"
+          icon="chevron_left"
+          size="30px"
+          style="margin-left: -24px"
+          @click.stop.prevent="carousel?.previous()"
+        />
+      </q-carousel-control>
+      <q-carousel-control
+        v-if="medias.length > 1"
+        position="right"
+        class="content-center"
+      >
+        <q-btn
+          round
+          dense
+          flat
+          color="white"
+          icon="chevron_right"
+          size="30px"
+          style="margin-right: -24px"
+          @click.stop.prevent="carousel?.next()"
+        />
+      </q-carousel-control>
+    </template>
     <q-carousel-slide
       v-for="(media, mediaIndex) in medias"
       :key="mediaIndex"
