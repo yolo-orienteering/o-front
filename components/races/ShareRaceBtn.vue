@@ -15,38 +15,38 @@
       color: '',
       href: window.location.href,
       icon: 'mdi-content-copy',
-      action: 'copy',
+      action: 'copy'
     },
     {
       name: 'Whatsapp',
       color: '#25D366',
       href: `https://wa.me/?text=${window.location.href}`,
-      icon: 'mdi-whatsapp',
+      icon: 'mdi-whatsapp'
     },
     {
       name: 'Linkedin',
       color: '#0A66C2',
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${window.location.href}`,
-      icon: 'mdi-linkedin',
+      icon: 'mdi-linkedin'
     },
     {
       name: 'X',
       color: '#1DA1F2',
       href: `https://x.com/share?url=${window.location.href}`,
-      icon: 'mdi-twitter',
+      icon: 'mdi-twitter'
     },
     {
       name: 'E-Mail',
       color: 'black',
       href: `mailto:?body=${window.location.href}`,
-      icon: 'mail',
+      icon: 'mail'
     },
     {
       name: 'Facebook',
       color: '#4267B2',
       href: `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
-      icon: 'mdi-facebook',
-    },
+      icon: 'mdi-facebook'
+    }
   ]
 
   async function copyUrlToClipboard(url: string) {
@@ -54,12 +54,12 @@
       await navigator.clipboard.writeText(url)
       Notify.create({
         message: 'Link in Zwischenablage kopiert!',
-        type: 'positive',
+        type: 'positive'
       })
     } catch (error) {
       Notify.create({
         message: error as unknown as string,
-        type: 'negative',
+        type: 'negative'
       })
     }
   }

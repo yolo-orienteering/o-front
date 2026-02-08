@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import { useQuasar } from 'quasar'
-import type { CustomDirectusUser, Race, UserDeparture } from '@/types/DirectusTypes'
+import type {
+  CustomDirectusUser,
+  Race,
+  UserDeparture
+} from '@/types/DirectusTypes'
 import { computed, ref, watch } from 'vue'
 
 export type FollowingUserDeparture = Pick<UserDeparture, 'id' | 'race'>
@@ -101,7 +105,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       )
     },
     {
-      deep: true,
+      deep: true
     }
   )
 
@@ -128,6 +132,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     user,
     followingUserDepartures,
     userIdentifier,
-    myDepartures,
+    myDepartures
   }
 })

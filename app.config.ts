@@ -9,7 +9,7 @@ export default defineAppConfig({
       positive: '#2a9d8f',
       negative: '#e76f51',
       info: '#e9c46a',
-      warning: '#f4a261',
-    },
-  },
+      warning: '#f4a261'
+    }
+  }
 })

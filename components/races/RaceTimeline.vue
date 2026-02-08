@@ -21,7 +21,7 @@
     }>(),
     {
       races: () => [],
-      hideLoadMore: false,
+      hideLoadMore: false
     }
   )
 
@@ -33,7 +33,7 @@
     emit('loadMore')
   }
 
-  function resetFilter (): void {
+  function resetFilter(): void {
     filter.resetFilter()
     emit('update:filter')
   }
@@ -129,9 +129,17 @@
           </q-timeline-entry>
 
           <!-- no bookmarked races -->
-          <div v-if="raceIndex === 0 && filter.filter.myRaces && !syncCenter.myRaces?.length" class="col-12 q-pb-lg">
+          <div
+            v-if="
+              raceIndex === 0 &&
+              filter.filter.myRaces &&
+              !syncCenter.myRaces?.length
+            "
+            class="col-12 q-pb-lg"
+          >
             <q-banner dark>
-              Du hast noch keine Läufe vorgemerkt. Klicke auf die <q-icon name="bookmark"/>-Symbole, um Dir Deine Liste
+              Du hast noch keine Läufe vorgemerkt. Klicke auf die
+              <q-icon name="bookmark" />-Symbole, um Dir Deine Liste
               zusammenzustellen.
               <template #avatar>
                 <q-icon name="bookmark" size="md" class="q-pr-sm" />
@@ -197,7 +205,9 @@
 
                   <q-chip
                     v-else
-                    :class="[{ 'text-strike': new Date() > new Date(race.deadline!) }]"
+                    :class="[
+                      { 'text-strike': new Date() > new Date(race.deadline!) }
+                    ]"
                     :outline="!filter.filter.deadline"
                     color="secondary"
                     dense
@@ -257,13 +267,18 @@
           <q-icon name="battery_0_bar" size="md" class="q-pr-sm" />
         </template>
         <template #action>
-          <q-btn icon="replay" @click="resetFilter()">Filter zurücksetzen</q-btn>
+          <q-btn icon="replay" @click="resetFilter()"
+            >Filter zurücksetzen</q-btn
+          >
         </template>
       </q-banner>
     </div>
 
     <!-- pagination -->
-    <div v-else-if="!hideLoadMore && !!races?.length" class="col-12 text-center q-pb-lg">
+    <div
+      v-else-if="!hideLoadMore && !!races?.length"
+      class="col-12 text-center q-pb-lg"
+    >
       <q-btn @click="loadMore()"> Mehr Läufe laden </q-btn>
     </div>
   </div>

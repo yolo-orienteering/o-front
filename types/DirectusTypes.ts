@@ -1,4 +1,4 @@
-import type { DirectusUser, DirectusFile } from "@directus/sdk"
+import type { DirectusUser, DirectusFile } from '@directus/sdk'
 
 export interface Schema {
   Game: Game[]
@@ -18,7 +18,7 @@ export interface Schema {
 
 export interface Game {
   id: string
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   sort: number | null
   user_created: string | DirectusUser<Schema> | null
   date_created: string | null
@@ -46,7 +46,7 @@ export interface GameAuthor {
 
 export interface GameCategory {
   id: string
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   sort: number | null
   user_created: string | DirectusUser<Schema> | null
   date_created: string | null
@@ -58,7 +58,7 @@ export interface GameCategory {
 
 export interface GameVariant {
   id: string
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   sort: number | null
   user_created: string | DirectusUser<Schema> | null
   date_created: string | null
@@ -79,13 +79,13 @@ export interface GameGameCategory {
 
 export interface Post {
   id: string
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   sort: number | null
   user_created: string | DirectusUser<Schema> | null
   date_created: string | null
   user_updated: string | DirectusUser<Schema> | null
   date_updated: string | null
-  type: "user-post" | "news-post" | null
+  type: 'user-post' | 'news-post' | null
   sourceUrl: string | null
   title: string | null
   lead: string | null
@@ -94,7 +94,7 @@ export interface Post {
 
 export interface PostMedia {
   id: string
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   sort: number | null
   user_created: string | DirectusUser<Schema> | null
   date_created: string | null
@@ -115,7 +115,7 @@ export interface Race {
   deadline: string | null
   departureLink: string | null
   eventLink: string | null
-  geographicalScale: "national" | "international" | "regional" | null
+  geographicalScale: 'national' | 'international' | 'regional' | null
   id: string
   inscriptionLink: string | null
   instructionLink: string | null
@@ -124,16 +124,16 @@ export interface Race {
   name: string | null
   originalDataFull: unknown | null
   originalDataId: string | null
-  originalDataSource: "solv" | null
+  originalDataSource: 'solv' | null
   publicationLink: string | null
   rankingLink: string | null
   region: string | null
   sort: number | null
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   user_created: string | DirectusUser<Schema> | null
   user_updated: string | DirectusUser<Schema> | null
-  terrain: "urban" | "forest" | "mix" | null
-  distance: "long" | "middle" | "sprint" | null
+  terrain: 'urban' | 'forest' | 'mix' | null
+  distance: 'long' | 'middle' | 'sprint' | null
   categories: string[] | RaceCategory[]
   instruction: string[] | RaceInstruction[]
 }
@@ -148,7 +148,7 @@ export interface RaceCategory {
   name: string | null
   race: string | Race | null
   sort: number | null
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   user_created: string | DirectusUser<Schema> | null
   user_updated: string | DirectusUser<Schema> | null
 }
@@ -177,7 +177,7 @@ export interface UserDeparture {
   raceCategory: string | RaceCategory | null
   sort: number | null
   startTimeInMinutes: number | null
-  status: "published" | "draft" | "archived"
+  status: 'published' | 'draft' | 'archived'
   user: string | DirectusUser<Schema> | null
   user_created: string | DirectusUser<Schema> | null
   user_updated: string | DirectusUser<Schema> | null
@@ -200,37 +200,37 @@ export interface CustomDirectusUser {
 // GeoJSON Types
 
 export interface GeoJSONPoint {
-  type: "Point"
+  type: 'Point'
   coordinates: [number, number]
 }
 
 export interface GeoJSONLineString {
-  type: "LineString"
+  type: 'LineString'
   coordinates: Array<[number, number]>
 }
 
 export interface GeoJSONPolygon {
-  type: "Polygon"
+  type: 'Polygon'
   coordinates: Array<Array<[number, number]>>
 }
 
 export interface GeoJSONMultiPoint {
-  type: "MultiPoint"
+  type: 'MultiPoint'
   coordinates: Array<[number, number]>
 }
 
 export interface GeoJSONMultiLineString {
-  type: "MultiLineString"
+  type: 'MultiLineString'
   coordinates: Array<Array<[number, number]>>
 }
 
 export interface GeoJSONMultiPolygon {
-  type: "MultiPolygon"
+  type: 'MultiPolygon'
   coordinates: Array<Array<Array<[number, number]>>>
 }
 
 export interface GeoJSONGeometryCollection {
-  type: "GeometryCollection"
+  type: 'GeometryCollection'
   geometries: Array<
     | GeoJSONPoint
     | GeoJSONLineString

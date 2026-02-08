@@ -15,7 +15,7 @@
       loading?: boolean
     }>(),
     {
-      loading: false,
+      loading: false
     }
   )
 
@@ -164,7 +164,7 @@
           updateFilter({
             geographicalScale: filter.filter.geographicalScale
               ? null
-              : 'national',
+              : 'national'
           })
         "
       >
@@ -265,11 +265,7 @@
     <div
       class="q-mr-xs"
       :class="[
-        isDesktop
-          ? 'col-11'
-          : !!filter?.filter.searchString
-          ? 'col-6'
-          : 'col-4',
+        isDesktop ? 'col-11' : !!filter?.filter.searchString ? 'col-6' : 'col-4'
       ]"
     >
       <q-input
@@ -289,11 +285,7 @@
     <!-- region -->
     <div
       :class="[
-        isDesktop
-          ? 'col-11 q-pt-xs'
-          : filter.filter.regions
-          ? 'col-7'
-          : 'col-5',
+        isDesktop ? 'col-11 q-pt-xs' : filter.filter.regions ? 'col-7' : 'col-5'
       ]"
     >
       <q-select

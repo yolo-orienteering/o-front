@@ -28,7 +28,7 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
     regions: [],
     previousDays: 0,
     limit: 25,
-    page: 1,
+    page: 1
   }
 
   const filter = ref<RaceFilter>({ ...defaultRaceFilter })
@@ -38,7 +38,7 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
   }
 
   function composeRaceQuery({
-    initialLoad,
+    initialLoad
   }: {
     initialLoad?: boolean
   }): RaceQuery {
@@ -46,7 +46,9 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
     let page = filter.value.page
 
     const now = new Date()
-    const filterDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+    const filterDate = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    )
     filterDate.setDate(filterDate.getDate() - filter.value.previousDays)
     const filterDateIso = filterDate.toISOString()
 
@@ -63,12 +65,12 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
       sort: 'date',
       filter: {
         date: {
-          _gte: filterDateIso,
+          _gte: filterDateIso
         },
         terrain: {
-          _eq: filter.value.terrain,
-        },
-      },
+          _eq: filter.value.terrain
+        }
+      }
     } as RaceQuery
 
     // add my races filter
@@ -79,7 +81,7 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
         _and: [
           {
             id: {
-              _in: myRaces?.map(myRace => myRace.id) || undefined
+              _in: myRaces?.map((myRace) => myRace.id) || undefined
             }
           }
         ]
@@ -93,17 +95,17 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
         _and: [
           {
             deadline: {
-              _nnull: true,
-            },
+              _nnull: true
+            }
           },
           {
             deadline: {
-              _gte: filterDateIso,
-            },
-          },
+              _gte: filterDateIso
+            }
+          }
         ],
         // reset date filter
-        date: {},
+        date: {}
       } as QueryFilter<Schema, Race>
 
       composedFilter.sort = 'deadline'
@@ -114,20 +116,20 @@ export const useRaceFilter = defineStore('useRaceFilter', () => {
       composedFilter.filter = {
         ...composedFilter.filter,
         geographicalScale: {
-          _eq: filter.value.geographicalScale,
-        },
+          _eq: filter.value.geographicalScale
+        }
       }
     }
 
     // add region filter
     if (filter.value.regions?.length) {
       const regionsOrFilter = filter.value.regions.map((region) => ({
-        region: { _eq: region },
+        region: { _eq: region }
       }))
 
       composedFilter.filter = {
         ...composedFilter.filter,
-        _or: regionsOrFilter,
+        _or: regionsOrFilter
       }
     }
 

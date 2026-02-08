@@ -20,7 +20,7 @@
         ? `${baseUrl.value}${route.fullPath}`
         : window.location.href,
     ogLocale: 'de_CH',
-    ogSiteName: 'o-mate orienteering',
+    ogSiteName: 'o-mate orienteering'
   })
 </script>
 

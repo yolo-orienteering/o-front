@@ -5,7 +5,7 @@
     Game,
     GameAuthor,
     GameCategory,
-    Schema,
+    Schema
   } from '~/types/DirectusTypes'
 
   type GameQuery = Query<Schema, Game>
@@ -28,24 +28,24 @@
           image: ['*'],
           categories: [
             {
-              GameCategory_id: ['*'],
-            },
+              GameCategory_id: ['*']
+            }
           ],
-          variants: ['*'],
-        },
+          variants: ['*']
+        }
       ],
       filter: {
         status: {
-          _eq: 'published',
-        },
+          _eq: 'published'
+        }
       },
       deep: {
         categories: {
-          _sort: ['sort'],
-        },
+          _sort: ['sort']
+        }
       },
       sort: ['-date_created'],
-      limit: -1,
+      limit: -1
     } as GameQuery
 
     // game author
@@ -53,8 +53,8 @@
       composedQuery.filter = {
         ...composedQuery.filter,
         author: {
-          _eq: filter.value.author.id,
-        },
+          _eq: filter.value.author.id
+        }
       }
     }
 
@@ -64,9 +64,9 @@
         ...composedQuery.filter,
         categories: {
           GameCategory_id: {
-            _in: filter.value.categories.map((category) => category.id),
-          },
-        },
+            _in: filter.value.categories.map((category) => category.id)
+          }
+        }
       }
     }
 
@@ -79,7 +79,7 @@
       return api.directus.request<Game[]>(readItems('Game', gameQuery.value))
     },
     {
-      watch: [gameQuery],
+      watch: [gameQuery]
     }
   )
 
@@ -92,11 +92,11 @@
         ),
         api.directus.request<GameCategory>(
           readItems('GameCategory', { fields: ['*'] })
-        ),
+        )
       ]),
     {
       server: false,
-      lazy: true,
+      lazy: true
     }
   )
 </script>

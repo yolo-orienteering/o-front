@@ -11,6 +11,6 @@ export function useTeleport(teleportToId: TeleportLocation) {
   })
 
   return {
-    teleportElement,
+    teleportElement
   }
 }

@@ -110,12 +110,12 @@
   }
 
   const props = withDefaults(defineProps<{ race: Race | null }>(), {
-    race: null,
+    race: null
   })
 
   const { user } = useSyncCenter()
   const sbbSearchParams = reactive<SbbSearchParams>({
-    arrival: true,
+    arrival: true
   })
 
   onMounted(() => {

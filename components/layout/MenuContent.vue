@@ -24,20 +24,20 @@
       name: 'Läufe',
       icon: 'explore',
       routeName: 'index',
-      subRoutes: ['/races/'],
+      subRoutes: ['/races/']
     },
     {
       name: 'Games',
       icon: 'casino',
       routeName: 'games',
-      subRoutes: ['/games/'],
+      subRoutes: ['/games/']
     },
     {
       name: 'Profil',
       icon: 'person',
       routeName: 'settings',
-      subRoutes: ['/roadmap'],
-    },
+      subRoutes: ['/roadmap']
+    }
   ])
 
   const hideBackBtnRoutes = ['/games/external']

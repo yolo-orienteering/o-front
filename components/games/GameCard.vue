@@ -4,7 +4,7 @@
     GameAuthor,
     GameCategory,
     GameGameCategory,
-    GameVariant,
+    GameVariant
   } from '~/types/DirectusTypes'
 
   const api = useApi()
@@ -36,7 +36,9 @@
 
     <q-card-section class="q-py-none q-px-sm">
       <q-chip
-        v-for="category in (game.categories.map(category => (category as GameGameCategory).GameCategory_id) as GameCategory[])"
+        v-for="category in game.categories.map(
+          (category) => (category as GameGameCategory).GameCategory_id
+        ) as GameCategory[]"
         :key="category.id"
         :icon="category.icon"
         size="sm"
@@ -61,7 +63,7 @@
         >
           <q-list>
             <div
-              v-for="variant in (game.variants as GameVariant[])"
+              v-for="variant in game.variants as GameVariant[]"
               :key="variant.id"
             >
               <q-item>
@@ -81,12 +83,18 @@
         <nuxt-link
           v-else-if="(game.variants as GameVariant[]).length === 1"
           :to="composeGameLink(game.variants[0] as GameVariant)"
-          :target="(game.variants[0] as GameVariant).openOutsideApp ? '_blank' : ''"
+          :target="
+            (game.variants[0] as GameVariant).openOutsideApp ? '_blank' : ''
+          "
           class="col-6"
         >
           <q-btn class="full-width" :outline="false" color="primary">
             <q-icon
-              :name="(game.variants[0] as GameVariant).openOutsideApp ? 'open_in_new' : 'play_arrow'"
+              :name="
+                (game.variants[0] as GameVariant).openOutsideApp
+                  ? 'open_in_new'
+                  : 'play_arrow'
+              "
               class="q-mr-sm"
             />
             {{

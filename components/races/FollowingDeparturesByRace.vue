@@ -61,7 +61,7 @@
   import type {
     DirectusUsers,
     RaceCategory,
-    UserDeparture,
+    UserDeparture
   } from '@/types/DirectusTypes'
 
   const { formatDepartureTime } = useDeparture()

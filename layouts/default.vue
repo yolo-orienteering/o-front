@@ -16,13 +16,13 @@
         bordered: true,
         'no-swipe-open': true,
         overlay: false,
-        'show-if-above': true,
+        'show-if-above': true
       }
     } else {
       return {
         'model-value': true,
         class: 'bg-white',
-        elevated: true,
+        elevated: true
       }
     }
   })

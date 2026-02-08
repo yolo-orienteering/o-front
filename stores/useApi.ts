@@ -20,6 +20,6 @@ export const useApi = defineStore('useApi', () => {
 
   return {
     directus,
-    getImgUrl,
+    getImgUrl
   }
 })

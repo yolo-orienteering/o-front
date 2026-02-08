@@ -25,6 +25,6 @@ export function useRaceTerrain() {
 
   return {
     getTerrainIcon,
-    getTerrainText,
+    getTerrainText
   }
 }

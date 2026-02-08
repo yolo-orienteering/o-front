@@ -8,7 +8,7 @@
     Race,
     RaceCategory,
     RaceInstruction,
-    UserDeparture,
+    UserDeparture
   } from '@/types/DirectusTypes'
   import { readItem } from '@directus/sdk'
 
@@ -30,9 +30,9 @@
         fields: [
           '*',
           {
-            instruction: ['*'],
-          },
-        ],
+            instruction: ['*']
+          }
+        ]
       })
     )
   })
@@ -45,7 +45,7 @@
     }`,
     ogDescription: `${
       race.value?.city || race.value?.mapName
-    } | Alle Informationen zum Anlass findest du in der o-mate app.`,
+    } | Alle Informationen zum Anlass findest du in der o-mate app.`
   })
 
   onMounted(async () => {

@@ -26,20 +26,20 @@ export function useFollowingUserDepartures() {
         readItems('UserDeparture', {
           filter: {
             id: {
-              _in: userDepartureIds,
-            },
+              _in: userDepartureIds
+            }
           },
           fields: [
             'id',
             'startTimeInMinutes',
             {
               raceCategory: ['id', 'name'],
-              user: ['first_name', 'last_name', 'birthYear'],
+              user: ['first_name', 'last_name', 'birthYear']
             },
-            'race',
+            'race'
           ],
           sort: ['startTimeInMinutes'],
-          limit: -1,
+          limit: -1
         })
       )
     } catch (error) {
