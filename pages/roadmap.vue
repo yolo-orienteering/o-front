@@ -2,92 +2,92 @@
   const milestones: { text: string; done: boolean }[] = [
     {
       text: 'Zeige deine Startzeit automatisch an, wenn Du an einem Lauf angemeldet bist. (01.04.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Android App (05.04.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'IOS App (07.04.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Ältere OLs anzeigen (07.04.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Weisungen automatisch von den Veranstaltungswebseiten abgreifen. (10.04.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Nach Terrain (Urban / Wald) filtern. (05.05.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Informationen aus den Weisungen mit KI als strukturierte Daten übersichtlich zur Verfügung stellen. (06.05.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Newsletter-Anmeldung (21.06.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'NuxtJS für SSR-Untersützung und SEO-Optimierung implementieren. (23.07.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Desktop-Version programmieren. (28.07.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Teile-Button für Läufe > SSR. (29.07.2025)',
-      done: true,
+      done: true
     },
     {
       text: 'Startlisten anzeigen: auch für nicht Angemeldete / suche nach Namen / zeige alle Kategorien / merke Startzeiten anderer Läufer:innen',
-      done: false,
+      done: false
     },
     {
       text: 'Einbindung von relevanten OL-News',
-      done: false,
+      done: false
     },
     {
       text: 'Social-App-Elemente (Fahrgemeinschaften, Posts, Following, Freundeskreise usw.)',
-      done: false,
+      done: false
     },
     {
       text: 'Übersetze die App in andere Sprachen.',
-      done: false,
+      done: false
     },
     {
       text: 'Resultate in der App darstellen.',
-      done: false,
+      done: false
     },
     {
       text: 'Synchronisiere die vorgemerkten Läufe automatisch mit Kalender.',
-      done: false,
+      done: false
     },
     {
       text: 'Plane deine Anreise mit einer integrierten Karte und dem genauem Standort des OLs.',
-      done: false,
+      done: false
     },
     {
       text: 'Erhalte Erinnerungen bei Anmeldeschlüssen.',
-      done: false,
+      done: false
     },
     {
       text: 'Bilde Freundeskreise und sehe, welche Freunde an welchen OLs teilnehmen.',
-      done: false,
+      done: false
     },
     {
       text: 'Bilde Fahrgemeinschaften an OLs.',
-      done: false,
+      done: false
     },
     {
       text: 'Suche nach internationalen OLs.',
-      done: false,
-    },
+      done: false
+    }
   ]
 </script>
 

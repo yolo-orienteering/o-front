@@ -15,28 +15,29 @@
 
   const menuEntries = ref<IMenuEntry[]>([
     {
-      name: 'Einstellungen',
-      icon: 'settings',
-      routeName: 'settings',
-      subRoutes: ['/roadmap'],
+      name: 'Home',
+      icon: 'home',
+      routeName: 'feed',
+      subRoutes: ['/feed/']
+    },
+    {
+      name: 'Läufe',
+      icon: 'explore',
+      routeName: 'index',
+      subRoutes: ['/races/']
     },
     {
       name: 'Games',
       icon: 'casino',
       routeName: 'games',
-      subRoutes: ['/games/'],
+      subRoutes: ['/games/']
     },
     {
-      name: 'Entdecken',
-      icon: 'search',
-      routeName: 'index',
-      subRoutes: ['/races/'],
-    },
-    {
-      name: 'Meine Läufe',
-      icon: 'bookmark_outline',
-      routeName: 'my-races',
-    },
+      name: 'Profil',
+      icon: 'person',
+      routeName: 'settings',
+      subRoutes: ['/roadmap']
+    }
   ])
 
   const hideBackBtnRoutes = ['/games/external']

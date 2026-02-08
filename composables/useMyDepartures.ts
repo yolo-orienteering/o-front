@@ -65,9 +65,9 @@ export function useMyDepartures() {
           filter: {
             user: {
               composedIdentifierSolv: {
-                _eq: syncCenter.userIdentifier,
-              },
-            },
+                _eq: syncCenter.userIdentifier
+              }
+            }
           },
           fields: [
             'id',
@@ -79,10 +79,10 @@ export function useMyDepartures() {
                 'name',
                 'amountOfControls',
                 'distanceInMeter',
-                'equidistanceInMeter',
-              ],
-            },
-          ],
+                'equidistanceInMeter'
+              ]
+            }
+          ]
         })
       )
     } catch (e) {
@@ -110,6 +110,6 @@ export function useMyDepartures() {
   return {
     myDepartures,
     getDepartureFor,
-    getFormatedDeparture,
+    getFormatedDeparture
   }
 }

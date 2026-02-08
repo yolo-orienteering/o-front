@@ -26,7 +26,7 @@
             <follow-user-departure-btn
               :following-user-departure="{
                 id: props.row.id,
-                race: props.row.race,
+                race: props.row.race
               }"
             />
           </td>
@@ -62,7 +62,7 @@
     DirectusUsers,
     Race,
     RaceCategory,
-    UserDeparture,
+    UserDeparture
   } from '@/types/DirectusTypes'
   import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
@@ -79,7 +79,7 @@
       label: 'Startzeit',
       align: 'left',
       field: (userDeparture: UserDeparture) =>
-        formatDepartureTime(userDeparture.startTimeInMinutes),
+        formatDepartureTime(userDeparture.startTimeInMinutes)
     },
     {
       name: 'user',
@@ -89,21 +89,21 @@
         const user = userDeparture.user as DirectusUsers | undefined
         if (!user) return `Unbekannte:r Läufer:in`
         return `${user.first_name} ${user.last_name}`
-      },
+      }
     },
     {
       name: 'birthYear',
       label: 'Jahrgang',
       align: 'left',
       field: (userDeparture: UserDeparture) =>
-        (userDeparture.user as DirectusUsers).birthYear,
+        (userDeparture.user as DirectusUsers).birthYear
     },
     {
       name: 'follow',
       label: 'Merken',
       align: 'right',
-      field: 'follow',
-    },
+      field: 'follow'
+    }
   ]
 
   const departures = ref<UserDeparture[]>([])
@@ -114,7 +114,7 @@
     const [tmpDepartures, tmpCategories, tmpRace] = await Promise.all([
       getDepartures(),
       getRaceCategories(),
-      getRace(),
+      getRace()
     ])
     departures.value = tmpDepartures
     categories.value = tmpCategories
@@ -132,8 +132,8 @@
       readItems('UserDeparture', {
         filter: {
           raceCategory: {
-            _eq: raceCategoryId,
-          },
+            _eq: raceCategoryId
+          }
         },
         fields: [
           'id',
@@ -144,14 +144,14 @@
               'name',
               'amountOfControls',
               'distanceInMeter',
-              'equidistanceInMeter',
+              'equidistanceInMeter'
             ],
-            user: ['first_name', 'last_name', 'birthYear'],
+            user: ['first_name', 'last_name', 'birthYear']
           },
-          'race',
+          'race'
         ],
         sort: ['startTimeInMinutes'],
-        limit: -1,
+        limit: -1
       })
     )
   }
@@ -170,13 +170,13 @@
         query: {
           filter: {
             race: {
-              _eq: raceId,
-            },
+              _eq: raceId
+            }
           },
-          sort: ['name'],
+          sort: ['name']
         },
         aggregate: {},
-        groupBy: ['id', 'name'],
+        groupBy: ['id', 'name']
       })
     )
   }
@@ -188,7 +188,7 @@
     }
     return await directus.request<Race>(
       readItem('Race', raceId as string, {
-        fields: ['id', 'name'],
+        fields: ['id', 'name']
       })
     )
   }

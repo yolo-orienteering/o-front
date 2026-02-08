@@ -14,7 +14,7 @@ export function useRace() {
 
   function composeLink({
     race,
-    linkType,
+    linkType
   }: {
     race: Race
     linkType: RaceLinkType
@@ -62,6 +62,6 @@ export function useRace() {
 
   return {
     composeLink,
-    addOrRemoveRace,
+    addOrRemoveRace
   }
 }

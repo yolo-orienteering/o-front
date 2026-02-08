@@ -5,24 +5,24 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL,
-    },
+      apiUrl: process.env.NUXT_PUBLIC_API_URL
+    }
   },
 
   css: ['@/assets/css/app.scss'],
-  modules: ['@nuxt/eslint', 'nuxt-quasar-ui', '@pinia/nuxt'],
+  modules: ['nuxt-quasar-ui', '@pinia/nuxt'],
   quasar: {
     plugins: ['Notify', 'LocalStorage'],
     components: {
       defaults: {
         QBtn: {
-          outline: true,
-        },
-      },
+          outline: true
+        }
+      }
     },
     extras: {
-      fontIcons: ['material-icons', 'material-icons-outlined', 'mdi-v7'],
+      fontIcons: ['material-icons', 'material-icons-outlined', 'mdi-v7']
     },
-    cssAddon: true,
-  },
+    cssAddon: true
+  }
 })

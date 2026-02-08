@@ -6,6 +6,8 @@ export interface Schema {
   GameCategory: GameCategory[]
   GameVariant: GameVariant[]
   Game_GameCategory: GameGameCategory[]
+  Post: Post[]
+  PostMedia: PostMedia[]
   Race: Race[]
   RaceCategory: RaceCategory[]
   RaceInstruction: RaceInstruction[]
@@ -73,6 +75,35 @@ export interface GameGameCategory {
   Game_id: string | Game | null
   GameCategory_id: string | GameCategory | null
   sort: number | null
+}
+
+export interface Post {
+  id: string
+  status: 'published' | 'draft' | 'archived'
+  sort: number | null
+  user_created: string | DirectusUser<Schema> | null
+  date_created: string | null
+  user_updated: string | DirectusUser<Schema> | null
+  date_updated: string | null
+  type: 'user-post' | 'news-post' | null
+  sourceUrl: string | null
+  title: string | null
+  lead: string | null
+  medias: string[] | PostMedia[]
+}
+
+export interface PostMedia {
+  id: string
+  status: 'published' | 'draft' | 'archived'
+  sort: number | null
+  user_created: string | DirectusUser<Schema> | null
+  date_created: string | null
+  user_updated: string | DirectusUser<Schema> | null
+  date_updated: string | null
+  post: string | Post | null
+  imageUrl: string | null
+  youtubeUrl: string | null
+  caption: string | null
 }
 
 export interface Race {

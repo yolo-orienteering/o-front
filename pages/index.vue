@@ -13,6 +13,7 @@
       :races="races"
       :loading="status !== 'success'"
       @load-more="loadMore()"
+      @update:filter="updateFilter()"
     />
     <div v-if="error">Error: {{ error }}</div>
   </div>
@@ -32,7 +33,7 @@
   const {
     data: races,
     status,
-    error,
+    error
   } = await useAsyncData<Race[]>('fetchRaces', () => {
     const query = filter.composeRaceQuery({ initialLoad: true })
     return directus.request<Race[]>(readItems('Race', query))
@@ -41,7 +42,7 @@
   async function updateFilter(): Promise<void> {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth',
+      behavior: 'smooth'
     })
     filter.filter.page = 1
     const query = filter.composeRaceQuery({})
@@ -57,7 +58,7 @@
     if (!newRaces.length) {
       filter.filter.page -= 1
       Notify.create({
-        message: 'Keine weiteren Läufe verfügbar',
+        message: 'Keine weiteren Läufe verfügbar'
       })
       return
     }

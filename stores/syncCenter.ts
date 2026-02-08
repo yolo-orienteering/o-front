@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import { useQuasar } from 'quasar'
-import type { DirectusUsers, Race, UserDeparture } from '@/types/DirectusTypes'
+import type {
+  CustomDirectusUser,
+  Race,
+  UserDeparture
+} from '@/types/DirectusTypes'
 import { computed, ref, watch } from 'vue'
 
 export type FollowingUserDeparture = Pick<UserDeparture, 'id' | 'race'>
@@ -15,7 +19,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
    * DEFINE DATA YOU WANT SYNC
    */
   const myRaces = ref<Race[] | null>(null)
-  const user = ref<Partial<DirectusUsers>>({})
+  const user = ref<Partial<CustomDirectusUser>>({})
   const followingUserDepartures = ref<FollowingUserDeparture[] | null>(null)
 
   /**
@@ -42,8 +46,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     myRaces.value = localStorage.getItem<Race[]>(MY_RACES_STORAGE_KEY) || []
   }
   function readUser(): void {
-    const userFromStore: Partial<DirectusUsers> =
-      localStorage.getItem<Partial<DirectusUsers>>(USER_STORAGE_KEY) || {}
+    const userFromStore: Partial<CustomDirectusUser> =
+      localStorage.getItem<Partial<CustomDirectusUser>>(USER_STORAGE_KEY) || {}
     if (userFromStore) {
       user.value = userFromStore
     } else {
@@ -101,7 +105,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       )
     },
     {
-      deep: true,
+      deep: true
     }
   )
 
@@ -128,6 +132,6 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     user,
     followingUserDepartures,
     userIdentifier,
-    myDepartures,
+    myDepartures
   }
 })
