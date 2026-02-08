@@ -20,16 +20,30 @@
   >
     <div class="row items-center q-ma-sm">
       <div class="col-auto">
-        <img
-          src="@/assets/img/o-mate-logo.webp"
-          style="height: 65px; width: auto; display: block; margin: auto"
-        />
+        <img src="@/assets/img/o-mate-logo.webp" class="header-logo" />
       </div>
     </div>
   </q-header>
 </template>
 
 <style lang="scss">
+  @import 'quasar/src/css/variables.sass';
+
+  .header-logo {
+    height: 45px;
+    width: auto;
+    display: block;
+    margin: auto;
+
+    @media (min-width: $breakpoint-xs-max) {
+      height: 55px;
+    }
+
+    @media (min-width: $breakpoint-sm-max) {
+      height: 65px;
+    }
+  }
+
   .title {
     margin: 0;
     font-weight: 300;
