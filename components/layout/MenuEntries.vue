@@ -29,7 +29,7 @@
             active-class="bg-primary text-white"
           >
             <q-item-section avatar>
-              <q-icon :name="menuEntry.icon" size="sm" />
+              <q-icon :name="'o_' + menuEntry.icon" size="sm" />
             </q-item-section>
 
             <q-item-section>{{ menuEntry.name }}</q-item-section>
@@ -51,7 +51,7 @@
     >
       <nuxt-link :to="{ name: menuEntry.routeName }">
         <div>
-          <q-icon :name="menuEntry.icon" size="sm" />
+          <q-icon :name="'o_' + menuEntry.icon" size="sm" />
         </div>
         {{ menuEntry.name }}
       </nuxt-link>
