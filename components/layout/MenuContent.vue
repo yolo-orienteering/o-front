@@ -21,7 +21,7 @@
       subRoutes: ['/feed/']
     },
     {
-      name: 'Entdecken',
+      name: 'Läufe',
       icon: 'explore',
       routeName: 'index',
       subRoutes: ['/races/'],
