@@ -15,7 +15,8 @@
           {
             medias: ['*']
           }
-        ]
+        ],
+        sort: ['-date_created']
       })
     )
   })
@@ -60,17 +61,7 @@
             </div>
           </div>
           <div v-if="post.medias.length" class="col-12 text-center">
-            <img
-              :src="(post.medias[0] as PostMedia).imageUrl as string"
-              style="
-                width: calc(100% + (2 * 8px));
-                max-height: calc(70vh);
-                margin-left: -8px;
-                margin-right: -8px;
-                object-fit: cover;
-                object-position: center center;
-              "
-            />
+            <feed-carousel :medias="post.medias as PostMedia[]" />
           </div>
           <!-- <div v-if="post.mainVideo" class="col-12">
             <iframe
