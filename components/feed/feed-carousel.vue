@@ -1,6 +1,8 @@
 <script lang="ts" setup>
   import type { PostMedia } from '~/types/DirectusTypes'
 
+  const isDesktop = useIsDesktop()
+
   const props = defineProps<{
     medias: PostMedia[]
   }>()
@@ -19,7 +21,7 @@
       swipeable
       style="margin-left: -8px; margin-right: -8px"
     >
-      <template v-slot:control>
+      <template v-slot:control v-if="isDesktop">
         <q-carousel-control
           v-if="medias.length > 1"
           position="left"
