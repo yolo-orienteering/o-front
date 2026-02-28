@@ -2,9 +2,10 @@
   import { readItems } from '@directus/sdk'
   import type { Post, PostMedia } from '~/types/DirectusTypes'
 
-  import solv from '@/assets/img/solv_logo.jpg'
-  import srf from '@/assets/img/srf_logo.png'
-  import tamedia from '@/assets/img/tamedia_logo.png'
+  import solv from '@/assets/img/newsSources/solv_logo.jpg'
+  import srf from '@/assets/img/newsSources/srf_logo.png'
+  import tamedia from '@/assets/img/newsSources/tamedia_logo.png'
+  import blick from '@/assets/img/newsSources/blick_logo.png'
 
   const { directus } = useApi()
   const { notify } = useQuasar()
@@ -35,6 +36,7 @@
     if (post.sourceUrl?.includes('swiss-orienteering.ch')) return solv
     if (post.sourceUrl?.includes('srf.ch')) return srf
     if (post.sourceUrl?.includes('tagesanzeiger.ch')) return tamedia
+    if (post.sourceUrl?.includes('blick.ch')) return blick
 
     return solv
   }
