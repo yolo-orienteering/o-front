@@ -3,6 +3,7 @@
   import type { Post, PostMedia } from '~/types/DirectusTypes'
 
   import solv from '@/assets/img/solv_logo.jpg'
+  import srf from '@/assets/img/srf_logo.png'
 
   const { directus } = useApi()
   const { notify } = useQuasar()
@@ -20,6 +21,13 @@
       })
     )
   })
+
+  function getSourceLogo(post: Post): string {
+    if (post.sourceUrl?.includes('swiss-orienteering.ch')) return solv
+    if (post.sourceUrl?.includes('srf.ch')) return srf
+
+    return solv
+  }
 
   function notifyNotImplemented() {
     notify({
@@ -48,7 +56,7 @@
           <div class="col-12">
             <div class="row items-center justify-between">
               <div class="col-auto">
-                <img :src="solv" style="height: 30px" />
+                <img :src="getSourceLogo(post)" style="height: 30px" />
               </div>
               <div class="col-auto text-grey">
                 {{
@@ -87,8 +95,9 @@
             />
             <q-icon
               name="mdi-share-outline"
-              size="sm"
+              size="md"
               class="q-ml-sm"
+              style="margin-top: -4px"
               @click.prevent="notifyNotImplemented()"
             />
           </div>
