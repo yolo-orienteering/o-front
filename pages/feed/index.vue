@@ -7,20 +7,28 @@
 
   const { directus } = useApi()
   const { notify } = useQuasar()
+  const filter = usePostsFilter()
 
   const { data: posts } = await useAsyncData<Post[]>('fetchPosts', () => {
-    return directus.request<Post[]>(
-      readItems('Post', {
-        fields: [
-          '*',
-          {
-            medias: ['*']
-          }
-        ],
-        sort: ['-date_created']
-      })
-    )
+    const query = filter.composePostsQuery({ initialLoad: true })
+    return directus.request<Post[]>(readItems('Post', query))
   })
+
+  async function loadMore() {
+    filter.filter.page += 1
+    const query = filter.composePostsQuery({})
+    const newPosts = await directus.request<Post[]>(readItems('Post', query))
+
+    // no new posts
+    if (!newPosts.length) {
+      filter.filter.page -= 1
+      Notify.create({
+        message: 'Keine weiteren News verfügbar'
+      })
+      return
+    }
+    posts.value = [...(posts.value || []), ...newPosts]
+  }
 
   function getSourceLogo(post: Post): string {
     if (post.sourceUrl?.includes('swiss-orienteering.ch')) return solv
@@ -109,6 +117,11 @@
           </div>
         </div>
       </a>
+    </div>
+
+    <!-- load more -->
+    <div class="col-12 text-center q-pb-lg q-pt-xl">
+      <q-btn @click="loadMore()"> Mehr News laden </q-btn>
     </div>
   </div>
 </template>
