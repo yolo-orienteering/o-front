@@ -70,7 +70,26 @@
           <div class="col-12">
             <div class="row items-center justify-between q-pb-sm">
               <div class="col-auto flex items-center">
+                <!-- forum post -->
+                <div v-if="post.type === 'forum-post'">
+                  <div class="row items-center">
+                    <div class="col-auto">
+                      <q-avatar color="grey" text-color="white" size="30px">
+                      </q-avatar>
+                    </div>
+                    <div class="col-auto q-pl-md">
+                      <div class="text-subtitle2" style="margin-top: 1px">
+                        {{ post.forumUserName || 'Unbekannt' }}
+                      </div>
+                      <div class="text-caption" style="margin-top: -5px">
+                        Swiss Orienteering Forum
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- news post -->
                 <img
+                  v-else
                   :src="getSourceLogo(post)"
                   style="max-height: 30px; max-width: 180px"
                 />
