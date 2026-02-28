@@ -4,6 +4,7 @@
 
   import solv from '@/assets/img/solv_logo.jpg'
   import srf from '@/assets/img/srf_logo.png'
+  import tamedia from '@/assets/img/tamedia_logo.png'
 
   const { directus } = useApi()
   const { notify } = useQuasar()
@@ -33,6 +34,7 @@
   function getSourceLogo(post: Post): string {
     if (post.sourceUrl?.includes('swiss-orienteering.ch')) return solv
     if (post.sourceUrl?.includes('srf.ch')) return srf
+    if (post.sourceUrl?.includes('tagesanzeiger.ch')) return tamedia
 
     return solv
   }
@@ -62,7 +64,7 @@
             <q-separator v-if="postId > 0" class="q-my-lg" />
           </div>
           <div class="col-12">
-            <div class="row items-center justify-between">
+            <div class="row items-center justify-between q-pb-sm">
               <div class="col-auto">
                 <img :src="getSourceLogo(post)" style="height: 30px" />
               </div>
