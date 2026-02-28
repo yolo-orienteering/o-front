@@ -69,7 +69,7 @@
           </div>
           <div class="col-12">
             <div class="row items-center justify-between q-pb-sm">
-              <div class="col-auto">
+              <div class="col-auto flex items-center">
                 <img
                   :src="getSourceLogo(post)"
                   style="max-height: 30px; max-width: 180px"
