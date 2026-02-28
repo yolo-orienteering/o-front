@@ -42,6 +42,11 @@ export const usePostsFilter = defineStore('usePostsFilter', () => {
           medias: ['*']
         }
       ],
+      filter: {
+        status: {
+          _eq: 'published'
+        }
+      },
       sort: ['-date_created'],
       limit,
       page

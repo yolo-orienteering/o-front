@@ -70,7 +70,10 @@
           <div class="col-12">
             <div class="row items-center justify-between q-pb-sm">
               <div class="col-auto">
-                <img :src="getSourceLogo(post)" style="height: 30px" />
+                <img
+                  :src="getSourceLogo(post)"
+                  style="max-height: 30px; max-width: 180px"
+                />
               </div>
               <div class="col-auto text-grey">
                 {{
