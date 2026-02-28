@@ -6,6 +6,7 @@
   import srf from '@/assets/img/newsSources/srf_logo.png'
   import tamedia from '@/assets/img/newsSources/tamedia_logo.png'
   import blick from '@/assets/img/newsSources/blick_logo.png'
+  import az from '@/assets/img/newsSources/aargauerzeitung_logo.svg'
 
   const { directus } = useApi()
   const { notify } = useQuasar()
@@ -37,6 +38,7 @@
     if (post.sourceUrl?.includes('srf.ch')) return srf
     if (post.sourceUrl?.includes('tagesanzeiger.ch')) return tamedia
     if (post.sourceUrl?.includes('blick.ch')) return blick
+    if (post.sourceUrl?.includes('aargauerzeitung.ch')) return az
 
     return solv
   }
