@@ -2,19 +2,14 @@
   import { onMounted, onBeforeUnmount, ref } from 'vue'
   import L from 'leaflet'
   import 'leaflet/dist/leaflet.css'
-  import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-  import markerIcon from 'leaflet/dist/images/marker-icon.png'
-  import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+  import mapMarkerUrl from '@/assets/img/map-marker.svg'
   import type { GeoJSONPoint } from '@/types/DirectusTypes'
 
-  // Fix Leaflet default marker icons in bundled environments:
-  // Delete the internal method that prepends Leaflet's own base path,
-  // then set the Vite-resolved URLs directly.
-  delete (L.Icon.Default.prototype as any)._getIconUrl
-  L.Icon.Default.mergeOptions({
-    iconUrl: markerIcon,
-    iconRetinaUrl: markerIcon2x,
-    shadowUrl: markerShadow
+  const oMateIcon = L.icon({
+    iconUrl: mapMarkerUrl,
+    iconSize: [32, 46],
+    iconAnchor: [16, 46],
+    popupAnchor: [0, -46]
   })
 
   const props = defineProps<{
@@ -41,7 +36,7 @@
       maxZoom: 19
     }).addTo(map)
 
-    L.marker([lat, lng]).addTo(map)
+    L.marker([lat, lng], { icon: oMateIcon }).addTo(map)
   })
 
   onBeforeUnmount(() => {
