@@ -15,8 +15,8 @@
 
   const menuEntries = ref<IMenuEntry[]>([
     {
-      name: 'Home',
-      icon: 'home',
+      name: 'Feed',
+      icon: 'image',
       routeName: 'feed',
       subRoutes: ['/feed/']
     },
