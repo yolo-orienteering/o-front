@@ -18,6 +18,8 @@
     "@directus/sdk": "^18.0.3",
     "@pinia/nuxt": "^0.11.2",
     "@quasar/extras": "^1.17.0",
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
     "moment": "^2.30.1",
     "nuxt": "^3.17.7",
     "nuxt-quasar-ui": "^2.1.12",
