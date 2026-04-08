@@ -42,6 +42,7 @@
 
     if (isFullscreen.value) {
       map.scrollWheelZoom.enable()
+      map.dragging.enable()
     } else {
       map.scrollWheelZoom.disable()
     }
@@ -52,6 +53,22 @@
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape' && isFullscreen.value) {
       toggleFullscreen()
+    }
+  }
+
+  function onMapTouchStart(e: TouchEvent) {
+    if (!map || isFullscreen.value) return
+    if (e.touches.length >= 2) {
+      map.dragging.enable()
+    } else {
+      map.dragging.disable()
+    }
+  }
+
+  function onMapTouchEnd(e: TouchEvent) {
+    if (!map || isFullscreen.value) return
+    if (e.touches.length === 0) {
+      map.dragging.disable()
     }
   }
 
@@ -72,10 +89,18 @@
     L.marker([lat, lng], { icon: oMateIcon }).addTo(map)
 
     document.addEventListener('keydown', handleKeydown)
+    mapContainer.value.addEventListener('touchstart', onMapTouchStart, {
+      passive: true
+    })
+    mapContainer.value.addEventListener('touchend', onMapTouchEnd, {
+      passive: true
+    })
   })
 
   onBeforeUnmount(() => {
     document.removeEventListener('keydown', handleKeydown)
+    mapContainer.value?.removeEventListener('touchstart', onMapTouchStart)
+    mapContainer.value?.removeEventListener('touchend', onMapTouchEnd)
     map?.remove()
     map = null
   })
