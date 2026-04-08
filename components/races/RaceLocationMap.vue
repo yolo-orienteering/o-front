@@ -25,6 +25,12 @@
 
   const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
 
+  const openRouteServiceData = JSON.stringify({
+    coordinates: `null;${lng},${lat}`,
+    options: {}
+  })
+  const openRouteServiceUrl = `https://maps.openrouteservice.org/#/directions/null/OL/data/${openRouteServiceData}`
+
   onMounted(() => {
     if (!mapContainer.value) return
 
@@ -47,21 +53,31 @@
 
 <template>
   <div class="race-location-map">
-    <div ref="mapContainer" class="map-container" />
-    <div class="q-mt-md text-center">
-      <q-btn :href="googleMapsUrl" target="_blank" color="primary">
-        <q-icon class="q-mr-sm" name="directions" />
-        Google Maps öffnen
-      </q-btn>
+    <div class="row q-pl-sm q-pb-lg">
+      <div class="col-auto">
+        <q-btn :href="googleMapsUrl" target="_blank">
+          <q-icon class="q-mr-sm" name="directions" />
+          Google Maps
+        </q-btn>
+      </div>
+      <div class="col-auto">
+        <q-btn :href="openRouteServiceUrl" target="_blank" class="q-ml-sm">
+          <q-icon class="q-mr-sm" name="directions" />
+          Open Route
+        </q-btn>
+      </div>
     </div>
+    <div ref="mapContainer" class="map-container" />
+    <div class="q-mt-md text-center"></div>
   </div>
 </template>
 
 <style lang="scss" scoped>
   .map-container {
-    width: 100%;
+    width: calc(100% + (2 * 8px));
     height: 300px;
     border-radius: 8px;
     z-index: 0;
+    margin: 0 -8px;
   }
 </style>
