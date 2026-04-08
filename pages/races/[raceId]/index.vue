@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
-  import SbbTimetable from '@/components/publicTransport/switzerland/SbbTimetable.vue'
   import FollowingDeparturesByRace from '~/components/races/FollowingDeparturesByRace.vue'
 
   import type {
@@ -71,7 +70,7 @@
 </script>
 
 <template>
-  <div v-if="race" class="row q-pt-md">
+  <div v-if="race" class="row q-py-md">
     <!-- title and race details -->
     <div class="col-10">
       <!-- title and favorite -->
@@ -268,7 +267,10 @@
 
       <div class="q-pt-md">
         <client-only>
-          <races-race-location-map :coordinates="race.coordinates" />
+          <races-race-location-map
+            :coordinates="race.coordinates"
+            :race="race"
+          />
         </client-only>
       </div>
     </div>
@@ -336,13 +338,6 @@
           </q-btn>
         </div>
       </div>
-    </div>
-
-    <!-- sbb -->
-    <div class="col-12">
-      <q-separator class="q-my-lg" />
-
-      <sbb-timetable :race="race" />
     </div>
   </div>
 </template>

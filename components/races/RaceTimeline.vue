@@ -185,10 +185,11 @@
                   <q-btn
                     v-if="shouldAddUser(race)"
                     color="secondary"
-                    href="/settings"
+                    to="/settings"
                     rounded
                     size="sm"
                     unelevated
+                    @click.stop=""
                   >
                     Deine Startzeit
                   </q-btn>

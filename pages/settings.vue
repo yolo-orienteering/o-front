@@ -77,7 +77,7 @@
     <!-- privacy policy -->
     <div class="row q-my-xl">
       <div class="col-12 text-h5">Datenschutz</div>
-      <p>
+      <p class="q-pt-sm q-px-sm">
         Wir legen grossen Wert darauf, dass der Umgang mit Personendaten
         transparent ist.
       </p>
