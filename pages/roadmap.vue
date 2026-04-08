@@ -45,15 +45,43 @@
       done: true
     },
     {
+      text: 'Plane deine Anreise mit einer integrierten Karte und dem genauem Standort des OLs. (08.04.2026)',
+      done: true
+    },
+    {
+      text: 'Einbindung von relevanten OL-News. (01.03.2026)',
+      done: false
+    },
+    {
       text: 'Startlisten anzeigen: auch für nicht Angemeldete / suche nach Namen / zeige alle Kategorien / merke Startzeiten anderer Läufer:innen',
       done: false
     },
     {
-      text: 'Einbindung von relevanten OL-News',
+      text: 'Synchronisiere die vorgemerkten Läufe automatisch mit Kalender.',
+      done: false
+    },
+    {
+      text: 'Generator für Ausschreibungen & Weisungen.',
+      done: false
+    },
+    {
+      text: 'Einfaches CMS für Event-Webseiten',
       done: false
     },
     {
       text: 'Social-App-Elemente (Fahrgemeinschaften, Posts, Following, Freundeskreise usw.)',
+      done: false
+    },
+    {
+      text: 'Bilde Freundeskreise und sehe, welche Freunde an welchen OLs teilnehmen.',
+      done: false
+    },
+    {
+      text: 'Erweiterung des Feeds: Beiträge via o-mate erfassen und als Multi-Channel publizieren (direkt auf Social-Media & Forum). Kommentare & Likes einbauen.',
+      done: false
+    },
+    {
+      text: 'Bilde Fahrgemeinschaften an OLs.',
       done: false
     },
     {
@@ -65,23 +93,7 @@
       done: false
     },
     {
-      text: 'Synchronisiere die vorgemerkten Läufe automatisch mit Kalender.',
-      done: false
-    },
-    {
-      text: 'Plane deine Anreise mit einer integrierten Karte und dem genauem Standort des OLs.',
-      done: false
-    },
-    {
       text: 'Erhalte Erinnerungen bei Anmeldeschlüssen.',
-      done: false
-    },
-    {
-      text: 'Bilde Freundeskreise und sehe, welche Freunde an welchen OLs teilnehmen.',
-      done: false
-    },
-    {
-      text: 'Bilde Fahrgemeinschaften an OLs.',
       done: false
     },
     {
