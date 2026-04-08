@@ -38,15 +38,15 @@
   function toggleFullscreen() {
     isFullscreen.value = !isFullscreen.value
 
-    if (map) {
-      if (isFullscreen.value) {
-        map.scrollWheelZoom.enable()
-      } else {
-        map.scrollWheelZoom.disable()
-      }
+    if (!map) return
 
-      nextTick(() => map?.invalidateSize())
+    if (isFullscreen.value) {
+      map.scrollWheelZoom.enable()
+    } else {
+      map.scrollWheelZoom.disable()
     }
+
+    nextTick(() => map?.invalidateSize())
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -60,7 +60,7 @@
 
     map = L.map(mapContainer.value, {
       scrollWheelZoom: false,
-      touchZoom: false
+      touchZoom: true
     }).setView([lat, lng], 13)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
