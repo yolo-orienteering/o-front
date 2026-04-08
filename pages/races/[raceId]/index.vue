@@ -260,6 +260,19 @@
       </div>
     </div>
 
+    <!-- map -->
+    <div v-if="race.coordinates" class="col-12">
+      <q-separator class="q-my-lg" />
+
+      <div class="text-h5">Anreise</div>
+
+      <div class="q-pt-md">
+        <client-only>
+          <races-race-location-map :coordinates="race.coordinates" />
+        </client-only>
+      </div>
+    </div>
+
     <!-- links -->
     <div class="col-12">
       <q-separator class="q-my-lg" />
@@ -322,19 +335,6 @@
             Rangliste
           </q-btn>
         </div>
-      </div>
-    </div>
-
-    <!-- map -->
-    <div v-if="race.coordinates" class="col-12">
-      <q-separator class="q-my-lg" />
-
-      <div class="text-h5">Anreise</div>
-
-      <div class="q-pt-md">
-        <client-only>
-          <races-race-location-map :coordinates="race.coordinates" />
-        </client-only>
       </div>
     </div>
 

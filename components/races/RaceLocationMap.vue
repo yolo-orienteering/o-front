@@ -83,7 +83,19 @@
 
 <template>
   <div class="race-location-map" :class="{ fullscreen: isFullscreen }">
-    <div class="row q-pl-sm q-pb-lg">
+    <div class="map-wrapper">
+      <div ref="mapContainer" class="map-container" />
+      <q-btn
+        class="fullscreen-btn"
+        round
+        dense
+        color="white"
+        text-color="dark"
+        :icon="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+        @click="toggleFullscreen"
+      />
+    </div>
+    <div class="row q-pl-sm q-pt-lg justify-center">
       <div class="col-auto">
         <q-btn :href="googleMapsUrl" target="_blank">
           <q-icon class="q-mr-sm" name="directions" />
@@ -96,18 +108,6 @@
           Open Route
         </q-btn>
       </div>
-    </div>
-    <div class="map-wrapper">
-      <div ref="mapContainer" class="map-container" />
-      <q-btn
-        class="fullscreen-btn"
-        round
-        dense
-        color="white"
-        text-color="dark"
-        :icon="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-        @click="toggleFullscreen"
-      />
     </div>
   </div>
 </template>
@@ -137,12 +137,16 @@
     inset: 0;
     z-index: 9999;
     background: white;
-    padding-top: 16px;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    .map-wrapper {
+      flex: 1;
+    }
 
     .map-container {
       width: 100%;
-      height: calc(100vh - 76px);
+      height: 100%;
       margin: 0;
       border-radius: 0;
     }
