@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { onMounted, onBeforeUnmount, ref } from 'vue'
+  import { onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
   import L from 'leaflet'
   import 'leaflet/dist/leaflet.css'
   import mapMarkerUrl from '@/assets/img/map-marker.svg'
@@ -17,6 +17,7 @@
   }>()
 
   const mapContainer = ref<HTMLElement | null>(null)
+  const isFullscreen = ref(false)
   let map: L.Map | null = null
 
   // GeoJSON uses [longitude, latitude]
@@ -27,14 +28,40 @@
 
   const openRouteServiceData = JSON.stringify({
     coordinates: `null;${lng},${lat}`,
-    options: {}
+    options: {
+      zoom: 14,
+      center: { lat, lng }
+    }
   })
   const openRouteServiceUrl = `https://maps.openrouteservice.org/#/directions/null/OL/data/${openRouteServiceData}`
+
+  function toggleFullscreen() {
+    isFullscreen.value = !isFullscreen.value
+
+    if (map) {
+      if (isFullscreen.value) {
+        map.scrollWheelZoom.enable()
+      } else {
+        map.scrollWheelZoom.disable()
+      }
+
+      nextTick(() => map?.invalidateSize())
+    }
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape' && isFullscreen.value) {
+      toggleFullscreen()
+    }
+  }
 
   onMounted(() => {
     if (!mapContainer.value) return
 
-    map = L.map(mapContainer.value).setView([lat, lng], 13)
+    map = L.map(mapContainer.value, {
+      scrollWheelZoom: false,
+      touchZoom: false
+    }).setView([lat, lng], 13)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
@@ -43,16 +70,19 @@
     }).addTo(map)
 
     L.marker([lat, lng], { icon: oMateIcon }).addTo(map)
+
+    document.addEventListener('keydown', handleKeydown)
   })
 
   onBeforeUnmount(() => {
+    document.removeEventListener('keydown', handleKeydown)
     map?.remove()
     map = null
   })
 </script>
 
 <template>
-  <div class="race-location-map">
+  <div class="race-location-map" :class="{ fullscreen: isFullscreen }">
     <div class="row q-pl-sm q-pb-lg">
       <div class="col-auto">
         <q-btn :href="googleMapsUrl" target="_blank">
@@ -67,17 +97,58 @@
         </q-btn>
       </div>
     </div>
-    <div ref="mapContainer" class="map-container" />
-    <div class="q-mt-md text-center"></div>
+    <div class="map-wrapper">
+      <div ref="mapContainer" class="map-container" />
+      <q-btn
+        class="fullscreen-btn"
+        round
+        dense
+        color="white"
+        text-color="dark"
+        :icon="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+        @click="toggleFullscreen"
+      />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+  .map-wrapper {
+    position: relative;
+  }
+
   .map-container {
     width: calc(100% + (2 * 8px));
     height: 300px;
     border-radius: 8px;
     z-index: 0;
     margin: 0 -8px;
+  }
+
+  .fullscreen-btn {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    z-index: 1;
+  }
+
+  .fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: white;
+    padding-top: 16px;
+    overflow: auto;
+
+    .map-container {
+      width: 100%;
+      height: calc(100vh - 76px);
+      margin: 0;
+      border-radius: 0;
+    }
+
+    .fullscreen-btn {
+      right: 16px;
+    }
   }
 </style>
