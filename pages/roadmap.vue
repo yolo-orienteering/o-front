@@ -45,19 +45,19 @@
       done: true
     },
     {
+      text: 'Einbindung von relevanten OL-News. (01.03.2026)',
+      done: true
+    },
+    {
       text: 'Plane deine Anreise mit einer integrierten Karte und dem genauem Standort des OLs. (08.04.2026)',
       done: true
     },
     {
-      text: 'Einbindung von relevanten OL-News. (01.03.2026)',
-      done: false
+      text: 'Synchronisiere die vorgemerkten Läufe automatisch mit Kalender. (10.04.2026)',
+      done: true
     },
     {
       text: 'Startlisten anzeigen: auch für nicht Angemeldete / suche nach Namen / zeige alle Kategorien / merke Startzeiten anderer Läufer:innen',
-      done: false
-    },
-    {
-      text: 'Synchronisiere die vorgemerkten Läufe automatisch mit Kalender.',
       done: false
     },
     {

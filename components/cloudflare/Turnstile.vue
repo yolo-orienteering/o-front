@@ -31,7 +31,7 @@
     loading.value = false
   }
 
-  onMounted(() => {
+  function loadAndRender() {
     if ((window as any).turnstile) {
       renderWidget()
       return
@@ -70,6 +70,16 @@
         error.value = true
       }
     }, 10000)
+  }
+
+  onMounted(() => {
+    // Defer script loading until the browser is idle so the Turnstile
+    // preloaded challenge resources don't fire before the load event.
+    if ('requestIdleCallback' in window) {
+      ;(window as any).requestIdleCallback(loadAndRender)
+    } else {
+      setTimeout(loadAndRender, 200)
+    }
   })
 
   onBeforeUnmount(() => {
