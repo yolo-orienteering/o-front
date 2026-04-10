@@ -339,6 +339,8 @@
         </div>
       </div>
     </div>
+
+    <races-calendar-subscription-dialog />
   </div>
 </template>
 
