@@ -21,6 +21,11 @@ export default defineNuxtConfig({
         }
       }
     },
+    config: {
+      notify: {
+        closeBtn: 'Schliessen'
+      }
+    },
     extras: {
       fontIcons: ['material-icons', 'material-icons-outlined', 'mdi-v7']
     },

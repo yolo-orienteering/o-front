@@ -22,7 +22,7 @@
         <div class="text-h6">Kalender-Abo</div>
       </q-card-section>
 
-      <q-card-section>
+      <q-card-section class="q-pt-none">
         <calendar-subscription-section />
       </q-card-section>
 

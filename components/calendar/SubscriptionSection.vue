@@ -58,9 +58,16 @@
   <!-- Already has subscription — show URL -->
   <div v-if="hasSubscription">
     <p>
-      Dein Kalender-Abo ist aktiv. Kopiere den Link und fuege ihn in deiner
-      Kalender-App als Abo hinzu. Aenderungen an deinen gemerkten Laeufen werden
-      automatisch synchronisiert.
+      Dein Kalender ist aktiv.
+      <b>Kopiere den Link und füge ihn in deiner Kalender-App als Abo hinzu.</b>
+    </p>
+    <p>
+      Änderungen an deinen gemerkten Läufen werden automatisch synchronisiert.
+      Der Kalender ist mit keinerlei persönlichen Daten verknüpft.
+    </p>
+    <p>
+      <b>Tipp:</b> Du kannst den Kalender auch mit deinen Freund:innen oder
+      Familie teilen.
     </p>
 
     <q-input
@@ -79,9 +86,10 @@
   <!-- No subscription — Turnstile + Create -->
   <div v-else>
     <p>
-      Erstelle ein Kalender-Abo fuer deine gemerkten Laeufe. Den Link kannst du
-      dann in deiner Kalender-App abonnieren.
+      Erstelle ein Kalender-Abo für deine gemerkten Läufe. Änderungen werden
+      automatisch in deinen Kalender übertragen.
     </p>
+    <p>Der Kalender wird mit keinerlei persönlichen Daten verknüpft.</p>
 
     <cloudflare-turnstile
       ref="turnstileRef"
@@ -92,12 +100,14 @@
     <div class="q-mt-md text-right">
       <q-btn
         color="primary"
+        icon-right="event_available"
         label="Abo erstellen"
         :loading="loading"
         :disable="
           !turnstileToken || turnstileRef?.loading || turnstileRef?.error
         "
         unelevated
+        :outline="false"
         @click="handleCreate()"
       />
     </div>
