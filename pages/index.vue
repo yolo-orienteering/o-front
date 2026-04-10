@@ -17,7 +17,7 @@
     />
     <div v-if="error">Error: {{ error }}</div>
 
-    <races-calendar-subscription-dialog />
+    <calendar-subscription-dialog />
   </div>
 </template>
 

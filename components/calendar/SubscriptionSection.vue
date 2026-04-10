@@ -1,36 +1,20 @@
 <script setup lang="ts">
-  import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
+  import { ref } from 'vue'
   import { Notify } from 'quasar'
 
   const { hasSubscription, subscriptionUrl, createSubscription } =
     useCalendarSubscription()
-  const config = useRuntimeConfig()
 
   const loading = ref(false)
   const turnstileToken = ref<string | null>(null)
-  const turnstileWidgetId = ref<string | null>(null)
-  const turnstileContainer = ref<HTMLElement | null>(null)
+  const turnstileRef = ref<{
+    token: string | null
+    loading: boolean
+    error: boolean
+  } | null>(null)
 
-  const siteKey = config.public.turnstileSiteKey as string
-
-  function renderTurnstile() {
-    if (
-      !turnstileContainer.value ||
-      !(window as any).turnstile ||
-      turnstileWidgetId.value
-    ) {
-      return
-    }
-
-    turnstileWidgetId.value = (window as any).turnstile.render(
-      turnstileContainer.value,
-      {
-        sitekey: siteKey,
-        callback: (token: string) => {
-          turnstileToken.value = token
-        }
-      }
-    )
+  function onTurnstileVerify(token: string) {
+    turnstileToken.value = token
   }
 
   async function handleCreate() {
@@ -68,50 +52,6 @@
       })
     }
   }
-
-  function loadTurnstileScript(): Promise<void> {
-    return new Promise((resolve) => {
-      if ((window as any).turnstile) {
-        resolve()
-        return
-      }
-      const existing = document.querySelector(
-        'script[src*="challenges.cloudflare.com/turnstile"]'
-      )
-      if (existing) {
-        existing.addEventListener('load', () => resolve())
-        if ((window as any).turnstile) resolve()
-        return
-      }
-      const script = document.createElement('script')
-      script.src =
-        'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-      script.async = true
-      script.onload = () => resolve()
-      document.head.appendChild(script)
-    })
-  }
-
-  onMounted(async () => {
-    if (!hasSubscription.value) {
-      await loadTurnstileScript()
-      nextTick(() => renderTurnstile())
-    }
-  })
-
-  watch(hasSubscription, async (val, oldVal) => {
-    if (!val && oldVal) {
-      await loadTurnstileScript()
-      nextTick(() => renderTurnstile())
-    }
-  })
-
-  onBeforeUnmount(() => {
-    if (turnstileWidgetId.value && (window as any).turnstile) {
-      ;(window as any).turnstile.remove(turnstileWidgetId.value)
-      turnstileWidgetId.value = null
-    }
-  })
 </script>
 
 <template>
@@ -143,14 +83,20 @@
       dann in deiner Kalender-App abonnieren.
     </p>
 
-    <div ref="turnstileContainer" class="q-mt-md" />
+    <cloudflare-turnstile
+      ref="turnstileRef"
+      class="q-mt-md"
+      @verify="onTurnstileVerify"
+    />
 
     <div class="q-mt-md text-right">
       <q-btn
         color="primary"
         label="Abo erstellen"
         :loading="loading"
-        :disable="!turnstileToken"
+        :disable="
+          !turnstileToken || turnstileRef?.loading || turnstileRef?.error
+        "
         unelevated
         @click="handleCreate()"
       />

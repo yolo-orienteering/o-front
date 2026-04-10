@@ -340,7 +340,7 @@
       </div>
     </div>
 
-    <races-calendar-subscription-dialog />
+    <calendar-subscription-dialog />
   </div>
 </template>
 
