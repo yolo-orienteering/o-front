@@ -91,7 +91,7 @@
       />
     </div>
 
-    <div class="q-mt-sm" v-if="hasSubscription">
+    <div class="q-mt-md" v-if="hasSubscription">
       <a
         class="text-primary text-caption cursor-pointer"
         @click.prevent="showUrl = !showUrl"

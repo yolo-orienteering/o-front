@@ -19,7 +19,7 @@
   <q-dialog v-model="dialogOpen">
     <q-card style="min-width: 320px; max-width: 480px">
       <q-card-section>
-        <div class="text-h6">Kalender-Abo</div>
+        <div class="text-h6">Kalender</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
