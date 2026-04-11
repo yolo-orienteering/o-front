@@ -1,22 +1,18 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { Notify } from 'quasar'
+  import VueTurnstile from 'vue-turnstile'
+
+  const config = useRuntimeConfig()
+  const siteKey = config.public.turnstileSiteKey as string
 
   const { hasSubscription, subscriptionUrl, createSubscription } =
     useCalendarSubscription()
 
   const loading = ref(false)
-  const turnstileToken = ref<string | null>(null)
   const showUrl = ref(false)
-  const turnstileRef = ref<{
-    token: string | null
-    loading: boolean
-    error: boolean
-  } | null>(null)
-
-  function onTurnstileVerify(token: string) {
-    turnstileToken.value = token
-  }
+  const turnstileToken = ref<string>('')
+  const turnstileError = ref<any | undefined>(undefined)
 
   async function handleConnect() {
     if (hasSubscription.value && subscriptionUrl.value) {
@@ -60,7 +56,7 @@
 
   const buttonDisabled = computed(() => {
     if (hasSubscription.value) return false
-    return !turnstileToken.value || !!turnstileRef.value?.error
+    return !turnstileToken.value || !!turnstileError.value
   })
 </script>
 
@@ -71,20 +67,32 @@
       automatisch synchronisiert.
     </p>
 
-    <cloudflare-turnstile
+    <vue-turnstile
       v-if="!hasSubscription"
-      ref="turnstileRef"
-      class="q-mt-md"
-      @verify="onTurnstileVerify"
+      :site-key="siteKey"
+      v-model="turnstileToken"
+      render-on-mount
+      @error="(error) => (turnstileError = error)"
     />
+
+    <div
+      v-if="!hasSubscription && !turnstileToken && !turnstileError"
+      class="q-mt-sm text-caption text-grey"
+    >
+      Sicherheitsüberprüfung wird geladen…
+    </div>
+
+    <div v-if="turnstileError" class="q-mt-sm text-negative text-caption">
+      Sicherheitsüberprüfung fehlgeschlagen. Bitte lade die Seite neu und
+      versuche es nochmals.
+    </div>
 
     <div class="q-mt-md">
       <q-btn
         color="primary"
         icon="event"
         label="Kalender verknüpfen"
-        :loading="loading"
-        :disable="buttonDisabled"
+        :loading="loading || buttonDisabled"
         unelevated
         :outline="false"
         @click="handleConnect()"
