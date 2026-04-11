@@ -70,6 +70,18 @@
       Familie teilen.
     </p>
 
+    <div class="q-mt-md">
+      <q-btn
+        :href="subscriptionUrl!"
+        color="primary"
+        unelevated
+        :outline="false"
+        icon="event"
+      >
+        Im Kalender anzeigen
+      </q-btn>
+    </div>
+
     <q-input
       :model-value="subscriptionUrl"
       readonly
@@ -85,10 +97,7 @@
 
   <!-- No subscription — Turnstile + Create -->
   <div v-else>
-    <p>
-      Erstelle ein Kalender-Abo für deine gemerkten Läufe. Änderungen werden
-      automatisch in deinen Kalender übertragen.
-    </p>
+    <p>Abonniere die gemerkten Läufe in deinem Kalender.</p>
     <p>Der Kalender wird mit keinerlei persönlichen Daten verknüpft.</p>
 
     <cloudflare-turnstile
@@ -101,7 +110,7 @@
       <q-btn
         color="primary"
         icon-right="event_available"
-        label="Abo erstellen"
+        label="Im Kalender anzeigen"
         :loading="loading"
         :disable="
           !turnstileToken || turnstileRef?.loading || turnstileRef?.error

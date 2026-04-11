@@ -11,7 +11,8 @@ export function useCalendarSubscription() {
 
   const subscriptionUrl = computed<string | null>(() => {
     if (!syncCenter.calendarSubscriptionId) return null
-    return `${apiUrl}/calendar-subscription/${syncCenter.calendarSubscriptionId}/calendar.ics`
+    const httpsUrl = `${apiUrl}/calendar-subscription/${syncCenter.calendarSubscriptionId}/calendar.ics`
+    return httpsUrl.replace(/^https?:\/\//, 'webcal://')
   })
 
   async function createSubscription(turnstileToken: string): Promise<void> {
