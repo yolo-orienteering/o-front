@@ -7,6 +7,7 @@
 
   const loading = ref(false)
   const turnstileToken = ref<string | null>(null)
+  const showUrl = ref(false)
   const turnstileRef = ref<{
     token: string | null
     loading: boolean
@@ -17,19 +18,23 @@
     turnstileToken.value = token
   }
 
-  async function handleCreate() {
+  async function handleConnect() {
+    if (hasSubscription.value && subscriptionUrl.value) {
+      window.location.href = subscriptionUrl.value
+      return
+    }
+
     if (!turnstileToken.value) return
 
     loading.value = true
     try {
       await createSubscription(turnstileToken.value)
-      Notify.create({
-        message: 'Kalender-Abo erstellt!',
-        type: 'positive'
-      })
+      if (subscriptionUrl.value) {
+        window.location.href = subscriptionUrl.value
+      }
     } catch {
       Notify.create({
-        message: 'Fehler beim Erstellen des Kalender-Abos',
+        message: 'Kalender konnte nicht erstellt werden.',
         type: 'negative'
       })
     } finally {
@@ -42,7 +47,7 @@
     try {
       await navigator.clipboard.writeText(subscriptionUrl.value)
       Notify.create({
-        message: 'Kalender-Link in Zwischenablage kopiert!',
+        message: 'Kalender-Link kopiert!',
         type: 'positive'
       })
     } catch {
@@ -52,73 +57,67 @@
       })
     }
   }
+
+  const buttonDisabled = computed(() => {
+    if (hasSubscription.value) return false
+    return !turnstileToken.value || !!turnstileRef.value?.error
+  })
 </script>
 
 <template>
-  <!-- Already has subscription — show URL -->
-  <div v-if="hasSubscription">
+  <div>
     <p>
-      Dein Kalender ist aktiv.
-      <b>Kopiere den Link und füge ihn in deiner Kalender-App als Abo hinzu.</b>
+      Verknüpfe deine gemerkten Läufe mit deiner Kalender-App. Änderungen werden
+      automatisch synchronisiert.
     </p>
-    <p>
-      Änderungen an deinen gemerkten Läufen werden automatisch synchronisiert.
-      Der Kalender ist mit keinerlei persönlichen Daten verknüpft.
-    </p>
-    <p>
-      <b>Tipp:</b> Du kannst den Kalender auch mit deinen Freund:innen oder
-      Familie teilen.
-    </p>
-
-    <div class="q-mt-md">
-      <q-btn
-        :href="subscriptionUrl!"
-        color="primary"
-        unelevated
-        :outline="false"
-        icon="event"
-      >
-        Im Kalender anzeigen
-      </q-btn>
-    </div>
-
-    <q-input
-      :model-value="subscriptionUrl"
-      readonly
-      outlined
-      dense
-      class="q-mt-md"
-    >
-      <template #append>
-        <q-btn flat round icon="content_copy" @click="copyUrl()" />
-      </template>
-    </q-input>
-  </div>
-
-  <!-- No subscription — Turnstile + Create -->
-  <div v-else>
-    <p>Abonniere die gemerkten Läufe in deinem Kalender.</p>
-    <p>Der Kalender wird mit keinerlei persönlichen Daten verknüpft.</p>
 
     <cloudflare-turnstile
+      v-if="!hasSubscription"
       ref="turnstileRef"
       class="q-mt-md"
       @verify="onTurnstileVerify"
     />
 
-    <div class="q-mt-md text-right">
+    <div class="q-mt-md">
       <q-btn
         color="primary"
-        icon-right="event_available"
-        label="Im Kalender anzeigen"
+        icon="event"
+        label="Kalender verknüpfen"
         :loading="loading"
-        :disable="
-          !turnstileToken || turnstileRef?.loading || turnstileRef?.error
-        "
+        :disable="buttonDisabled"
         unelevated
         :outline="false"
-        @click="handleCreate()"
+        @click="handleConnect()"
       />
     </div>
+
+    <div class="q-mt-sm" v-if="hasSubscription">
+      <a
+        class="text-primary text-caption cursor-pointer"
+        @click.prevent="showUrl = !showUrl"
+      >
+        {{
+          showUrl
+            ? 'Link ausblenden'
+            : 'Kalender-App hat sich nicht geöffnet? Oder webcal-Link manuell kopieren?'
+        }}
+      </a>
+    </div>
+
+    <q-slide-transition>
+      <div v-if="showUrl && hasSubscription">
+        <q-input
+          :model-value="subscriptionUrl"
+          readonly
+          outlined
+          dense
+          class="q-mt-sm"
+        >
+          <template #append>
+            <q-btn flat round icon="content_copy" @click="copyUrl()" />
+          </template>
+        </q-input>
+      </div>
+    </q-slide-transition>
   </div>
 </template>
