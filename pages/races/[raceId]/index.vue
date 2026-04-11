@@ -339,6 +339,8 @@
         </div>
       </div>
     </div>
+
+    <calendar-subscription-dialog />
   </div>
 </template>
 

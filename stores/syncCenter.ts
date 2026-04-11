@@ -6,6 +6,7 @@ import type {
   UserDeparture
 } from '@/types/DirectusTypes'
 import { computed, ref, watch } from 'vue'
+import { updateItem } from '@directus/sdk'
 
 export type FollowingUserDeparture = Pick<UserDeparture, 'id' | 'race'>
 
@@ -21,6 +22,9 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   const myRaces = ref<Race[] | null>(null)
   const user = ref<Partial<CustomDirectusUser>>({})
   const followingUserDepartures = ref<FollowingUserDeparture[] | null>(null)
+  const calendarSubscriptionId = ref<string | null>(null)
+  const bookmarkCount = ref<number>(0)
+  const showCalendarPrompt = ref<boolean>(false)
 
   /**
    * DEFINE STORE KEY NAMES
@@ -30,6 +34,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   const MY_RACES_STORAGE_KEY = 'my-races'
   const USER_STORAGE_KEY = 'user'
   const FOLLOWING_USER_DEPARTURES_STORAGE_KEY = 'following-user-departures'
+  const CALENDAR_SUBSCRIPTION_ID_STORAGE_KEY = 'calendar-subscription-id'
+  const BOOKMARK_COUNT_STORAGE_KEY = 'bookmark-count'
 
   /**
    * INITIAL DATA READING FROM STORE
@@ -39,6 +45,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     readUser()
     readMyRaces()
     readFollowingUserDepartures()
+    readCalendarSubscriptionId()
+    readBookmarkCount()
   })
 
   // load data from the local store
@@ -66,6 +74,14 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       followingUserDepartures.value = []
     }
   }
+  function readCalendarSubscriptionId(): void {
+    calendarSubscriptionId.value =
+      localStorage.getItem<string>(CALENDAR_SUBSCRIPTION_ID_STORAGE_KEY) || null
+  }
+  function readBookmarkCount(): void {
+    bookmarkCount.value =
+      localStorage.getItem<number>(BOOKMARK_COUNT_STORAGE_KEY) || 0
+  }
 
   /**
    * WATCH CHANGES ON THE DATA AND SAVE THEM
@@ -77,11 +93,36 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       if (isServer()) {
         return
       }
-      // sort by date
       localStorage.set(MY_RACES_STORAGE_KEY, myRaces.value)
+      syncCalendarSubscription()
     },
     { deep: true }
   )
+
+  function incrementBookmarkCount(): void {
+    bookmarkCount.value += 1
+    localStorage.set(BOOKMARK_COUNT_STORAGE_KEY, bookmarkCount.value)
+    if (!calendarSubscriptionId.value && bookmarkCount.value % 10 === 1) {
+      showCalendarPrompt.value = true
+    }
+  }
+
+  function syncCalendarSubscription(): void {
+    if (!calendarSubscriptionId.value) return
+
+    const { directus } = useApi()
+    const raceIds = (myRaces.value || []).map((r) => r.id)
+
+    directus
+      .request(
+        updateItem('CalendarSubscription', calendarSubscriptionId.value, {
+          races: raceIds.map((id) => ({ Race_id: id })) as any
+        })
+      )
+      .catch((error) => {
+        console.error('Failed to sync calendar subscription:', error)
+      })
+  }
   // user
   watch(
     user,
@@ -108,6 +149,19 @@ export const useSyncCenter = defineStore('syncCenter', () => {
       deep: true
     }
   )
+  watch(calendarSubscriptionId, () => {
+    if (isServer()) {
+      return
+    }
+    if (calendarSubscriptionId.value) {
+      localStorage.set(
+        CALENDAR_SUBSCRIPTION_ID_STORAGE_KEY,
+        calendarSubscriptionId.value
+      )
+    } else {
+      localStorage.remove(CALENDAR_SUBSCRIPTION_ID_STORAGE_KEY)
+    }
+  })
 
   /**
    * Computed data
@@ -131,6 +185,10 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     myRaces,
     user,
     followingUserDepartures,
+    calendarSubscriptionId,
+    bookmarkCount,
+    showCalendarPrompt,
+    incrementBookmarkCount,
     userIdentifier,
     myDepartures
   }

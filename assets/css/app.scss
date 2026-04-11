@@ -1,4 +1,6 @@
 // app global css in SCSS form
+@use 'quasar/src/css/variables' as *;
+
 @keyframes animate-up {
   from {
     transform: translateY(60px);
@@ -28,4 +30,13 @@ a {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+// Push Quasar notifications above the mobile bottom menu
+@media (max-width: $breakpoint-sm-max) {
+  .q-notifications__list--bottom,
+  .q-notifications__list--bottom-left,
+  .q-notifications__list--bottom-right {
+    margin-bottom: 56px;
+  }
 }

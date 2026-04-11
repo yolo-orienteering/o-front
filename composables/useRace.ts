@@ -58,6 +58,7 @@ export function useRace() {
     } else {
       syncCenter.myRaces.splice(index, 1)
     }
+    syncCenter.incrementBookmarkCount()
   }
 
   return {

@@ -16,6 +16,8 @@
       @update:filter="updateFilter()"
     />
     <div v-if="error">Error: {{ error }}</div>
+
+    <calendar-subscription-dialog />
   </div>
 </template>
 

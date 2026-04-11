@@ -8,6 +8,14 @@
       </div>
     </div>
 
+    <!-- calendar subscription -->
+    <div class="row q-my-xl">
+      <div class="col-12 text-h5">Kalender</div>
+      <div class="col-12 q-px-sm q-pt-sm">
+        <calendar-subscription-section />
+      </div>
+    </div>
+
     <!-- Feedback -->
     <div class="row q-my-xl">
       <div class="col-12 text-h5">Feedback</div>
