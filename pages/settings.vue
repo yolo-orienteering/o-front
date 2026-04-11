@@ -8,13 +8,14 @@
       </div>
     </div>
 
+    <!-- disable it until webapp crashes are fixed -->
     <!-- calendar subscription -->
-    <div class="row q-my-xl">
+    <!-- <div class="row q-my-xl">
       <div class="col-12 text-h5">Kalender</div>
       <div class="col-12 q-px-sm q-pt-sm">
         <calendar-subscription-section />
       </div>
-    </div>
+    </div> -->
 
     <!-- Feedback -->
     <div class="row q-my-xl">

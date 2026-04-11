@@ -58,7 +58,8 @@ export function useRace() {
     } else {
       syncCenter.myRaces.splice(index, 1)
     }
-    syncCenter.incrementBookmarkCount()
+    // disable it until webapp crashes are fixed
+    // syncCenter.incrementBookmarkCount()
   }
 
   return {
