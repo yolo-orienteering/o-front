@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "ch.seccom.omate",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_APP_SIGNING_SHA256_FINGERPRINT"
+        "92:31:07:4D:7A:C3:DE:23:FB:B5:A3:11:B9:16:68:F4:05:13:5C:5A:BA:04:AC:FA:B3:0F:6A:C2:B5:F6:B9:34",
+        "5E:C7:53:6E:B2:35:9D:AD:56:B7:97:83:4F:CF:F7:80:07:20:EB:A0:65:65:74:67:6F:22:7B:A1:F4:CE:9F:74"
       ]
     }
   }
