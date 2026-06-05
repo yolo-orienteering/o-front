@@ -28,4 +28,7 @@
   <NuxtLayout>
     <NuxtPage class="animate-up" />
   </NuxtLayout>
+
+  <!-- Global gate: blocks the whole app when an outdated native wrapper is detected. -->
+  <app-update-gate />
 </template>

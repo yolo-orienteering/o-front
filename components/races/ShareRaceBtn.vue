@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { Notify } from 'quasar'
+  import { copyToClipboard } from '@/utils/clipboard'
 
   interface SocialMedia {
     name: string
@@ -51,14 +52,14 @@
 
   async function copyUrlToClipboard(url: string) {
     try {
-      await navigator.clipboard.writeText(url)
+      await copyToClipboard(url)
       Notify.create({
         message: 'Link in Zwischenablage kopiert!',
         type: 'positive'
       })
-    } catch (error) {
+    } catch {
       Notify.create({
-        message: error as unknown as string,
+        message: 'Kopieren fehlgeschlagen',
         type: 'negative'
       })
     }

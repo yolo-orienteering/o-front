@@ -2,6 +2,7 @@
   import { ref } from 'vue'
   import { Notify } from 'quasar'
   import VueTurnstile from 'vue-turnstile'
+  import { copyToClipboard } from '@/utils/clipboard'
 
   const config = useRuntimeConfig()
   const siteKey = config.public.turnstileSiteKey as string
@@ -28,9 +29,9 @@
       if (subscriptionUrl.value) {
         window.location.href = subscriptionUrl.value
       }
-    } catch {
+    } catch (e) {
       Notify.create({
-        message: 'Kalender konnte nicht erstellt werden.',
+        message: 'Kalender konnte nicht erstellt werden.' + e,
         type: 'negative'
       })
     } finally {
@@ -41,7 +42,7 @@
   async function copyUrl() {
     if (!subscriptionUrl.value) return
     try {
-      await navigator.clipboard.writeText(subscriptionUrl.value)
+      await copyToClipboard(subscriptionUrl.value)
       Notify.create({
         message: 'Kalender-Link kopiert!',
         type: 'positive'
