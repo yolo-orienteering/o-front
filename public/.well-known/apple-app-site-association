@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["68X2T4YTGN.ch.seccom.omate"],
+        "components": [
+          {
+            "/": "/calendar-subscription/*",
+            "exclude": true,
+            "comment": "Calendar feed (.ics) — let the calendar app/browser handle it, not o-mate"
+          },
+          {
+            "/": "*",
+            "comment": "All other o-mate.app links open the app"
+          }
+        ]
+      }
+    ]
+  }
+}
