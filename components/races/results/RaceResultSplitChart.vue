@@ -55,7 +55,12 @@
   const chartData = computed<ChartData<'line'>>(() => ({
     datasets: props.series.map((s) => ({
       label: s.label,
-      data: xs.value.map((x, i) => ({ x, y: s.data[i] as number })),
+      // Every runner starts level (0 behind at 0:00), so anchor each line at the
+      // origin on the y-axis, then plot the per-control gaps.
+      data: [
+        { x: 0, y: 0 },
+        ...xs.value.map((x, i) => ({ x, y: s.data[i] as number }))
+      ],
       borderColor: s.color,
       backgroundColor: s.color,
       borderDash: s.dashed ? [6, 4] : undefined,
@@ -102,8 +107,9 @@
         callbacks: {
           title: (items) => {
             const i = items[0]?.dataIndex ?? 0
-            const code = props.controls[i]
-            return `Posten ${i + 1}${code ? ` (${code})` : ''}`
+            if (i === 0) return 'Start'
+            const code = props.controls[i - 1]
+            return `Posten ${i}${code ? ` (${code})` : ''}`
           },
           label: (ctx) =>
             `${ctx.dataset.label}: +${formatRaceTime(Number(ctx.parsed.y))}`
