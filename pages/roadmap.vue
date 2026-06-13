@@ -57,6 +57,10 @@
       done: true
     },
     {
+      text: 'Resultate in der App darstellen. (13.06.2026)',
+      done: true
+    },
+    {
       text: 'Startlisten anzeigen: auch für nicht Angemeldete / suche nach Namen / zeige alle Kategorien / merke Startzeiten anderer Läufer:innen',
       done: false
     },
@@ -86,10 +90,6 @@
     },
     {
       text: 'Übersetze die App in andere Sprachen.',
-      done: false
-    },
-    {
-      text: 'Resultate in der App darstellen.',
       done: false
     },
     {
