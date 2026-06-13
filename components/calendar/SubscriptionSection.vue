@@ -1,64 +1,28 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { Notify } from 'quasar'
-  import VueTurnstile from 'vue-turnstile'
   import { copyToClipboard } from '@/utils/clipboard'
 
-  const config = useRuntimeConfig()
-  const siteKey = config.public.turnstileSiteKey as string
+  const { hasSubscription, subscriptionUrl } = useCalendarSubscription()
+  // iOS / macOS / Linux open `webcal://` natively → keep the one-click flow.
+  // Everywhere else (Windows, Android, …) we send the user to the how-to page.
+  const { supportsWebcal, resolved } = useDevicePlatform()
 
-  const { hasSubscription, subscriptionUrl, createSubscription } =
-    useCalendarSubscription()
-
-  const loading = ref(false)
   const showUrl = ref(false)
-  const turnstileToken = ref<string>('')
-  const turnstileError = ref<any | undefined>(undefined)
 
-  async function handleConnect() {
-    if (hasSubscription.value && subscriptionUrl.value) {
-      window.location.href = subscriptionUrl.value
-      return
-    }
-
-    if (!turnstileToken.value) return
-
-    loading.value = true
-    try {
-      await createSubscription(turnstileToken.value)
-      if (subscriptionUrl.value) {
-        window.location.href = subscriptionUrl.value
-      }
-    } catch (e) {
-      Notify.create({
-        message: 'Kalender konnte nicht erstellt werden.' + e,
-        type: 'negative'
-      })
-    } finally {
-      loading.value = false
-    }
+  function openWebcal() {
+    if (subscriptionUrl.value) window.location.href = subscriptionUrl.value
   }
 
   async function copyUrl() {
     if (!subscriptionUrl.value) return
     try {
       await copyToClipboard(subscriptionUrl.value)
-      Notify.create({
-        message: 'Kalender-Link kopiert!',
-        type: 'positive'
-      })
+      Notify.create({ message: 'Kalender-Link kopiert!', type: 'positive' })
     } catch {
-      Notify.create({
-        message: 'Kopieren fehlgeschlagen',
-        type: 'negative'
-      })
+      Notify.create({ message: 'Kopieren fehlgeschlagen', type: 'negative' })
     }
   }
-
-  const buttonDisabled = computed(() => {
-    if (hasSubscription.value) return false
-    return !turnstileToken.value || !!turnstileError.value
-  })
 </script>
 
 <template>
@@ -68,65 +32,78 @@
       automatisch synchronisiert.
     </p>
 
-    <vue-turnstile
-      v-if="!hasSubscription"
-      :site-key="siteKey"
-      v-model="turnstileToken"
-      render-on-mount
-      @error="(error) => (turnstileError = error)"
-    />
+    <!-- Wait for client-side platform detection so we never flash the wrong branch. -->
+    <div v-if="!resolved" class="text-caption text-grey">Einen Moment…</div>
 
-    <div
-      v-if="!hasSubscription && !turnstileToken && !turnstileError"
-      class="q-mt-sm text-caption text-grey"
-    >
-      Sicherheitsüberprüfung wird geladen…
-    </div>
+    <template v-else>
+      <!-- iOS / macOS / Linux: hand the webcal:// link straight to the OS. -->
+      <template v-if="supportsWebcal">
+        <calendar-subscription-creator
+          v-if="!hasSubscription"
+          label="Kalender verknüpfen"
+          icon="event"
+          @created="openWebcal"
+        />
 
-    <div v-if="turnstileError" class="q-mt-sm text-negative text-caption">
-      Sicherheitsüberprüfung fehlgeschlagen. Bitte lade die Seite neu und
-      versuche es nochmals.
-    </div>
+        <template v-else>
+          <div class="q-mt-md">
+            <q-btn
+              color="primary"
+              icon="event"
+              label="Kalender verknüpfen"
+              unelevated
+              :outline="false"
+              @click="openWebcal()"
+            />
+          </div>
 
-    <div class="q-mt-md">
-      <q-btn
-        color="primary"
-        icon="event"
-        label="Kalender verknüpfen"
-        :loading="loading || buttonDisabled"
-        unelevated
-        :outline="false"
-        @click="handleConnect()"
-      />
-    </div>
+          <q-slide-transition>
+            <div v-if="showUrl">
+              <q-input
+                :model-value="subscriptionUrl"
+                readonly
+                outlined
+                dense
+                class="q-mt-sm"
+              >
+                <template #append>
+                  <q-btn flat round icon="content_copy" @click="copyUrl()" />
+                </template>
+              </q-input>
+            </div>
+          </q-slide-transition>
+        </template>
 
-    <div class="q-mt-md" v-if="hasSubscription">
-      <a
-        class="text-primary text-caption cursor-pointer"
-        @click.prevent="showUrl = !showUrl"
-      >
-        {{
-          showUrl
-            ? 'Link ausblenden'
-            : 'Kalender-App hat sich nicht geöffnet? Oder webcal-Link manuell kopieren?'
-        }}
-      </a>
-    </div>
+        <!-- Fallback / second chance: the step-by-step guide also helps here. -->
+        <div class="q-mt-md">
+          <q-btn
+            flat
+            dense
+            no-caps
+            size="md"
+            color="primary"
+            icon="help_outline"
+            label="Hat nicht geklappt? Schritt-für-Schritt-Anleitung"
+            :to="{ name: 'calendar-setup' }"
+          />
+        </div>
+      </template>
 
-    <q-slide-transition>
-      <div v-if="showUrl && hasSubscription">
-        <q-input
-          :model-value="subscriptionUrl"
-          readonly
-          outlined
-          dense
-          class="q-mt-sm"
-        >
-          <template #append>
-            <q-btn flat round icon="content_copy" @click="copyUrl()" />
-          </template>
-        </q-input>
-      </div>
-    </q-slide-transition>
+      <!-- Windows / Android / other: webcal:// is unreliable → guided how-to page. -->
+      <template v-else>
+        <p class="text-caption text-grey q-mb-md">
+          Auf diesem Gerät muss der Kalender manuell abonniert werden. Unsere
+          Anleitung führt dich Schritt für Schritt durch.
+        </p>
+        <q-btn
+          color="primary"
+          icon="event"
+          label="Kalender einrichten"
+          unelevated
+          :outline="false"
+          :to="{ name: 'calendar-setup' }"
+        />
+      </template>
+    </template>
   </div>
 </template>

@@ -1,5 +1,13 @@
 import { computed } from 'vue'
 
+/** Both URL forms of a subscription feed: the raw HTTPS `.ics` and its `webcal://` twin. */
+export interface SubscriptionUrls {
+  /** `https://…/calendar.ics` — paste this into "Kalender per URL abonnieren" dialogs. */
+  https: string
+  /** `webcal://…/calendar.ics` — hand to the OS to open the calendar app directly. */
+  webcal: string
+}
+
 export function useCalendarSubscription() {
   const syncCenter = useSyncCenter()
   const config = useRuntimeConfig()
@@ -9,11 +17,32 @@ export function useCalendarSubscription() {
     () => !!syncCenter.calendarSubscriptionId
   )
 
-  const subscriptionUrl = computed<string | null>(() => {
-    if (!syncCenter.calendarSubscriptionId) return null
-    const httpsUrl = `${apiUrl}/calendar-subscription/${syncCenter.calendarSubscriptionId}/calendar.ics`
-    return httpsUrl.replace(/^https?:\/\//, 'webcal://')
-  })
+  /** Build both URL forms for an arbitrary subscription id (used by the how-to page,
+   * which may receive the id via a cross-device link rather than from local state). */
+  function urlsForId(id: string): SubscriptionUrls {
+    const https = `${apiUrl}/calendar-subscription/${id}/calendar.ics`
+    return {
+      https: https.replace(/^webcal:\/\//, 'https://'),
+      webcal: https.replace(/^https?:\/\//, 'webcal://')
+    }
+  }
+
+  /** Both URL forms for the current user's subscription, or null if there is none. */
+  const subscriptionUrls = computed<SubscriptionUrls | null>(() =>
+    syncCenter.calendarSubscriptionId
+      ? urlsForId(syncCenter.calendarSubscriptionId)
+      : null
+  )
+
+  /** `webcal://` feed URL for the current subscription (kept for existing callers). */
+  const subscriptionUrl = computed<string | null>(
+    () => subscriptionUrls.value?.webcal ?? null
+  )
+
+  /** `https://` `.ics` feed URL — the form you paste into manual subscription dialogs. */
+  const icsUrl = computed<string | null>(
+    () => subscriptionUrls.value?.https ?? null
+  )
 
   async function createSubscription(turnstileToken: string): Promise<void> {
     const raceIds = (syncCenter.myRaces || []).map((r) => r.id)
@@ -38,7 +67,10 @@ export function useCalendarSubscription() {
 
   return {
     hasSubscription,
+    subscriptionUrls,
     subscriptionUrl,
+    icsUrl,
+    urlsForId,
     createSubscription
   }
 }

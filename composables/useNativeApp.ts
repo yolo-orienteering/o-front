@@ -1,4 +1,5 @@
 import { computed, ref, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
 
 /**
  * Minimum native app version (Android versionCode / iOS CFBundleVersion) the frontend
@@ -24,6 +25,7 @@ const APP_STORE_URL = 'https://apps.apple.com/app/id<APPLE_APP_ID>'
  * is never gated.
  */
 export function useNativeApp() {
+  const $q = useQuasar()
   const userAgent = ref('')
   // Only evaluate on the client — `navigator` doesn't exist during SSR, and deferring to
   // onMounted keeps the initial client render identical to the server render (no hydration
@@ -57,11 +59,14 @@ export function useNativeApp() {
     () => appVersion.value !== null || isLegacyApp.value
   )
 
-  /** Best-effort platform, used to pick the right app store. */
+  /**
+   * Best-effort platform, used to pick the right app store. OS detection comes from
+   * Quasar's `$q.platform`; we keep the `WePublish/` override so the legacy iOS wrapper is
+   * always treated as iOS even if its WebView UA wouldn't otherwise classify as such.
+   */
   const platform = computed<'ios' | 'android' | 'other'>(() => {
-    const ua = userAgent.value
-    if (/iPhone|iPad|iPod/i.test(ua) || /WePublish\//i.test(ua)) return 'ios'
-    if (/Android/i.test(ua)) return 'android'
+    if ($q.platform.is.ios || /WePublish\//i.test(userAgent.value)) return 'ios'
+    if ($q.platform.is.android) return 'android'
     return 'other'
   })
 

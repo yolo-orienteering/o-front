@@ -36,7 +36,7 @@ frontend/
 │   ├── publicTransport/  # SBB timetable widget
 │   ├── races/            # Race timeline, filters, departures
 │   └── user/             # User profile form
-├── composables/          # Reusable Vue composables (11 total)
+├── composables/          # Reusable Vue composables (14 total)
 ├── stores/               # Pinia stores
 ├── types/                # TypeScript types (DirectusTypes.ts)
 ├── utils/                # Utility functions (DateUtils.ts)
@@ -69,6 +69,7 @@ npm run lint      # Format with Prettier
 | `/settings`                                            | User settings       |
 | `/roadmap`                                             | Roadmap             |
 | `/privacy-policy`                                      | Privacy policy      |
+| `/calendar-setup`                                      | Calendar how-to     |
 
 ## State Management (Pinia Stores)
 
@@ -89,12 +90,27 @@ npm run lint      # Format with Prettier
 - Users can subscribe to a calendar of their followed races (iCalendar).
 - Creation calls `POST ${apiUrl}/calendar-subscription` via direct `fetch()` (not the SDK),
   gated by a Cloudflare **Turnstile** token (`vue-turnstile`, key `NUXT_PUBLIC_TURNSTILE_SITE_KEY`).
-- The feed URL `${apiUrl}/calendar-subscription/{id}/calendar.ics` is handed to the OS as
-  `webcal://`. Logic lives in `composables/useCalendarSubscription.ts`.
-- The calendar (and every other feature) is **not** gated per-feature. Instead, a single
-  global **force-update gate** (see below) guarantees that any native app reaching the UI is
-  new enough to handle `webcal://`; in a normal browser (mobile or desktop) the OS handles
-  `webcal://` natively. So the subscription section/dialog render unconditionally.
+  The Turnstile + create button is factored into `components/calendar/SubscriptionCreator.vue`.
+- `composables/useCalendarSubscription.ts` exposes the feed `${apiUrl}/calendar-subscription/{id}/calendar.ics`
+  in both forms: `subscriptionUrl` (the `webcal://` twin, handed to the OS) and `icsUrl` (the `https://`
+  form you paste into "subscribe by URL" dialogs), plus `urlsForId(id)`.
+- **Platform-aware UX** — `composables/useDevicePlatform.ts` exposes `supportsWebcal`, and
+  `components/calendar/SubscriptionSection.vue` (used in settings + the prompt dialog) branches on it:
+  - **iOS / macOS / Linux** open `webcal://` natively → keep the one-click "Kalender verknüpfen" flow
+    (hand the link to the OS) + a copyable webcal URL, with a fallback link to the how-to page.
+  - **Windows / Android / everything else** can't rely on `webcal://` → the section instead links to the
+    dedicated step-by-step how-to page **`pages/calendar-setup.vue`** (route `/calendar-setup`).
+- **`pages/calendar-setup.vue`** is the guided fallback (also the second-chance link from the
+  iOS/macOS/Linux flow): if no subscription exists yet it creates one (Turnstile); on **mobile** it nudges
+  the user to a **desktop** via a `?sub=<id>` link that carries the subscription across devices (no shared
+  localStorage) — sharable by copy / WhatsApp / e-mail / native share (`useShareLink`, the Signal path) —
+  and the provider step stays hidden until the user actively chooses to continue on the phone; then the
+  user picks their calendar provider (9 Swiss-common providers + a generic fallback) and gets tailored
+  "subscribe by URL" instructions with the `.ics` URL to copy.
+- The calendar (and every other feature) is **not** gated per-feature. A single global
+  **force-update gate** (see below) guarantees that any native app reaching the UI is new enough to
+  handle `webcal://`; normal browsers are never gated. So the subscription section/dialog render
+  unconditionally.
 
 ### Force-update gate (native apps)
 
@@ -125,8 +141,10 @@ npm run lint      # Format with Prettier
 | `useRace`                    | Race utilities                                                                                           |
 | `useTeleport`                | Portal/teleport utilities                                                                                |
 | `useIsDesktop`               | Responsive breakpoint detection                                                                          |
-| `useCalendarSubscription`    | Create/manage iCalendar subscriptions (Turnstile)                                                        |
-| `useNativeApp`               | Detect native wrapper + version; drives the force-update gate (`updateRequired`, `platform`, `storeUrl`) |
+| `useCalendarSubscription`    | Create/manage iCalendar subscriptions (Turnstile); exposes `subscriptionUrl` (webcal) + `icsUrl` (https) |
+| `useNativeApp`               | Detect native wrapper + version (OS family via `$q.platform`); drives the force-update gate              |
+| `useDevicePlatform`          | OS + mobile form factor via Quasar `$q.platform`; `supportsWebcal` branches the calendar flow            |
+| `useShareLink`               | Share a URL via WhatsApp/`mailto:` links + Web Share API (`canNativeShare`/`nativeShare`, e.g. Signal)   |
 
 ## Coding Conventions
 
@@ -136,6 +154,18 @@ npm run lint      # Format with Prettier
 - Components are organized by feature domain, not by type. Naming is mixed (PascalCase like `GameCard.vue` and kebab-case like `feed-carousel.vue`) — prefer **PascalCase** for new components
 - Use Quasar components (`QBtn`, `QCard`, `QPage`, etc.) for all UI elements
 - Style with **SCSS** and Quasar CSS variables (`var(--q-primary)`, etc.) — no Tailwind
+- **Layout & spacing via Quasar utility classes**, not bespoke CSS: spacing `q-pa-*` / `q-mt-*` /
+  `q-mb-*` / `q-my-*`, grids with `row` + `col-*` / `col-sm-*` / `col-md-*`, gaps with
+  `q-col-gutter-*`. **Avoid custom scoped CSS with hard-coded pixel values** — reach for a Quasar
+  class or `$q` first (rare, accepted exceptions: library containers like the Leaflet map, dialog
+  `min/max-width`, content `max-width` for readability)
+- **Page top spacing:** a page's root element uses `q-pt-md` so content sits consistently below the
+  header (the layout's `<q-page padding>` supplies the base padding) — see `pages/index.vue`,
+  `pages/settings.vue`. Don't add ad-hoc top margins/paddings against the header
+- **Detect OS / device form factor via Quasar's `$q.platform`** (`useQuasar().platform`), not
+  hand-rolled User-Agent regex. It disambiguates Android from Linux, corrects iPadOS's desktop UA,
+  and is SSR-aware. The one exception is `useNativeApp`'s custom `o-mate-app/` / `WePublish/` / `wv`
+  wrapper markers, which no library exposes
 - Brand colors are defined in `app.config.ts` (primary: #264653, secondary: #f4a261)
 - Responsive layout: desktop uses side drawer, mobile uses bottom footer navigation
 - Locale is German (de-CH) — use Moment.js with German locale for date formatting

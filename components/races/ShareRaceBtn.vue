@@ -64,6 +64,13 @@
       })
     }
   }
+
+  // Signal has no share-URL scheme; the Web Share API (when available) is the way to reach
+  // it — it opens the OS share sheet where Signal/Telegram/… appear. See useShareLink.
+  const { canNativeShare, nativeShare } = useShareLink()
+  function shareNative() {
+    nativeShare(window.location.href, { title: 'o-mate' })
+  }
 </script>
 
 <template>
@@ -71,6 +78,17 @@
     <q-icon name="share">
       <q-menu anchor="bottom left" :offset="[4, 8]">
         <q-list>
+          <q-item
+            v-if="canNativeShare"
+            v-close-popup
+            clickable
+            @click="shareNative()"
+          >
+            <q-item-section avatar>
+              <q-icon name="mdi-share-variant" color="light-blue-7" />
+            </q-item-section>
+            <q-item-section>Signal &amp; mehr</q-item-section>
+          </q-item>
           <nuxt-link
             v-for="plattform in socialMediaPlattforms"
             :key="plattform.name"
