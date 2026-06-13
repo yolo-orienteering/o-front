@@ -19,7 +19,12 @@
       </div>
 
       <!-- podium (top 3) -->
-      <div v-for="(entry, i) in podium(cat)" :key="i" class="result-line">
+      <div
+        v-for="(entry, i) in podium(cat)"
+        :key="i"
+        class="result-line"
+        :class="{ 'result-line--mine': isMine(entry) }"
+      >
         <q-icon
           name="emoji_events"
           :style="{ color: PODIUM_COLORS[i] }"
@@ -27,7 +32,13 @@
           class="q-mr-sm"
         />
         <span class="result-name">{{ entry.fullName }}</span>
-        <span class="result-time text-grey-8">
+        <q-icon
+          v-if="isMine(entry)"
+          name="person"
+          size="14px"
+          class="q-mr-xs text-primary"
+        />
+        <span class="result-time" :class="isMine(entry) ? '' : 'text-grey-8'">
           {{ formatRaceTime(entry.timeInSeconds) }}
         </span>
       </div>
@@ -123,6 +134,11 @@
     return parts.join(' · ')
   }
 
+  function isMine(entry: RaceResultEntry): boolean {
+    return (
+      props.meIdentifier !== false && entry.identifier === props.meIdentifier
+    )
+  }
   function isOwnCategory(cat: RaceResultClass): boolean {
     return !!own.value && cat.name === own.value.raceClass.name
   }
@@ -217,6 +233,13 @@
     display: flex;
     align-items: center;
     padding: 3px 0;
+  }
+  .result-line--mine {
+    margin: 2px -4px;
+    padding: 3px 4px;
+    border-radius: 8px;
+    background: rgba(38, 70, 83, 0.1);
+    font-weight: 600;
   }
   .result-name {
     flex: 1 1 auto;
