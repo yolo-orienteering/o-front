@@ -19,6 +19,10 @@
     "@pinia/nuxt": "^0.11.2",
     "@quasar/extras": "^1.17.0",
     "@types/leaflet": "^1.9.21",
+    "chart.js": "^4.5.1",
+    "chartjs-plugin-zoom": "^2.2.0",
+    "fast-xml-parser": "^5.8.0",
+    "hammerjs": "^2.0.8",
     "leaflet": "^1.9.4",
     "moment": "^2.30.1",
     "nuxt": "^3.17.7",
@@ -26,6 +30,7 @@
     "pinia": "^3.0.3",
     "quasar": "^2.18.2",
     "vue": "^3.5.17",
+    "vue-chartjs": "^5.3.3",
     "vue-router": "^4.5.1",
     "vue-turnstile": "^1.0.11"
   },

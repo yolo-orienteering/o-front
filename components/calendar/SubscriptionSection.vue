@@ -99,19 +99,6 @@
       />
     </div>
 
-    <div class="q-mt-md" v-if="hasSubscription">
-      <a
-        class="text-primary text-caption cursor-pointer"
-        @click.prevent="showUrl = !showUrl"
-      >
-        {{
-          showUrl
-            ? 'Link ausblenden'
-            : 'Kalender-App hat sich nicht geöffnet? Oder webcal-Link manuell kopieren?'
-        }}
-      </a>
-    </div>
-
     <q-slide-transition>
       <div v-if="showUrl && hasSubscription">
         <q-input
