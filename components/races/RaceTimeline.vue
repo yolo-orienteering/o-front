@@ -42,6 +42,22 @@
     return !syncCenter.userIdentifier && !!race.departureLink
   }
 
+  function isBookmarked(race: Race): boolean {
+    return !!syncCenter.myRaces?.find((myRace) => myRace.id === race.id)
+  }
+
+  // The timeline dot doubles as the bookmark toggle (rendered via the entry's
+  // `icon`/`color` props): a click on the dot toggles it, anywhere else opens
+  // the race detail.
+  const router = useRouter()
+  function onEntryClick(race: Race, event: MouseEvent): void {
+    if ((event.target as HTMLElement).closest('.q-timeline__dot')) {
+      raceCompose.addOrRemoveRace(race)
+      return
+    }
+    router.push(`/races/${race.id}`)
+  }
+
   function isRaceToday(date: string | null | undefined): boolean {
     if (!date) return false
     const raceDay = new Date(date)
@@ -54,6 +70,13 @@
   // Shared result-button logic (Rangliste / Live-Resultate); shown on race day only.
   function raceResultButton(race: Race) {
     return isRaceToday(race.date) ? raceCompose.getResultButton(race) : null
+  }
+
+  // When the in-app Rangliste button is shown, drop the orange deadline pill
+  // (date + start time) — the race is over, so the deadline is irrelevant.
+  // Live-Resultate (external `href`, no `to`) keeps the pill.
+  function showsRanking(race: Race): boolean {
+    return !!raceResultButton(race)?.to
   }
 
   function getMonthlyDelimiter(date: string): string {
@@ -126,7 +149,7 @@
   <!-- races list -->
   <div v-else class="row justify-center">
     <div class="col-12">
-      <q-timeline layout="dense">
+      <q-timeline class="q-pl-sm race-timeline" layout="dense">
         <template v-for="(race, raceIndex) in races" :key="race.id">
           <!-- monthly delimiter -->
           <q-timeline-entry v-if="monthChangeInArray(race.id)" heading>
@@ -182,76 +205,82 @@
             <mailchimp style="margin-top: -16px" />
           </q-timeline-entry>
 
-          <!-- races -->
+          <!-- races — the dot is the bookmark toggle (filled/primary when
+               bookmarked, outline/grey when not); click it to add/remove -->
           <q-timeline-entry
+            :color="isBookmarked(race) ? 'primary' : 'grey-5'"
+            :icon="isBookmarked(race) ? 'bookmark' : 'bookmark_outline'"
             :title="race.name!"
             class="cursor-pointer"
-            @click="$router.push(`/races/${race.id}`)"
+            @click="onEntryClick(race, $event)"
           >
             <!-- date & deadline -->
             <template #subtitle>
               <div class="row items-center">
-                <div class="col-6">
+                <div class="col-6 race-subtitle-muted">
                   {{ formatDate(race.date!, 'dd, DD.MM yyyy') }}
                 </div>
-                <!-- deadline -->
-                <div v-if="race.deadline" class="col-6 text-right">
+                <!-- deadline — or, on race day, the Rangliste shortcut takes
+                     this slot (right of the date) in place of the deadline.
+                     The subtitle's muted look is re-applied to the deadline pill
+                     only, so the Rangliste button keeps full opacity. -->
+                <div
+                  v-if="showsRanking(race) || race.deadline"
+                  class="col-6 text-right"
+                  :class="{ 'race-subtitle-muted': !showsRanking(race) }"
+                >
                   <q-btn
-                    v-if="shouldAddUser(race)"
-                    color="secondary"
-                    to="/settings"
+                    v-if="showsRanking(race)"
+                    :outline="false"
+                    color="primary"
                     rounded
                     size="sm"
-                    unelevated
+                    no-caps
+                    :icon="raceResultButton(race)!.icon"
+                    :label="raceResultButton(race)!.label"
+                    :to="raceResultButton(race)!.to"
                     @click.stop=""
-                  >
-                    Deine Startzeit
-                  </q-btn>
+                  />
 
-                  <q-chip
-                    v-else-if="syncCenter.myDepartures.getDepartureFor(race.id)"
-                    color="secondary"
-                    rounded
-                    size="md"
-                    unelevated
-                  >
-                    {{ syncCenter.myDepartures.getFormatedDeparture(race.id) }}
-                  </q-chip>
+                  <template v-else>
+                    <q-btn
+                      v-if="shouldAddUser(race)"
+                      color="secondary"
+                      to="/settings"
+                      rounded
+                      size="sm"
+                      unelevated
+                      @click.stop=""
+                    >
+                      Deine Startzeit
+                    </q-btn>
 
-                  <q-chip
-                    v-else
-                    :class="[
-                      { 'text-strike': new Date() > new Date(race.deadline!) }
-                    ]"
-                    :outline="!filter.filter.deadline"
-                    color="secondary"
-                    dense
-                  >
-                    {{ formatDate(race.deadline!, 'dd, DD.MMM') }}
-                  </q-chip>
-                </div>
-              </div>
-            </template>
-            <!-- title & favorites -->
-            <template #title>
-              <div class="row items-center">
-                <div class="col-10">
-                  {{ race.name }}
-                </div>
-                <div class="col-2 text-right">
-                  <q-btn
-                    :outline="
-                      !syncCenter.myRaces?.find(
-                        (myRace) => myRace.id === race.id
-                      )
-                    "
-                    color="primary"
-                    dense
-                    round
-                    @click.stop="raceCompose.addOrRemoveRace(race)"
-                  >
-                    <q-icon name="bookmark_outline" />
-                  </q-btn>
+                    <q-chip
+                      v-else-if="
+                        syncCenter.myDepartures.getDepartureFor(race.id)
+                      "
+                      color="secondary"
+                      rounded
+                      size="md"
+                      unelevated
+                    >
+                      {{
+                        syncCenter.myDepartures.getFormatedDeparture(race.id)
+                      }}
+                    </q-chip>
+
+                    <q-chip
+                      v-else
+                      :class="[
+                        { 'text-strike': new Date() > new Date(race.deadline!) }
+                      ]"
+                      :outline="!filter.filter.deadline"
+                      color="secondary"
+                      dense
+                    >
+                      {{ formatDate(race.deadline!, 'dd, DD.MMM') }}
+                    </q-chip>
+                  </template>
                 </div>
               </div>
             </template>
@@ -269,9 +298,13 @@
                 {{ race.region ? `(${race.region})` : '' }}
               </div>
 
-              <!-- result shortcut (race day only) — shares the city row, no extra
-                   vertical space; mirrors the detail page (Rangliste / Live-Resultate) -->
-              <div v-if="raceResultButton(race)" class="col-auto">
+              <!-- result shortcut (race day only) — Live-Resultate stays on the
+                   city row (Rangliste moves up next to the date); shares the row,
+                   no extra vertical space; mirrors the detail page -->
+              <div
+                v-if="raceResultButton(race) && !showsRanking(race)"
+                class="col-auto"
+              >
                 <q-btn
                   :outline="false"
                   color="primary"
@@ -318,6 +351,18 @@
 </template>
 
 <style lang="scss">
+  // Quasar dims the whole `#subtitle` slot (opacity .6). That also dims the
+  // Rangliste button we render there, and a child can't undo a parent's opacity.
+  // So lift it off the subtitle and re-apply the muted look only where wanted
+  // (the date + deadline pill) via `.race-subtitle-muted`.
+  .race-timeline .q-timeline__subtitle {
+    opacity: 1;
+  }
+
+  .race-subtitle-muted {
+    opacity: 0.6;
+  }
+
   .newsletter-container {
     margin-left: -8px;
     margin-right: -8px;

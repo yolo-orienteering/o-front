@@ -200,7 +200,14 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   `rankingLink` exists, else external **Live-Resultate**; slowly blinks when the race is today;
   **shown on mobile only** (hidden on desktop). Both the Rangliste section and the Anreise map render
   with reserved-height skeletons to avoid layout shift on load. The race timeline overview
-  (`RaceTimeline.vue`) shows a small result button below each race's bookmark **only on the race's day**.
+  (`RaceTimeline.vue`) shows a small result button **only on the race's day**: an in-app
+  **Rangliste** sits top-right next to the race date, taking the deadline pill's slot (the deadline —
+  date + start time — is hidden since the race is over); an external **Live-Resultate** instead sits
+  below the title on the city row and keeps the deadline pill (`showsRanking()` switches between the two
+  by testing the button's `to`). The bookmark control **is** the entry's timeline dot — set via the
+  `q-timeline-entry` `icon`/`color` props (filled `bookmark`/primary when bookmarked, `bookmark_outline`/grey
+  when not); the entry's click handler (`onEntryClick`) toggles the bookmark when the dot is clicked and
+  otherwise opens the race detail.
   The shared button config (Rangliste → Live-Resultate priority, labels, in-app/external target) lives
   in **`useRace().getResultButton(race)`**; each caller adds its own date gate (today vs today-or-past).
 
