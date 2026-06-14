@@ -20,10 +20,6 @@
           @click="dismissPrompt"
         />
       </div>
-      <div class="text-body2 text-grey-7 q-mb-sm">
-        Gib deinen Namen und Jahrgang ein, um dich in der Rangliste
-        hervorzuheben.
-      </div>
       <user-form />
     </div>
 

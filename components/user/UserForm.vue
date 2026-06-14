@@ -14,8 +14,10 @@
           <template #avatar>
             <q-icon name="info" size="md" />
           </template>
-          Lass dir deine <b>Startzeiten automatisch</b> von o-mate anzeigen. Gib
-          einfach deinen Vornamen, Nachnamen und Jahrgang ein.
+          Lass dir deine <b>Startzeiten & Resultate automatisch</b> von o-mate
+          anzeigen. Du brauchst dafür weder Passwort noch einen Account. Gib
+          einfach Vornamen, Nachnamen und Jahrgang ein. Die Daten werden nur auf
+          deinem Gerät gespeichert.
         </q-banner>
       </div>
     </client-only>
