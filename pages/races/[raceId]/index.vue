@@ -106,31 +106,11 @@
     () => expectResults.value && !(resultsLoaded.value && !hasResults.value)
   )
 
-  // Quick-access button shown next to the back button for finished/ongoing races.
-  // Priority: in-app Rangliste, else external Live-Resultate.
-  const resultButton = computed<{
-    label: string
-    icon: string
-    to?: string
-    href?: string
-  } | null>(() => {
-    if (!isPastOrToday.value || !race.value) return null
-    if (race.value.rankingLink) {
-      return {
-        label: 'Rangliste',
-        icon: 'leaderboard',
-        to: `/races/${raceId.value}/results`
-      }
-    }
-    if (race.value.liveResultLink) {
-      return {
-        label: 'Live-Resultate',
-        icon: 'live_tv',
-        href: race.value.liveResultLink
-      }
-    }
-    return null
-  })
+  // Quick-access button next to the back button for finished/ongoing races —
+  // shared Rangliste / Live-Resultate logic (see useRace.getResultButton).
+  const resultButton = computed(() =>
+    isPastOrToday.value ? raceCompose.getResultButton(race.value) : null
+  )
 
   const myDeparture = computed<UserDeparture | undefined>(() =>
     syncCenter.myDepartures.getDepartureFor(race.value?.id)

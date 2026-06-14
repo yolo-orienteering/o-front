@@ -26,10 +26,8 @@
       <!-- user not found → let them pick a category from the slider -->
       <template v-else-if="results">
         <div class="text-h5">{{ race?.name }}</div>
-        <div class="text-body2 text-grey-7 q-mt-xs q-mb-md">
-          Wähle deine Kategorie:
-        </div>
         <race-category-carousel
+          class="q-pt-lg"
           :results="results"
           :me-identifier="syncCenter.userIdentifier"
           :race-id="raceId"

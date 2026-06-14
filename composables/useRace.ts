@@ -9,8 +9,43 @@ type RaceLinkType =
   | 'liveResult'
   | 'instruction'
 
+export interface RaceResultButton {
+  icon: string
+  label: string
+  /** in-app route (Rangliste) */
+  to?: string
+  /** external URL (Live-Resultate) */
+  href?: string
+}
+
 export function useRace() {
   const syncCenter = useSyncCenter()
+
+  /**
+   * The result shortcut for a race: in-app **Rangliste** when a ranking link
+   * exists, else external **Live-Resultate**. Callers decide *when* to show it
+   * (e.g. race day on the overview, today-or-past on the detail page).
+   */
+  function getResultButton(
+    race: Race | null | undefined
+  ): RaceResultButton | null {
+    if (!race) return null
+    if (race.rankingLink) {
+      return {
+        icon: 'leaderboard',
+        label: 'Rangliste',
+        to: `/races/${race.id}/results`
+      }
+    }
+    if (race.liveResultLink) {
+      return {
+        icon: 'live_tv',
+        label: 'Live-Resultate',
+        href: race.liveResultLink
+      }
+    }
+    return null
+  }
 
   function composeLink({
     race,
@@ -63,6 +98,7 @@ export function useRace() {
 
   return {
     composeLink,
-    addOrRemoveRace
+    addOrRemoveRace,
+    getResultButton
   }
 }
