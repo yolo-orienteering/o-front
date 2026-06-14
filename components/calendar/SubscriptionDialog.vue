@@ -8,7 +8,8 @@
     () => syncCenter.showCalendarPrompt,
     (val) => {
       if (val) {
-        dialogOpen.value = true
+        // disable it until webapp crashes are fixed
+        // dialogOpen.value = true
         syncCenter.showCalendarPrompt = false
       }
     }

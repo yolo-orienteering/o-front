@@ -2,6 +2,7 @@
   import { computed, onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import FollowingDeparturesByRace from '~/components/races/FollowingDeparturesByRace.vue'
+  import RaceResultSummary from '~/components/races/results/RaceResultSummary.vue'
 
   import type {
     Race,
@@ -16,6 +17,11 @@
   const raceCompose = useRace()
   const syncCenter = useSyncCenter()
   const { getFollowingUserDeparturesbyRace } = useFollowingUserDepartures()
+  const { results: raceResults, fetchByRankingLink } = useRaceResults()
+  const { teleportElement: backBtnTeleport } = useTeleport(
+    'teleport-right-to-back-btn'
+  )
+  const isDesktop = useIsDesktop()
 
   const followingDepartures = ref<UserDeparture[] | false>([])
   const expandedInstructions = ref<boolean>(false)
@@ -47,8 +53,14 @@
     } | Alle Informationen zum Anlass findest du in der o-mate app.`
   })
 
+  const resultsLoaded = ref(false)
+
   onMounted(async () => {
     await loadFollowing()
+    if (isPastOrToday.value && race.value?.rankingLink) {
+      await fetchByRankingLink(race.value.rankingLink)
+      resultsLoaded.value = true
+    }
   })
 
   async function loadFollowing() {
@@ -56,6 +68,69 @@
       raceId.value
     )
   }
+
+  // race day flags (only used client-side via teleport / fetched results)
+  function isSameOrPastDay(dateStr: string | null | undefined): {
+    pastOrToday: boolean
+    today: boolean
+  } {
+    if (!dateStr) return { pastOrToday: false, today: false }
+    const raceDay = new Date(dateStr)
+    raceDay.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return {
+      pastOrToday: raceDay.getTime() <= today.getTime(),
+      today: raceDay.getTime() === today.getTime()
+    }
+  }
+
+  const isPastOrToday = computed(
+    () => isSameOrPastDay(race.value?.date).pastOrToday
+  )
+  const isToday = computed(() => isSameOrPastDay(race.value?.date).today)
+
+  const hasResults = computed(
+    () =>
+      !!raceResults.value &&
+      raceResults.value.classes.some((c) => c.results.length > 0)
+  )
+
+  // We expect a Rangliste (so we can reserve space + show a skeleton while loading)
+  // whenever the race is finished/ongoing and has a ranking link.
+  const expectResults = computed(
+    () => isPastOrToday.value && !!race.value?.rankingLink
+  )
+  // Show the section unless we've loaded and there are genuinely no results.
+  const showResultsSection = computed(
+    () => expectResults.value && !(resultsLoaded.value && !hasResults.value)
+  )
+
+  // Quick-access button shown next to the back button for finished/ongoing races.
+  // Priority: in-app Rangliste, else external Live-Resultate.
+  const resultButton = computed<{
+    label: string
+    icon: string
+    to?: string
+    href?: string
+  } | null>(() => {
+    if (!isPastOrToday.value || !race.value) return null
+    if (race.value.rankingLink) {
+      return {
+        label: 'Rangliste',
+        icon: 'leaderboard',
+        to: `/races/${raceId.value}/results`
+      }
+    }
+    if (race.value.liveResultLink) {
+      return {
+        label: 'Live-Resultate',
+        icon: 'live_tv',
+        href: race.value.liveResultLink
+      }
+    }
+    return null
+  })
 
   const myDeparture = computed<UserDeparture | undefined>(() =>
     syncCenter.myDepartures.getDepartureFor(race.value?.id)
@@ -271,7 +346,49 @@
             :coordinates="race.coordinates"
             :race="race"
           />
+          <!-- reserve the map + buttons height so the layout doesn't jump -->
+          <template #fallback>
+            <q-skeleton
+              class="rounded-borders"
+              height="300px"
+              style="margin: 0 -8px"
+            />
+            <div class="row q-pt-lg justify-center q-gutter-sm">
+              <q-skeleton type="QBtn" width="130px" />
+              <q-skeleton type="QBtn" width="120px" />
+              <q-skeleton type="QBtn" width="80px" />
+            </div>
+          </template>
         </client-only>
+      </div>
+    </div>
+
+    <!-- rangliste (in-app results) — shown with a skeleton while loading so it
+         doesn't pop in late and shift the layout -->
+    <div v-if="showResultsSection" class="col-12">
+      <q-separator class="q-my-lg" />
+
+      <div class="text-h5">Rangliste</div>
+
+      <div class="q-pt-md q-pl-sm">
+        <race-result-summary
+          v-if="resultsLoaded && hasResults && raceResults"
+          :results="raceResults"
+          :me-identifier="syncCenter.userIdentifier"
+          :race-id="race.id"
+        />
+        <!-- loading placeholder (reserves height) -->
+        <div v-else class="results-skeleton">
+          <q-skeleton type="QInput" class="q-mb-md" />
+          <q-skeleton height="120px" class="rounded-borders q-mb-md" />
+          <q-skeleton
+            v-for="n in 5"
+            :key="n"
+            type="text"
+            height="32px"
+            class="q-mb-sm"
+          />
+        </div>
       </div>
     </div>
 
@@ -327,20 +444,40 @@
           </q-btn>
         </div>
 
-        <!-- ranking -->
+        <!-- ranking (external source) -->
         <div v-if="race.rankingLink" class="col-auto">
           <q-btn
             :href="raceCompose.composeLink({ race, linkType: 'ranking' })"
             target="_blank"
           >
             <q-icon class="q-mr-sm" name="list" />
-            Rangliste
+            Rangliste auf o-l.ch
           </q-btn>
         </div>
       </div>
     </div>
 
     <calendar-subscription-dialog />
+
+    <!-- quick-access result button, next to the "Zurück" button (mobile only) -->
+    <Teleport
+      v-if="backBtnTeleport && resultButton && !isDesktop"
+      :to="backBtnTeleport"
+    >
+      <q-btn
+        size="md"
+        rounded
+        :outline="false"
+        color="primary"
+        :icon="resultButton.icon"
+        :label="resultButton.label"
+        :to="resultButton.to"
+        :href="resultButton.href"
+        :target="resultButton.href ? '_blank' : undefined"
+        :class="{ 'result-btn-blink': isToday }"
+        no-caps
+      />
+    </Teleport>
   </div>
 </template>
 
@@ -351,5 +488,19 @@
     overflow: hidden;
     position: relative;
     mask-image: linear-gradient(to bottom, black 10%, transparent 100%);
+  }
+
+  @keyframes resultBtnBlink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  .result-btn-blink {
+    animation: resultBtnBlink 1.6s ease-in-out infinite;
   }
 </style>
