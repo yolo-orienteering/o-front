@@ -233,9 +233,10 @@
   <div class="q-pt-md">
     <h1 class="text-h5 q-mt-none q-mb-sm">Kalender abonnieren</h1>
     <p class="text-body2 text-grey-8">
-      Wenn sich deine Kalender-App nicht automatisch geöffnet hat, kannst du
-      deine gemerkten Läufe hier in wenigen Schritten manuell abonnieren. Einmal
-      eingerichtet, synchronisieren sich Änderungen automatisch.
+      Hier kannst du deine gemerkten Läufe in wenigen Schritten abonnieren.
+      Einmal eingerichtet, synchronisieren sich Änderungen automatisch. Für
+      Iphone-User ist ein Update geplant, mit dem die Läufe mit einem Klick
+      abonniert werden können.
     </p>
 
     <client-only>

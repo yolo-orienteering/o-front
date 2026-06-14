@@ -124,12 +124,13 @@ npm run lint      # Format with Prettier
 - `composables/useCalendarSubscription.ts` exposes the feed `${apiUrl}/calendar-subscription/{id}/calendar.ics`
   in both forms: `subscriptionUrl` (the `webcal://` twin, handed to the OS) and `icsUrl` (the `https://`
   form you paste into "subscribe by URL" dialogs), plus `urlsForId(id)`.
-- **Platform-aware UX** — `composables/useDevicePlatform.ts` exposes `supportsWebcal`, and
-  `components/calendar/SubscriptionSection.vue` (used in settings + the prompt dialog) branches on it:
-  - **iOS / macOS / Linux** open `webcal://` natively → keep the one-click "Kalender verknüpfen" flow
-    (hand the link to the OS) + a copyable webcal URL, with a fallback link to the how-to page.
-  - **Windows / Android / everything else** can't rely on `webcal://` → the section instead links to the
-    dedicated step-by-step how-to page **`pages/calendar-setup.vue`** (route `/calendar-setup`).
+- **Platform-aware UX** — `composables/useDevicePlatform.ts` exposes `supportsWebcal` + `isMobile`, and
+  `components/calendar/SubscriptionSection.vue` (used in settings + the prompt dialog) branches on them:
+  - **Desktop iOS/macOS/Linux** open `webcal://` natively → keep the one-click "Kalender verknüpfen" flow
+    (hand the link to the OS) + a copyable webcal URL, plus a fallback link to the how-to page.
+  - **Mobile (any OS)** and **desktop Windows / Android / everything else** → the button routes straight
+    to the guided step-by-step how-to page **`pages/calendar-setup.vue`** (route `/calendar-setup`); on
+    mobile the "Hat nicht geklappt?" fallback link is hidden.
 - **`pages/calendar-setup.vue`** is the guided fallback (also the second-chance link from the
   iOS/macOS/Linux flow): if no subscription exists yet it creates one (Turnstile); on **mobile** it nudges
   the user to a **desktop** via a `?sub=<id>` link that carries the subscription across devices (no shared
@@ -144,6 +145,10 @@ npm run lint      # Format with Prettier
 
 ### Force-update gate (native apps)
 
+- **Currently disabled:** `FORCE_UPDATE_ENABLED` in `composables/useNativeApp.ts` is `false`, so
+  `updateRequired` always returns `false` and the gate never shows — this lets the frontend ship without
+  releasing matching Android/iOS app updates. Set it back to `true` to re-enable; the rest of this section
+  describes the behaviour when enabled.
 - `composables/useNativeApp.ts` reads the `o-mate-app/<version>` User-Agent marker the native
   wrappers append, and exposes `updateRequired`, `platform`, and `storeUrl`.
 - `components/AppUpdateGate.vue` (mounted globally in `app.vue`) shows a **persistent,

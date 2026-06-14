@@ -6,7 +6,9 @@
   const { hasSubscription, subscriptionUrl } = useCalendarSubscription()
   // iOS / macOS / Linux open `webcal://` natively → keep the one-click flow.
   // Everywhere else (Windows, Android, …) we send the user to the how-to page.
-  const { supportsWebcal, resolved } = useDevicePlatform()
+  // On mobile (any OS) the one-click flow is unreliable, so we always route to the
+  // guided how-to page instead.
+  const { supportsWebcal, resolved, isMobile } = useDevicePlatform()
 
   const showUrl = ref(false)
 
@@ -38,55 +40,69 @@
     <template v-else>
       <!-- iOS / macOS / Linux: hand the webcal:// link straight to the OS. -->
       <template v-if="supportsWebcal">
-        <calendar-subscription-creator
-          v-if="!hasSubscription"
-          label="Kalender verknüpfen"
+        <!-- Mobile: the one-click webcal flow is unreliable → go to the guided page. -->
+        <q-btn
+          v-if="isMobile"
+          color="primary"
           icon="event"
-          @created="openWebcal"
+          label="Kalender verknüpfen"
+          unelevated
+          :outline="false"
+          :to="{ name: 'calendar-setup' }"
         />
 
+        <!-- Desktop: hand webcal:// straight to the OS, with the how-to as a fallback. -->
         <template v-else>
+          <calendar-subscription-creator
+            v-if="!hasSubscription"
+            label="Kalender verknüpfen"
+            icon="event"
+            @created="openWebcal"
+          />
+
+          <template v-else>
+            <div class="q-mt-md">
+              <q-btn
+                color="primary"
+                icon="event"
+                label="Kalender verknüpfen"
+                unelevated
+                :outline="false"
+                @click="openWebcal()"
+              />
+            </div>
+
+            <q-slide-transition>
+              <div v-if="showUrl">
+                <q-input
+                  :model-value="subscriptionUrl"
+                  readonly
+                  outlined
+                  dense
+                  class="q-mt-sm"
+                >
+                  <template #append>
+                    <q-btn flat round icon="content_copy" @click="copyUrl()" />
+                  </template>
+                </q-input>
+              </div>
+            </q-slide-transition>
+          </template>
+
+          <!-- Fallback / second chance: the step-by-step guide also helps here. -->
           <div class="q-mt-md">
             <q-btn
+              flat
+              dense
+              no-caps
+              size="md"
               color="primary"
-              icon="event"
-              label="Kalender verknüpfen"
-              unelevated
-              :outline="false"
-              @click="openWebcal()"
+              icon="help_outline"
+              label="Hat nicht geklappt? Schritt-für-Schritt-Anleitung"
+              :to="{ name: 'calendar-setup' }"
             />
           </div>
-
-          <q-slide-transition>
-            <div v-if="showUrl">
-              <q-input
-                :model-value="subscriptionUrl"
-                readonly
-                outlined
-                dense
-                class="q-mt-sm"
-              >
-                <template #append>
-                  <q-btn flat round icon="content_copy" @click="copyUrl()" />
-                </template>
-              </q-input>
-            </div>
-          </q-slide-transition>
         </template>
-
-        <!-- Fallback / second chance: the step-by-step guide also helps here. -->
-        <div class="q-mt-md">
-          <q-btn
-            flat
-            dense
-            no-caps
-            size="md"
-            color="primary"
-            icon="help_outline"
-            label="Hat nicht geklappt? Schritt-für-Schritt-Anleitung"
-            :to="{ name: 'calendar-setup' }"
-          />
-        </div>
       </template>
 
       <!-- Windows / Android / other: webcal:// is unreliable → guided how-to page. -->

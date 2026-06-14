@@ -9,6 +9,14 @@ import { useQuasar } from 'quasar'
  */
 const MIN_REQUIRED_APP_VERSION = 2
 
+/**
+ * Master switch for the force-update gate. **Temporarily disabled** so the frontend can be
+ * deployed without shipping matching Android/iOS app releases — while `false`, no native
+ * wrapper is ever forced to update (`updateRequired` always returns `false`). Set back to
+ * `true` to re-enable, and bump `MIN_REQUIRED_APP_VERSION` in lockstep with the native apps.
+ */
+const FORCE_UPDATE_ENABLED = false
+
 /** Store listings for the o-mate apps. */
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=ch.seccom.omate'
@@ -82,6 +90,8 @@ export function useNativeApp() {
    * UA is resolved on the client, and is always false in a normal browser (mobile/desktop).
    */
   const updateRequired = computed<boolean>(() => {
+    // Temporarily off — see FORCE_UPDATE_ENABLED above. Re-enable to restore the gate.
+    if (!FORCE_UPDATE_ENABLED) return false
     if (!resolved.value) return false
     // Marker-bearing app: gate on the advertised version.
     if (appVersion.value !== null)
