@@ -217,7 +217,7 @@
   }
 
   .cat-card {
-    flex: 0 0 86%;
+    flex: 0 0 400px;
     max-width: 86%;
     scroll-snap-align: start;
     border: 1px solid rgba(0, 0, 0, 0.1);
