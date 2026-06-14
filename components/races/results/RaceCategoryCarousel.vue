@@ -1,83 +1,148 @@
 <template>
-  <div ref="catRow" class="cat-row">
-    <div
-      v-for="cat in results.classes"
-      :key="cat.name"
-      class="cat-card"
-      :class="{ 'cat-card--mine': isOwnCategory(cat) }"
+  <div>
+    <!-- search runners across this race's categories -->
+    <q-input
+      v-model="search"
+      class="q-mb-sm"
+      dense
+      outlined
+      rounded
+      clearable
+      debounce="150"
+      placeholder="Läufer:in suchen …"
     >
-      <div class="row items-baseline justify-between no-wrap">
-        <div class="text-subtitle1 text-weight-bold ellipsis">
-          {{ cat.name }}
-        </div>
-        <div class="text-caption text-grey-7 q-ml-sm">
-          {{ rankedCount(cat) }} klassiert
-        </div>
-      </div>
-      <div v-if="courseLine(cat)" class="text-caption text-grey-7 q-mb-xs">
-        {{ courseLine(cat) }}
-      </div>
-
-      <!-- podium (top 3) -->
-      <div
-        v-for="(entry, i) in podium(cat)"
-        :key="i"
-        class="result-line"
-        :class="{ 'result-line--mine': isMine(entry) }"
-      >
-        <q-icon
-          name="emoji_events"
-          :style="{ color: PODIUM_COLORS[i] }"
-          size="18px"
-          class="q-mr-sm"
-        />
-        <span class="result-name">{{ entry.fullName }}</span>
-        <q-icon
-          v-if="isMine(entry)"
-          name="person"
-          size="14px"
-          class="q-mr-xs text-primary"
-        />
-        <span class="result-time" :class="isMine(entry) ? '' : 'text-grey-8'">
-          {{ formatRaceTime(entry.timeInSeconds) }}
-        </span>
-      </div>
-
-      <!-- the profile user as a 4th entry (only in their category, if not on podium) -->
-      <template v-if="showUserExtra(cat)">
-        <div v-if="ownHasGapToPodium" class="result-line dots-line">⋮</div>
-        <div class="result-line user-line">
-          <span class="user-pos">{{ ownPosLabel }}</span>
-          <span class="result-name">{{ own!.entry.fullName }}</span>
-          <span class="result-time">
-            <template v-if="own!.entry.status === 'OK'">
-              {{ formatRaceTime(own!.entry.timeInSeconds) }}
-              <span v-if="ownGap" class="user-gap">{{
-                formatGap(ownGap)
-              }}</span>
-            </template>
-            <span v-else>{{ statusShort(own!.entry.status) }}</span>
-          </span>
-        </div>
+      <template #prepend>
+        <q-icon name="search" />
       </template>
+    </q-input>
 
+    <div ref="catRow" class="cat-row">
       <div
-        v-if="!podium(cat).length && !showUserExtra(cat)"
-        class="text-caption text-grey-6 q-py-sm"
+        v-for="cat in visibleClasses"
+        :key="cat.name"
+        class="cat-card"
+        :class="{ 'cat-card--mine': isOwnCategory(cat) }"
       >
-        Keine Resultate.
-      </div>
+        <div class="row items-baseline justify-between no-wrap">
+          <div class="text-subtitle1 text-weight-bold ellipsis">
+            {{ cat.name }}
+          </div>
+          <div class="text-caption text-grey-7 q-ml-sm">
+            {{ rankedCount(cat) }} klassiert
+          </div>
+        </div>
+        <div v-if="courseLine(cat)" class="text-caption text-grey-7 q-mb-xs">
+          {{ courseLine(cat) }}
+        </div>
 
-      <q-btn
-        class="q-mt-sm full-width"
-        :outline="false"
-        color="primary"
-        no-caps
-        dense
-        icon="leaderboard"
-        :to="`/races/${raceId}/results/category/${encodeURIComponent(cat.name)}`"
-        label="Rangliste ansehen"
-      />
+        <!-- while searching: the matching runners in this category -->
+        <template v-if="searchActive">
+          <div
+            v-for="(entry, i) in matchingRunners(cat)"
+            :key="i"
+            class="result-line"
+            :class="{ 'result-line--mine': isMine(entry) }"
+          >
+            <span class="match-pos">
+              {{
+                entry.position
+                  ? `${entry.position}.`
+                  : statusShort(entry.status)
+              }}
+            </span>
+            <span class="result-name">{{ entry.fullName }}</span>
+            <q-icon
+              v-if="isMine(entry)"
+              name="person"
+              size="14px"
+              class="q-mr-xs text-primary"
+            />
+            <span
+              class="result-time"
+              :class="isMine(entry) ? '' : 'text-grey-8'"
+            >
+              {{
+                entry.status === 'OK'
+                  ? formatRaceTime(entry.timeInSeconds)
+                  : statusShort(entry.status)
+              }}
+            </span>
+          </div>
+        </template>
+
+        <!-- default: podium (top 3) + the user as a 4th entry -->
+        <template v-else>
+          <div
+            v-for="(entry, i) in podium(cat)"
+            :key="i"
+            class="result-line"
+            :class="{ 'result-line--mine': isMine(entry) }"
+          >
+            <q-icon
+              name="emoji_events"
+              :style="{ color: PODIUM_COLORS[i] }"
+              size="18px"
+              class="q-mr-sm"
+            />
+            <span class="result-name">{{ entry.fullName }}</span>
+            <q-icon
+              v-if="isMine(entry)"
+              name="person"
+              size="14px"
+              class="q-mr-xs text-primary"
+            />
+            <span
+              class="result-time"
+              :class="isMine(entry) ? '' : 'text-grey-8'"
+            >
+              {{ formatRaceTime(entry.timeInSeconds) }}
+            </span>
+          </div>
+
+          <template v-if="showUserExtra(cat)">
+            <div v-if="ownHasGapToPodium" class="result-line dots-line">⋮</div>
+            <div class="result-line user-line">
+              <span class="user-pos">{{ ownPosLabel }}</span>
+              <span class="result-name">{{ own!.entry.fullName }}</span>
+              <span class="result-time">
+                <template v-if="own!.entry.status === 'OK'">
+                  {{ formatRaceTime(own!.entry.timeInSeconds) }}
+                  <span v-if="ownGap" class="user-gap">{{
+                    formatGap(ownGap)
+                  }}</span>
+                </template>
+                <span v-else>{{ statusShort(own!.entry.status) }}</span>
+              </span>
+            </div>
+          </template>
+
+          <div
+            v-if="!podium(cat).length && !showUserExtra(cat)"
+            class="text-caption text-grey-6 q-py-sm"
+          >
+            Keine Resultate.
+          </div>
+        </template>
+
+        <q-btn
+          class="q-mt-sm full-width"
+          :outline="false"
+          color="primary"
+          no-caps
+          dense
+          icon="leaderboard"
+          :to="`/races/${raceId}/results/category/${encodeURIComponent(cat.name)}`"
+          label="Rangliste ansehen"
+        />
+      </div>
+    </div>
+
+    <!-- no category contains a matching runner -->
+    <div
+      v-if="searchActive && !visibleClasses.length"
+      class="text-center text-grey-6 q-py-md"
+    >
+      Keine Läufer:innen gefunden für „{{ search }}“.
     </div>
   </div>
 </template>
@@ -105,6 +170,27 @@
 
   const catRow = ref<HTMLElement | null>(null)
   const hasAutoScrolled = ref(false)
+  const search = ref('')
+
+  const query = computed(() => (search.value ?? '').trim().toLowerCase())
+  const searchActive = computed(() => query.value.length > 0)
+
+  function matchesQuery(entry: RaceResultEntry): boolean {
+    return `${entry.fullName} ${entry.club ?? ''}`
+      .toLowerCase()
+      .includes(query.value)
+  }
+  function matchingRunners(cat: RaceResultClass): RaceResultEntry[] {
+    return cat.results.filter(matchesQuery)
+  }
+
+  // Categories to render: all of them, or — while searching — only those that
+  // contain a matching runner.
+  const visibleClasses = computed(() =>
+    searchActive.value
+      ? props.results.classes.filter((c) => c.results.some(matchesQuery))
+      : props.results.classes
+  )
 
   const own = computed<
     { entry: RaceResultEntry; raceClass: RaceResultClass } | undefined
@@ -199,6 +285,10 @@
   watch(own, () => {
     if (!hasAutoScrolled.value) autoScroll()
   })
+  // jump back to the first (matching) category whenever the search changes
+  watch(search, () => {
+    if (catRow.value) catRow.value.scrollLeft = 0
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -250,6 +340,13 @@
   }
   .result-time {
     flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .match-pos {
+    flex: 0 0 auto;
+    min-width: 30px;
+    opacity: 0.7;
     font-variant-numeric: tabular-nums;
   }
 

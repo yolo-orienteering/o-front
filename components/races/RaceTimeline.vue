@@ -42,6 +42,20 @@
     return !syncCenter.userIdentifier && !!race.departureLink
   }
 
+  function isRaceToday(date: string | null | undefined): boolean {
+    if (!date) return false
+    const raceDay = new Date(date)
+    raceDay.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return raceDay.getTime() === today.getTime()
+  }
+
+  // Shared result-button logic (Rangliste / Live-Resultate); shown on race day only.
+  function raceResultButton(race: Race) {
+    return isRaceToday(race.date) ? raceCompose.getResultButton(race) : null
+  }
+
   function getMonthlyDelimiter(date: string): string {
     const momentDate = moment(date)
     return momentDate.year() > moment().year()
@@ -242,8 +256,8 @@
               </div>
             </template>
             <!-- text body -->
-            <div class="row justify-between items-center">
-              <div class="col-auto">
+            <div class="row justify-between items-center no-wrap">
+              <div class="col ellipsis" style="min-width: 0">
                 <span v-if="!!race?.terrain" class="q-mr-xs">
                   <q-icon
                     :name="getTerrainIcon(race.terrain as RaceTerrain)"
@@ -253,6 +267,24 @@
                 </span>
                 {{ race.city || race.mapName || 'vakant' }}
                 {{ race.region ? `(${race.region})` : '' }}
+              </div>
+
+              <!-- result shortcut (race day only) — shares the city row, no extra
+                   vertical space; mirrors the detail page (Rangliste / Live-Resultate) -->
+              <div v-if="raceResultButton(race)" class="col-auto">
+                <q-btn
+                  :outline="false"
+                  color="primary"
+                  rounded
+                  size="sm"
+                  no-caps
+                  :icon="raceResultButton(race)!.icon"
+                  :label="raceResultButton(race)!.label"
+                  :to="raceResultButton(race)!.to"
+                  :href="raceResultButton(race)!.href"
+                  :target="raceResultButton(race)!.href ? '_blank' : undefined"
+                  @click.stop=""
+                />
               </div>
             </div>
           </q-timeline-entry>
@@ -297,5 +329,19 @@
     left: 8px;
     margin-top: 8px;
     margin-bottom: 16px;
+  }
+
+  @keyframes resultBtnBlink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+
+  .result-blink {
+    animation: resultBtnBlink 1.6s ease-in-out infinite;
   }
 </style>

@@ -104,7 +104,9 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   the o-l.ch XML — with **pinch-zoom + pan** via `chartjs-plugin-zoom`) + `RaceResultLegChart`.
 - **`RaceCategoryCarousel`** — a horizontally-swipeable row of all categories (top-3 podium per
   card). It preselects (scrolls to) the profile user's category and shows them as a highlighted
-  4th entry there when they're not already on the podium; otherwise it starts on a random category.
+  4th entry there when they're not already on the podium (and highlights them in-place if they're
+  on the podium); otherwise it starts on a random category. Has a **runner-name search** that
+  filters the row to categories containing a match and lists the matching runners inside each card.
   Each card links to that category's full ranking page.
 - **`RaceResultSummary`** (race detail page) = `RaceCategoryCarousel` plus, when there's no profile
   (or while the user is editing), a dismissable prompt that reuses `components/user/UserForm.vue`
@@ -121,7 +123,10 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   next to the "Zurück" button (`teleport-right-to-back-btn`) — **Rangliste** (in-app) when a
   `rankingLink` exists, else external **Live-Resultate**; slowly blinks when the race is today;
   **shown on mobile only** (hidden on desktop). Both the Rangliste section and the Anreise map render
-  with reserved-height skeletons to avoid layout shift on load.
+  with reserved-height skeletons to avoid layout shift on load. The race timeline overview
+  (`RaceTimeline.vue`) shows a small result button below each race's bookmark **only on the race's day**.
+  The shared button config (Rangliste → Live-Resultate priority, labels, in-app/external target) lives
+  in **`useRace().getResultButton(race)`**; each caller adds its own date gate (today vs today-or-past).
 
 ## Composables
 
