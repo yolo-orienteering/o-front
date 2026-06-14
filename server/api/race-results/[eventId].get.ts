@@ -39,7 +39,7 @@ const KNOWN_STATUSES: ResultStatus[] = [
   'NotCompeting'
 ]
 
-export default defineEventHandler(
+export default defineCachedEventHandler(
   async (event): Promise<RaceResultsResponse> => {
     const eventId = getRouterParam(event, 'eventId')
     if (!eventId || !/^\d+$/.test(eventId)) {
@@ -80,10 +80,16 @@ export default defineEventHandler(
       throw createError({ statusCode: 404, statusMessage: 'No results found' })
     }
 
-    // Cache at the edge for 5 minutes — results change rarely once published.
-    setResponseHeader(event, 'Cache-Control', 'public, max-age=300')
-
     return transform(resultList)
+  },
+  {
+    // 30-minute cache layer: results change rarely once published, so serve the
+    // parsed JSON from cache instead of re-fetching + re-parsing o-l.ch every
+    // time. Keyed per event id; thrown errors (invalid id / upstream failure)
+    // are not cached. Also emits Cache-Control so the edge/browser cache too.
+    name: 'race-results',
+    maxAge: 60 * 30,
+    getKey: (event) => getRouterParam(event, 'eventId') ?? 'unknown'
   }
 )
 

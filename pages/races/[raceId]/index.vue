@@ -238,6 +238,35 @@
       </div>
     </div>
 
+    <!-- rangliste (in-app results) — shown with a skeleton while loading so it
+         doesn't pop in late and shift the layout -->
+    <div v-if="showResultsSection" class="col-12">
+      <q-separator class="q-my-lg" />
+
+      <div class="text-h5">Rangliste</div>
+
+      <div class="q-pt-md q-pl-sm">
+        <race-result-summary
+          v-if="resultsLoaded && hasResults && raceResults"
+          :results="raceResults"
+          :me-identifier="syncCenter.userIdentifier"
+          :race-id="race.id"
+        />
+        <!-- loading placeholder (reserves height) -->
+        <div v-else class="results-skeleton">
+          <q-skeleton type="QInput" class="q-mb-md" />
+          <q-skeleton height="120px" class="rounded-borders q-mb-md" />
+          <q-skeleton
+            v-for="n in 5"
+            :key="n"
+            type="text"
+            height="32px"
+            class="q-mb-sm"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- my departure -->
     <!-- todo > also show, if I am not participating thus having no own departure -->
     <div v-if="myDeparture" class="col-12">
@@ -360,35 +389,6 @@
             </div>
           </template>
         </client-only>
-      </div>
-    </div>
-
-    <!-- rangliste (in-app results) — shown with a skeleton while loading so it
-         doesn't pop in late and shift the layout -->
-    <div v-if="showResultsSection" class="col-12">
-      <q-separator class="q-my-lg" />
-
-      <div class="text-h5">Rangliste</div>
-
-      <div class="q-pt-md q-pl-sm">
-        <race-result-summary
-          v-if="resultsLoaded && hasResults && raceResults"
-          :results="raceResults"
-          :me-identifier="syncCenter.userIdentifier"
-          :race-id="race.id"
-        />
-        <!-- loading placeholder (reserves height) -->
-        <div v-else class="results-skeleton">
-          <q-skeleton type="QInput" class="q-mb-md" />
-          <q-skeleton height="120px" class="rounded-borders q-mb-md" />
-          <q-skeleton
-            v-for="n in 5"
-            :key="n"
-            type="text"
-            height="32px"
-            class="q-mb-sm"
-          />
-        </div>
       </div>
     </div>
 

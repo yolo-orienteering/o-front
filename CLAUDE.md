@@ -94,7 +94,8 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   browser can't fetch it directly. The Nitro route **`server/api/race-results/[eventId].get.ts`**
   proxies it: it accepts only a numeric `result_event_id` (extracted from a race's `rankingLink`
   via `parseEventId`), builds a fixed o-l.ch URL, fetches with the global `fetch`, parses with
-  `fast-xml-parser`, and returns app-friendly JSON (`types/RaceResults.ts`). Edge-cached 5 min.
+  `fast-xml-parser`, and returns app-friendly JSON (`types/RaceResults.ts`). Wrapped in
+  `defineCachedEventHandler` (30-min cache, keyed per event id) so hits skip the upstream fetch+parse.
 - **Frontend:** `components/races/results/` — `RaceResultList`/`RaceResultRow` (progressive-disclosure
   ranked list with client-side name search, inverted time-behind bars, and a per-row toggle to
   add/remove a runner from the comparison chart without expanding), `RaceResultSplitsTable`, and the
