@@ -34,11 +34,13 @@ frontend/
 │   ├── games/            # Game cards
 │   ├── helper/           # Navigation helpers
 │   ├── layout/           # Header, menu, navigation
+│   ├── magazine/         # Swiss O Magazine online articles (teaser, reader, paywall)
 │   ├── newsletter/       # Mailchimp integration
 │   ├── publicTransport/  # SBB timetable widget
 │   ├── races/            # Race timeline, filters, departures
 │   └── user/             # User profile form
-├── composables/          # Reusable Vue composables (16 total)
+├── composables/          # Reusable Vue composables (17 total)
+├── data/                 # Hardcoded content fixtures (magazine.ts — Swiss O Magazine test articles)
 ├── stores/               # Pinia stores
 ├── types/                # TypeScript types (DirectusTypes.ts)
 ├── utils/                # Utility functions (DateUtils.ts)
@@ -68,7 +70,9 @@ npm run lint      # Format with Prettier
 | Route                                                  | Page                                   |
 | ------------------------------------------------------ | -------------------------------------- |
 | `/`                                                    | Home                                   |
-| `/feed`                                                | News feed                              |
+| `/feed`                                                | News feed (+ Swiss O Magazine teasers) |
+| `/magazine/[slug]`                                     | Magazine article reader (paywall demo) |
+| `/magazine/checkout`                                   | Mock subscription checkout             |
 | `/games`                                               | Games listing                          |
 | `/games/external`                                      | External games                         |
 | `/races/[raceId]`                                      | Race detail                            |
@@ -106,6 +110,7 @@ npm run lint      # Format with Prettier
 | `useDevicePlatform`          | OS + mobile form factor via Quasar `$q.platform`; `supportsWebcal` branches the calendar flow            |
 | `useTeleport`                | Portal/teleport utilities                                                                                |
 | `useIsDesktop`               | Responsive breakpoint detection                                                                          |
+| `useMagazineSubscription`    | Mock Swiss O Magazine subscription state (localStorage); gates premium articles                          |
 
 ## API Integration
 
@@ -210,6 +215,33 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   otherwise opens the race detail.
   The shared button config (Rangliste → Live-Resultate priority, labels, in-app/external target) lives
   in **`useRace().getResultButton(race)`**; each caller adds its own date gate (today vs today-or-past).
+
+## Swiss O Magazine (online articles — test fixture)
+
+A **hardcoded** test of publishing print Swiss O Magazine articles online inside o-mate
+(a possible content cooperation). **Intentionally bypasses Directus/the API** — no schema,
+collection, or backend model is involved.
+
+- **Content:** `data/magazine.ts` holds 4 typed articles (`MagazineArticle`) as ordered
+  **content blocks** (`paragraph`/`heading`/`figure`/`pullquote`/`list`/`infobox`/`qa`/`expert`).
+  Images were extracted from the print PDF and live in `public/magazine/*.jpg`.
+- **Feed teasers:** `pages/feed/index.vue` renders `components/magazine/MagazineTeaser.vue`
+  cards above the Directus posts, linking to `/magazine/[slug]`.
+- **Reader:** `pages/magazine/[slug].vue` renders the hero + header + body via
+  `components/magazine/MagazineArticleBlock.vue` (per-block styling). Unknown slug → 404.
+- **Paywall demo:** one article (`herzgesundheit-…`) has `premium: true` + `previewBlocks`.
+  After the preview blocks, `components/magazine/MagazinePaywall.vue` blocks the rest unless
+  subscribed. The gated region is wrapped in `<client-only>` (fallback = paywall) so premium
+  content never ships in SSR HTML and the lock survives reload.
+- **Subscription state:** `composables/useMagazineSubscription.ts` — a module-level reactive
+  ref persisted to **localStorage** (Quasar `LocalStorage`). `subscribe(plan)` (from checkout),
+  `login()` (mock "existing subscriber"), and `reset()` (re-test the paywall, exposed as a small
+  link in the article footer when subscribed).
+- **Checkout:** `pages/magazine/checkout.vue` — mock plan picker (Print / Online / Online&Print,
+  all **CHF 70.–**, **CHF 85.–** outside CH via the country select), registration + payment
+  (**TWINT / credit card**). Submit is mocked (no charge): it calls `subscribe()` then routes back
+  to `?return=<slug>`, where the now-unlocked article shows full content. `MagazineBadge.vue` is the
+  shared wordmark.
 
 ## Coding Conventions
 

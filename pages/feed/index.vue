@@ -2,6 +2,9 @@
   import { readItems } from '@directus/sdk'
   import type { Post, PostMedia } from '~/types/DirectusTypes'
 
+  import { magazineArticles } from '~/data/magazine'
+  import MagazineTeaser from '~/components/magazine/MagazineTeaser.vue'
+
   import solv from '@/assets/img/newsSources/solv_logo.jpg'
   import srf from '@/assets/img/newsSources/srf_logo.png'
   import tamedia from '@/assets/img/newsSources/tamedia_logo.png'
@@ -56,6 +59,32 @@
 
 <template>
   <div class="row q-mt-lg justify-center">
+    <!-- Swiss O Magazine — online articles (test) -->
+    <div class="col-12" style="max-width: 600px">
+      <div class="row items-center justify-between q-mb-md">
+        <div class="text-overline text-primary">Aus dem Swiss O Magazine</div>
+        <q-chip
+          dense
+          square
+          color="secondary"
+          text-color="white"
+          class="text-caption"
+        >
+          Neu
+        </q-chip>
+      </div>
+
+      <div class="q-gutter-y-md">
+        <magazine-teaser
+          v-for="mag in magazineArticles"
+          :key="mag.slug"
+          :article="mag"
+        />
+      </div>
+
+      <q-separator class="q-my-lg" />
+    </div>
+
     <div
       v-for="(post, postId) in posts"
       :key="postId"
