@@ -70,6 +70,16 @@ export function useSplitAnalysis() {
       (_, i) => reference?.splits[i]?.control ?? null
     )
 
+    // Only runners who completed the standard course correctly (status OK)
+    // define the "leader" and "fastest leg" baselines. A runner who mispunched
+    // (or DNF'd) has splits that no longer line up with the course sequence —
+    // o-l.ch still emits cumulative times, but they refer to different/earlier
+    // physical controls, so a skipped control yields an artificially small
+    // cumulative that would otherwise become a phantom leader and push even the
+    // actual winner's line below zero. Their own per-leg analysis is still
+    // computed (relative to this baseline); they just don't get to set it.
+    const isOk = results.map((r) => r.status === 'OK')
+
     // cumulative[runner][leg] and legTime[runner][leg]
     const cumulative = results.map((r) =>
       Array.from({ length: legCount }, (_, i) => valid(r.splits[i]?.time))
@@ -82,12 +92,14 @@ export function useSplitAnalysis() {
       })
     )
 
-    // Best (fastest) cumulative + leg per control index.
+    // Best (fastest) cumulative + leg per control index — among OK runners only.
     const bestCumulative: (number | null)[] = []
     const bestLeg: (number | null)[] = []
     for (let i = 0; i < legCount; i++) {
-      bestCumulative.push(min(cumulative.map((c) => c[i])))
-      bestLeg.push(min(legTimes.map((l) => l[i])))
+      bestCumulative.push(
+        min(cumulative.filter((_, r) => isOk[r]).map((c) => c[i]))
+      )
+      bestLeg.push(min(legTimes.filter((_, r) => isOk[r]).map((l) => l[i])))
     }
 
     const byIndex: RunnerAnalysis[] = results.map((_, rIdx) => {
@@ -99,7 +111,8 @@ export function useSplitAnalysis() {
         let legRank: number | null = null
         if (legTime !== null && legTime > 0) {
           const faster = legTimes.reduce(
-            (count, l) =>
+            (count, l, r) =>
+              isOk[r] &&
               l[i] !== null &&
               (l[i] as number) > 0 &&
               (l[i] as number) < legTime
