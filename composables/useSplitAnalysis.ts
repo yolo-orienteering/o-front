@@ -13,6 +13,8 @@ export interface LegAnalysis {
   legLoss: number | null
   /** cumulative − leader's cumulative at this control (≥ 0). */
   cumulativeBehind: number | null
+  /** Placement (rank of cumulative time) among runners at this control (1 = leading). */
+  cumulativeRank: number | null
 }
 
 export interface RunnerAnalysis {
@@ -70,6 +72,16 @@ export function useSplitAnalysis() {
       (_, i) => reference?.splits[i]?.control ?? null
     )
 
+    // Only runners who completed the standard course correctly (status OK)
+    // define the "leader" and "fastest leg" baselines. A runner who mispunched
+    // (or DNF'd) has splits that no longer line up with the course sequence —
+    // o-l.ch still emits cumulative times, but they refer to different/earlier
+    // physical controls, so a skipped control yields an artificially small
+    // cumulative that would otherwise become a phantom leader and push even the
+    // actual winner's line below zero. Their own per-leg analysis is still
+    // computed (relative to this baseline); they just don't get to set it.
+    const isOk = results.map((r) => r.status === 'OK')
+
     // cumulative[runner][leg] and legTime[runner][leg]
     const cumulative = results.map((r) =>
       Array.from({ length: legCount }, (_, i) => valid(r.splits[i]?.time))
@@ -82,12 +94,14 @@ export function useSplitAnalysis() {
       })
     )
 
-    // Best (fastest) cumulative + leg per control index.
+    // Best (fastest) cumulative + leg per control index — among OK runners only.
     const bestCumulative: (number | null)[] = []
     const bestLeg: (number | null)[] = []
     for (let i = 0; i < legCount; i++) {
-      bestCumulative.push(min(cumulative.map((c) => c[i])))
-      bestLeg.push(min(legTimes.map((l) => l[i])))
+      bestCumulative.push(
+        min(cumulative.filter((_, r) => isOk[r]).map((c) => c[i]))
+      )
+      bestLeg.push(min(legTimes.filter((_, r) => isOk[r]).map((l) => l[i])))
     }
 
     const byIndex: RunnerAnalysis[] = results.map((_, rIdx) => {
@@ -99,7 +113,8 @@ export function useSplitAnalysis() {
         let legRank: number | null = null
         if (legTime !== null && legTime > 0) {
           const faster = legTimes.reduce(
-            (count, l) =>
+            (count, l, r) =>
+              isOk[r] &&
               l[i] !== null &&
               (l[i] as number) > 0 &&
               (l[i] as number) < legTime
@@ -108,6 +123,22 @@ export function useSplitAnalysis() {
             0
           )
           legRank = faster + 1
+        }
+
+        // Placement at this control = rank of the cumulative time among OK runners.
+        let cumulativeRank: number | null = null
+        if (cum !== null && cum > 0) {
+          const ahead = cumulative.reduce(
+            (count, c, r) =>
+              isOk[r] &&
+              c[i] !== null &&
+              (c[i] as number) > 0 &&
+              (c[i] as number) < cum
+                ? count + 1
+                : count,
+            0
+          )
+          cumulativeRank = ahead + 1
         }
 
         legs.push({
@@ -122,7 +153,8 @@ export function useSplitAnalysis() {
           cumulativeBehind:
             cum !== null && bestCumulative[i] !== null
               ? cum - (bestCumulative[i] as number)
-              : null
+              : null,
+          cumulativeRank
         })
       }
       return { legs }
@@ -153,4 +185,34 @@ function min(values: (number | null)[]): number | null {
     }
   }
   return best
+}
+
+/**
+ * Fastest (smallest strictly-positive) leg time at control index `i` across the
+ * given per-runner leg-time rows. Used to re-base "Zeitverlust pro Abschnitt" on
+ * a subset of runners (Direktvergleich) instead of the whole class.
+ */
+export function fastestLegAmong(
+  legTimesByRunner: (number | null)[][],
+  i: number
+): number | null {
+  return min(legTimesByRunner.map((legs) => legs[i] ?? null))
+}
+
+/**
+ * Rank of `legTime` at control `i` among the given per-runner leg-time rows
+ * (1 = fastest of the field). Ties share a rank. Null for an invalid leg time.
+ */
+export function legRankAmong(
+  legTime: number | null,
+  legTimesByRunner: (number | null)[][],
+  i: number
+): number | null {
+  if (legTime === null || legTime <= 0) return null
+  let faster = 0
+  for (const legs of legTimesByRunner) {
+    const t = legs[i]
+    if (t !== null && t > 0 && t < legTime) faster++
+  }
+  return faster + 1
 }

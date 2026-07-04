@@ -113,14 +113,24 @@
           Start {{ startClock }} · {{ legCount }} Posten
         </div>
 
-        <race-result-splits-table :legs="legs" />
+        <race-result-splits-table
+          :legs="legs"
+          :mode="compareMode"
+          :baseline="compareBaseline"
+          :selected-leg-times="selectedLegTimes"
+          :selected-cumulatives="selectedCumulatives"
+        />
 
         <div v-if="legs.length" class="q-mt-md">
           <div class="text-caption text-grey-7 q-mb-xs">
             Zeitverlust pro Abschnitt
           </div>
           <client-only>
-            <race-result-leg-chart :legs="legs" />
+            <race-result-leg-chart
+              :legs="legs"
+              :mode="compareMode"
+              :selected-leg-times="selectedLegTimes"
+            />
           </client-only>
         </div>
       </div>
@@ -151,6 +161,14 @@
     expanded: boolean
     inCompare: boolean
     compareColor?: string | null
+    /** Comparison reference for the split table: 'winner' (Rückstand) or 'selected' (Direktvergleich). */
+    compareMode?: 'winner' | 'selected'
+    /** Fastest selected runner's cumulative time per control (drives the "Direktvergleich" column). */
+    compareBaseline?: (number | null)[]
+    /** Leg times per control for each selected runner (drives the "Direktvergleich" leg-rank badge). */
+    selectedLegTimes?: (number | null)[][]
+    /** Cumulative times per control for each selected runner (drives the "Total" placement badge). */
+    selectedCumulatives?: (number | null)[][]
   }>()
 
   defineEmits<{ toggle: []; 'toggle-compare': [] }>()
