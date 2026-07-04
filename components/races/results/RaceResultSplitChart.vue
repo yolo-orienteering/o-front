@@ -1,6 +1,6 @@
 <template>
   <div class="split-chart-wrap">
-    <div class="split-chart">
+    <div class="split-chart" @dblclick="resetZoom">
       <Line
         ref="chartRef"
         :data="chartData"
@@ -8,11 +8,15 @@
         :plugins="chartPlugins"
       />
     </div>
+    <div v-if="zoomEnabled" class="zoom-hint">
+      Zoom: Strg&nbsp;+&nbsp;Mausrad · Doppelklick setzt zurück
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { computed, ref } from 'vue'
+  import { useQuasar } from 'quasar'
   import { Line } from 'vue-chartjs'
   import type { Chart, ChartData, ChartOptions, Plugin } from 'chart.js'
   import { formatRaceTime } from '@/utils/raceResultFormat'
@@ -35,7 +39,20 @@
     series: SplitChartSeries[]
   }>()
 
+  const $q = useQuasar()
   const chartRef = ref<InstanceType<typeof Line> | null>(null)
+
+  // Interactive zoom only where a mouse is available (desktop). On touch the zoom
+  // plugin fights page scroll on the now-sticky chart, so mobile stays scroll-only.
+  const zoomEnabled = computed(() => $q.platform.is.desktop)
+
+  function resetZoom(): void {
+    // vue-chartjs exposes the underlying Chart instance as `.chart`.
+    const chart = (
+      chartRef.value as unknown as { chart?: { resetZoom?: () => void } }
+    )?.chart
+    chart?.resetZoom?.()
+  }
 
   // Strictly increasing numeric x positions (course time). Controls with longer
   // legs sit further apart, so the column spacing reflects leg length/effort.
@@ -160,11 +177,15 @@
       // Tooltip removed on purpose — the Posten numbers along the top and the
       // time axes now carry the labelling the hover popover used to.
       tooltip: { enabled: false },
+      // Zoom is desktop-only: Ctrl + wheel zooms the x-axis (plain wheel still
+      // scrolls the page) and drag pans; double-click resets. On touch every gesture
+      // stays disabled so the page scrolls past the sticky chart — and the canvas
+      // `touch-action: pan-y` (below) guarantees that regardless of the plugin.
       zoom: {
-        pan: { enabled: true, mode: 'x' },
+        pan: { enabled: zoomEnabled.value, mode: 'x' },
         zoom: {
-          wheel: { enabled: true },
-          pinch: { enabled: true },
+          wheel: { enabled: zoomEnabled.value, modifierKey: 'ctrl' },
+          pinch: { enabled: false },
           mode: 'x'
         },
         limits: { x: { min: 'original', max: 'original' } }
@@ -182,6 +203,22 @@
     position: relative;
     height: 300px;
     width: 100%;
-    touch-action: pan-y; // let the plugin handle horizontal pan/pinch
+  }
+
+  // Touch gestures over the chart must scroll the page — Chart.js / the zoom
+  // plugin can set `touch-action: none` on the canvas, which would trap vertical
+  // scroll on mobile — force it back to page-scroll. (Desktop zoom uses the mouse
+  // wheel + Ctrl, which `touch-action` doesn't affect.)
+  .split-chart :deep(canvas) {
+    touch-action: pan-y !important;
+  }
+
+  .zoom-hint {
+    margin-top: 2px;
+    font-size: 0.68rem;
+    line-height: 1.2;
+    text-align: right;
+    color: var(--q-dark);
+    opacity: 0.45;
   }
 </style>

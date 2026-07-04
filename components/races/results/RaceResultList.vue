@@ -33,12 +33,6 @@
       </div>
     </div>
 
-    <div class="row justify-end">
-      <div class="text-caption text-grey-5 q-mt-sm">
-        {{ compareHint }}
-      </div>
-    </div>
-
     <!-- comparison chart — the section stays put; when nothing is selected it
          shows a hint instead of the chart (the list below is always visible).
          Sticky so it stays pinned below the header while scrolling the list. -->
@@ -78,6 +72,7 @@
         :compare-mode="compareMode"
         :compare-baseline="compareBaseline"
         :selected-leg-times="selectedLegTimes"
+        :selected-cumulatives="selectedCumulatives"
         @toggle="toggleExpand(row.index)"
         @toggle-compare="toggleCompare(row.index)"
       />
@@ -118,11 +113,6 @@
     { label: 'Sieger', value: 'winner' },
     { label: 'Direktvergleich', value: 'selected' }
   ]
-  const compareHint = computed(() =>
-    compareMode.value === 'selected'
-      ? 'Vergleich der gewählten Läufer:innen'
-      : 'Rückstand auf die Siegerzeit'
-  )
 
   // Keep the comparison chart pinned just below the app header while scrolling the
   // (long) result list. The sticky `top` tracks the header's live bottom edge so it
@@ -263,10 +253,20 @@
   )
 
   // Leg (section) times per control for each selected runner — feeds the split
-  // table's "Direktvergleich" rank badge (rank within the compared field).
+  // table's "Direktvergleich" leg-rank badge (rank within the compared field).
   const selectedLegTimes = computed<(number | null)[][]>(() =>
     compareIndices.value.map(
       (index) => props.analysis.byIndex[index]?.legs.map((l) => l.legTime) ?? []
+    )
+  )
+
+  // Cumulative times per control for each selected runner — feeds the split
+  // table's "Total" placement badge in Direktvergleich mode (placement within
+  // the compared field, rather than the whole class).
+  const selectedCumulatives = computed<(number | null)[][]>(() =>
+    compareIndices.value.map(
+      (index) =>
+        props.analysis.byIndex[index]?.legs.map((l) => l.cumulative) ?? []
     )
   )
 

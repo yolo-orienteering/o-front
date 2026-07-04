@@ -118,6 +118,7 @@
           :mode="compareMode"
           :baseline="compareBaseline"
           :selected-leg-times="selectedLegTimes"
+          :selected-cumulatives="selectedCumulatives"
         />
 
         <div v-if="legs.length" class="q-mt-md">
@@ -164,8 +165,10 @@
     compareMode?: 'winner' | 'selected'
     /** Fastest selected runner's cumulative time per control (drives the "Direktvergleich" column). */
     compareBaseline?: (number | null)[]
-    /** Leg times per control for each selected runner (drives the "Direktvergleich" rank badge). */
+    /** Leg times per control for each selected runner (drives the "Direktvergleich" leg-rank badge). */
     selectedLegTimes?: (number | null)[][]
+    /** Cumulative times per control for each selected runner (drives the "Total" placement badge). */
+    selectedCumulatives?: (number | null)[][]
   }>()
 
   defineEmits<{ toggle: []; 'toggle-compare': [] }>()

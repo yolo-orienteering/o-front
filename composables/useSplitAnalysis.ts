@@ -13,6 +13,8 @@ export interface LegAnalysis {
   legLoss: number | null
   /** cumulative − leader's cumulative at this control (≥ 0). */
   cumulativeBehind: number | null
+  /** Placement (rank of cumulative time) among runners at this control (1 = leading). */
+  cumulativeRank: number | null
 }
 
 export interface RunnerAnalysis {
@@ -123,6 +125,22 @@ export function useSplitAnalysis() {
           legRank = faster + 1
         }
 
+        // Placement at this control = rank of the cumulative time among OK runners.
+        let cumulativeRank: number | null = null
+        if (cum !== null && cum > 0) {
+          const ahead = cumulative.reduce(
+            (count, c, r) =>
+              isOk[r] &&
+              c[i] !== null &&
+              (c[i] as number) > 0 &&
+              (c[i] as number) < cum
+                ? count + 1
+                : count,
+            0
+          )
+          cumulativeRank = ahead + 1
+        }
+
         legs.push({
           control: controls[i],
           cumulative: cum,
@@ -135,7 +153,8 @@ export function useSplitAnalysis() {
           cumulativeBehind:
             cum !== null && bestCumulative[i] !== null
               ? cum - (bestCumulative[i] as number)
-              : null
+              : null,
+          cumulativeRank
         })
       }
       return { legs }

@@ -18,7 +18,7 @@ There is **no authentication**: users identify themselves by name + birth year, 
 - **Bot protection:** Cloudflare Turnstile (`vue-turnstile`) — for calendar subscriptions
 - **Date Handling:** Moment.js (locale: de-CH)
 - **Tooling:** Prettier + Husky/lint-staged pre-commit formatting
-- **Charts:** Chart.js 4 via vue-chartjs + chartjs-plugin-zoom (pinch-zoom/pan, uses hammerjs) — client-only; registered in `plugins/chart.client.ts`
+- **Charts:** Chart.js 4 via vue-chartjs + chartjs-plugin-zoom (uses hammerjs) — client-only; registered in `plugins/chart.client.ts`. Zoom/pan is enabled **desktop-only** (Ctrl+wheel) and disabled on touch so it doesn't trap page scroll on the sticky split chart — see `RaceResultSplitChart`
 - **XML parsing:** fast-xml-parser (server-side, in the race-results Nitro route)
 - **Language:** TypeScript throughout
 
@@ -181,19 +181,23 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   segment): **Sieger** = gap to the class winner (`analysis.bestCumulative`, the classic Rückstand; default)
   and **Direktvergleich** = gap
   to the fastest of the _currently selected_ runners per control (`compareBaseline`, re-bases as you
-  add/remove runners). The mode drives the chart's 0-line (`chartBaseline`), the split table's single
-  comparison column (`RaceResultSplitsTable` shows either **Rückstand**+category leg-rank badge, or
-  **Direktvergleich**+leg-rank-among-selected badge; values precomputed in a `rows` computed for cheap
-  re-toggling; Direktvergleich falls back to winner when no selection), **and** the per-leg _Zeitverlust_
-  shown both in brackets next to each **Abschnitt** and as the `RaceResultLegChart` bars — re-based on the
-  fastest leg of the class (Sieger) or of the selected runners (Direktvergleich). The mode-aware "fastest
-  leg / rank among a set" helpers live in `useSplitAnalysis` (`fastestLegAmong`, `legRankAmong`), shared by
-  the table and the leg chart. `RaceResultSplitChart`: **linear
+  add/remove runners). The mode drives the chart's 0-line (`chartBaseline`) and the `RaceResultSplitsTable`,
+  which has **two rank badges** — a **leg-rank** badge next to **Abschnitt** and a **placement** badge next to
+  **Total (Rückstand)** — plus the per-leg _Zeitverlust_ (in brackets next to Abschnitt and as the
+  `RaceResultLegChart` bars). In **Sieger** mode these are vs the whole class (`leg.legRank`,
+  `leg.cumulativeRank`, `leg.legLoss`); in **Direktvergleich** they're re-based on the selected field
+  (rank/loss among `selectedLegTimes` / `selectedCumulatives`). The table precomputes it all in a `rows`
+  computed for cheap re-toggling and falls back to winner when there's no selection. Shared mode-aware helpers
+  live in `useSplitAnalysis` (`fastestLegAmong`, `legRankAmong`; `LegAnalysis.cumulativeRank` is the class
+  placement). `RaceResultSplitChart`: **linear
   x-axis spaced by the reference's cumulative time per control** (columns reflect leg length — true per-leg
-  distances are NOT in the o-l.ch XML), **pinch-zoom + pan** via `chartjs-plugin-zoom`; the reversed y-axis
-  is pinned at `0` so 0:00 stays at the top while zooming; **no hover tooltip** — control (Posten) sequence
-  numbers are drawn along the **top** via an inline `afterDraw` plugin that reads the live x scale so labels
-  track zoom/pan. The chart section is **sticky** (`position: sticky`) so it stays pinned while scrolling the
+  distances are NOT in the o-l.ch XML). **Zoom is desktop-only** (`$q.platform.is.desktop`): **Ctrl + wheel**
+  zooms the x-axis (plain wheel still scrolls the page), drag pans, double-click resets — with a small hint. On
+  touch it stays disabled and the canvas is forced to `touch-action: pan-y` so gestures scroll the page past
+  the sticky chart (mobile scroll is a hard requirement; the zoom plugin otherwise sets `touch-action: none`).
+  The reversed y-axis is pinned at `0` so 0:00 stays at the top; **no hover tooltip** —
+  control (Posten) sequence numbers are drawn along the **top** via an inline `afterDraw` plugin that reads the
+  live x scale. The chart section is **sticky** (`position: sticky`) so it stays pinned while scrolling the
   list; its `top` offset tracks the header's live bottom edge (`RaceResultList` updates `--myol-sticky-top` on
   scroll, rAF-throttled) so it follows the mobile reveal header. When no runner is selected the section shows
   a hint instead of the chart, but the **list is always rendered** (never hidden by an empty comparison). The

@@ -3,8 +3,7 @@
     <div class="splits-row splits-head text-grey-7">
       <div class="splits-col-control">Posten</div>
       <div class="splits-col-num">Abschnitt</div>
-      <div class="splits-col-num">Total</div>
-      <div class="splits-col-num">{{ compareHeader }}</div>
+      <div class="splits-col-num">Total (Rückstand)</div>
     </div>
 
     <div
@@ -22,12 +21,19 @@
         <span class="splits-leg-loss" :class="{ primary: !row.legLoss }">
           (+{{ formatRaceTime(row.legLoss || 0) }})
         </span>
-      </div>
-      <div class="splits-col-num">{{ formatRaceTime(row.cumulative) }}</div>
-      <div class="splits-col-num" :class="row.deltaClass">
-        {{ formatDelta(row.delta) }}
         <span v-if="row.rank" class="splits-rank" :class="rankClass(row.rank)">
           {{ row.rank }}
+        </span>
+      </div>
+      <div class="splits-col-num">
+        {{ formatRaceTime(row.cumulative) }}
+        <span :class="row.deltaClass">({{ formatDelta(row.delta) }})</span>
+        <span
+          v-if="row.totalRank"
+          class="splits-rank"
+          :class="rankClass(row.totalRank)"
+        >
+          {{ row.totalRank }}
         </span>
       </div>
     </div>
@@ -48,6 +54,8 @@
     baseline?: (number | null)[]
     /** Leg (section) times per control for each selected runner (selected mode). */
     selectedLegTimes?: (number | null)[][]
+    /** Cumulative times per control for each selected runner (selected mode). */
+    selectedCumulatives?: (number | null)[][]
   }>()
 
   const hasBaseline = computed(
@@ -69,10 +77,12 @@
   const rows = computed(() => {
     const selected = effectiveMode.value === 'selected'
     const selLegs = props.selectedLegTimes ?? []
+    const selCums = props.selectedCumulatives ?? []
     return props.legs.map((leg, i) => {
       let delta: number | null
       let rank: number | null
       let legLoss: number | null
+      let totalRank: number | null
       if (selected) {
         const base = props.baseline?.[i]
         delta =
@@ -80,6 +90,8 @@
             ? leg.cumulative - base
             : null
         rank = legRankAmong(leg.legTime, selLegs, i)
+        // Placement re-based on the selected field, by cumulative time.
+        totalRank = legRankAmong(leg.cumulative, selCums, i)
         // Zeitverlust re-based on the selected field: leg time − fastest selected leg.
         const refLeg = fastestLegAmong(selLegs, i)
         legLoss =
@@ -87,6 +99,7 @@
       } else {
         delta = leg.cumulativeBehind
         rank = leg.legRank
+        totalRank = leg.cumulativeRank
         legLoss = leg.legLoss
       }
       return {
@@ -96,6 +109,7 @@
         cumulative: leg.cumulative,
         delta,
         rank,
+        totalRank,
         legLoss,
         // Highlight the row where this runner led the compared field on the leg.
         isBest: rank === 1,
@@ -125,7 +139,7 @@
 
   .splits-row {
     display: grid;
-    grid-template-columns: 0.7fr 1.25fr 0.8fr 1.05fr;
+    grid-template-columns: 0.7fr 1.5fr 1.5fr;
     align-items: center;
     gap: 2px;
     padding: 4px 0;
