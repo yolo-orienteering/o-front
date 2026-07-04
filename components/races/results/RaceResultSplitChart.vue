@@ -75,6 +75,12 @@
     return Math.max(Math.ceil((m * 1.1) / 5) * 5, 30)
   })
 
+  // Small negative headroom (~5% of the range) so the top line at 0:00 and its
+  // dots aren't clipped against the top edge. 0:00 stays effectively at the top;
+  // the sliver above it is just padding (its label is hidden). Fixed chart height
+  // → this is a near-constant ~13px gap regardless of the range.
+  const yMin = computed(() => -yMax.value * 0.05)
+
   // Renders the control (Posten) sequence numbers along the top of the plot,
   // replacing the hover tooltip. It reads the live x scale on every draw, so the
   // labels stay pinned above their points at any zoom/pan level. Labels that
@@ -133,10 +139,14 @@
     scales: {
       y: {
         reverse: true, // smaller gap (better) on top
-        min: 0, // pin 0:00 (the fastest selected) to the top; never rescales
+        // Pinned bounds (never rescale on zoom); the small negative min is only
+        // top padding so the 0:00 line/dots clear the edge.
+        min: yMin.value,
         max: yMax.value,
         ticks: {
-          callback: (value) => formatRaceTime(Number(value)),
+          // Hide the padding region's (negative) label; 0:00 stays the top tick.
+          callback: (value) =>
+            Number(value) < 0 ? '' : formatRaceTime(Number(value)),
           font: { size: 10 },
           maxTicksLimit: 6
         },
