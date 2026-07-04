@@ -41,7 +41,7 @@
       Keine Resultate für diese Kategorie.
     </div>
 
-    <div v-else class="col-12 q-pt-sm">
+    <div v-else class="col-12 q-pt-md">
       <race-result-list
         :race-class="raceClass"
         :analysis="analysis"

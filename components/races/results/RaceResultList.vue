@@ -1,8 +1,7 @@
 <template>
-  <div class="result-list">
-    <!-- reference toggle: gap to the winner vs. among the selected runners -->
-    <div class="row no-wrap q-gutter-sm items-top justify-between q-mt-md">
-      <!-- name search (client-side filter) -->
+  <div class="result-list" :style="{ '--myol-sticky-top': stickyTop }">
+    <!-- name search (client-side filter) + reference toggle -->
+    <div class="row no-wrap q-gutter-sm items-top justify-between">
       <q-input
         v-model="search"
         dense
@@ -17,34 +16,52 @@
         </template>
       </q-input>
 
-      <q-btn-toggle
-        v-model="compareMode"
-        :options="compareModeOptions"
-        dense
-        no-caps
-        rounded
-        toggle-color="primary"
-        text-color="grey-7"
-        color="primary"
-      />
+      <!-- Segmented mode toggle. Built from plain buttons rather than
+           q-btn-toggle: its color props render flat here, so the active segment
+           never got a solid fill. Explicit CSS guarantees the primary fill. -->
+      <div class="mode-toggle row no-wrap">
+        <button
+          v-for="opt in compareModeOptions"
+          :key="opt.value"
+          type="button"
+          class="mode-toggle__btn"
+          :class="{ 'mode-toggle__btn--active': compareMode === opt.value }"
+          @click="compareMode = opt.value"
+        >
+          {{ opt.label }}
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="row justify-end">
-    <div class="text-caption text-grey-5 q-mt-sm">
-      {{ compareHint }}
+
+    <div class="row justify-end">
+      <div class="text-caption text-grey-5 q-mt-sm">
+        {{ compareHint }}
+      </div>
     </div>
-  </div>
 
-  <!-- comparison chart -->
-  <div v-if="hasSplits && compareSeries.length" class="q-mt-md">
-    <client-only>
-      <race-result-split-chart
-        :x-values="chartBaseline"
-        :series="compareSeries"
-      />
-    </client-only>
+    <!-- comparison chart — the section stays put; when nothing is selected it
+         shows a hint instead of the chart (the list below is always visible).
+         Sticky so it stays pinned below the header while scrolling the list. -->
+    <div v-if="hasSplits" class="q-mt-md chart-sticky">
+      <client-only>
+        <race-result-split-chart
+          v-if="compareSeries.length"
+          :x-values="chartBaseline"
+          :series="compareSeries"
+        />
+      </client-only>
+      <div
+        v-if="!compareSeries.length"
+        class="column items-center text-grey-6 q-py-lg"
+      >
+        <q-icon name="timeline" size="28px" class="text-grey-5 q-mb-xs" />
+        <div class="text-caption text-center">
+          Läufer:innen unten für den Vergleich auswählen.
+        </div>
+      </div>
+    </div>
 
-    <!-- ranked rows (filtered by name search; original index preserved) -->
+    <!-- ranked rows — always visible (filtered by name search; original index kept) -->
     <div class="q-mt-md">
       <race-result-row
         v-for="row in visibleRows"
@@ -73,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, watch } from 'vue'
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
   import type { RaceResultClass } from '@/types/RaceResults'
   import type { SplitAnalysis } from '@/composables/useSplitAnalysis'
   import RaceResultRow from './RaceResultRow.vue'
@@ -97,7 +114,7 @@
   // 'selected' = Direktvergleich, gap to the fastest of the selected runners.
   type CompareMode = 'winner' | 'selected'
   const compareMode = ref<CompareMode>('winner')
-  const compareModeOptions = [
+  const compareModeOptions: { label: string; value: CompareMode }[] = [
     { label: 'Sieger', value: 'winner' },
     { label: 'Direktvergleich', value: 'selected' }
   ]
@@ -106,6 +123,39 @@
       ? 'Vergleich der gewählten Läufer:innen'
       : 'Rückstand auf die Siegerzeit'
   )
+
+  // Keep the comparison chart pinned just below the app header while scrolling the
+  // (long) result list. The sticky `top` tracks the header's live bottom edge so it
+  // follows the mobile reveal header: sits under it when it's shown (scroll up) and
+  // rises to the very top when it hides (scroll down). rAF-throttled; only writes on
+  // change so it doesn't thrash Vue's render on every scroll frame.
+  const stickyTop = ref('0px')
+  let stickyRaf = 0
+  function updateStickyTop(): void {
+    const header = document.querySelector('.q-header') as HTMLElement | null
+    const bottom = header
+      ? Math.max(0, Math.round(header.getBoundingClientRect().bottom))
+      : 0
+    const next = `${bottom}px`
+    if (next !== stickyTop.value) stickyTop.value = next
+  }
+  function onStickyScroll(): void {
+    if (stickyRaf) return
+    stickyRaf = requestAnimationFrame(() => {
+      stickyRaf = 0
+      updateStickyTop()
+    })
+  }
+  onMounted(() => {
+    updateStickyTop()
+    window.addEventListener('scroll', onStickyScroll, { passive: true })
+    window.addEventListener('resize', onStickyScroll, { passive: true })
+  })
+  onBeforeUnmount(() => {
+    window.removeEventListener('scroll', onStickyScroll)
+    window.removeEventListener('resize', onStickyScroll)
+    if (stickyRaf) cancelAnimationFrame(stickyRaf)
+  })
 
   // Rows to render, filtered by the name search but keeping the original index
   // so ranks, gaps, bars and the comparison chart stay relative to the full field.
@@ -282,3 +332,57 @@
     }
   )
 </script>
+
+<style lang="scss" scoped>
+  // Keep the comparison chart in view while scrolling the result list: it pins
+  // just below the app header (offset supplied at runtime via --myol-sticky-top).
+  // The opaque background matters — the Chart.js canvas is transparent, so the
+  // list rows would otherwise show through the pinned chart.
+  .chart-sticky {
+    position: sticky;
+    top: var(--myol-sticky-top, 0px);
+    z-index: 3;
+    background: #fff;
+    // A hair of side/bottom bleed + soft shadow so the list reads as scrolling under.
+    box-shadow: 0 6px 8px -6px rgba(0, 0, 0, 0.18);
+  }
+
+  // Segmented reference toggle (Sieger / Direktvergleich): the active segment is
+  // a solid primary fill, the inactive one is a plain primary-outlined segment.
+  .mode-toggle {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    border: 1px solid var(--q-primary);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .mode-toggle__btn {
+    height: 40px;
+    border: 0;
+    background: #fff;
+    color: var(--q-primary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+
+    & + & {
+      border-left: 1px solid var(--q-primary);
+    }
+
+    &:hover:not(&--active) {
+      background: rgba(38, 70, 83, 0.08);
+    }
+  }
+
+  .mode-toggle__btn--active {
+    background: var(--q-primary);
+    color: #fff;
+  }
+</style>

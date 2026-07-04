@@ -176,8 +176,10 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   ranked list with client-side name search, inverted time-behind bars, and a per-row toggle to
   add/remove a runner from the comparison chart without expanding), `RaceResultSplitsTable`, and the
   two Chart.js views `RaceResultSplitChart` + `RaceResultLegChart`. **Comparison reference has two modes**
-  (a `q-btn-toggle` under the chart, owned by `RaceResultList` as `compareMode`): **Sieger** = gap to the
-  class winner (`analysis.bestCumulative`, the classic Rückstand; default) and **Direktvergleich** = gap
+  (a custom segmented toggle next to the search box, owned by `RaceResultList` as `compareMode` — built from
+  plain buttons + CSS, since `q-btn-toggle`'s color props render flat in this app and never filled the active
+  segment): **Sieger** = gap to the class winner (`analysis.bestCumulative`, the classic Rückstand; default)
+  and **Direktvergleich** = gap
   to the fastest of the _currently selected_ runners per control (`compareBaseline`, re-bases as you
   add/remove runners). The mode drives the chart's 0-line (`chartBaseline`), the split table's single
   comparison column (`RaceResultSplitsTable` shows either **Rückstand**+category leg-rank badge, or
@@ -191,7 +193,11 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   distances are NOT in the o-l.ch XML), **pinch-zoom + pan** via `chartjs-plugin-zoom`; the reversed y-axis
   is pinned at `0` so 0:00 stays at the top while zooming; **no hover tooltip** — control (Posten) sequence
   numbers are drawn along the **top** via an inline `afterDraw` plugin that reads the live x scale so labels
-  track zoom/pan. The main list's per-runner `+gap` stays the classic gap to the winner regardless of mode.
+  track zoom/pan. The chart section is **sticky** (`position: sticky`) so it stays pinned while scrolling the
+  list; its `top` offset tracks the header's live bottom edge (`RaceResultList` updates `--myol-sticky-top` on
+  scroll, rAF-throttled) so it follows the mobile reveal header. When no runner is selected the section shows
+  a hint instead of the chart, but the **list is always rendered** (never hidden by an empty comparison). The
+  main list's per-runner `+gap` stays the classic gap to the winner regardless of mode.
 - **`RaceCategoryCarousel`** — a horizontally-swipeable row of all categories (top-3 podium per
   card). It preselects (scrolls to) the profile user's category and shows them as a highlighted
   4th entry there when they're not already on the podium (and highlights them in-place if they're
