@@ -76,7 +76,7 @@
     </q-card>
 
     <!-- mock login dialog -->
-    <q-dialog v-model="showLogin">
+    <q-dialog v-model="showLogin" class="mag-login-dialog">
       <q-card class="paywall__dialog">
         <q-card-section class="row items-center q-pb-none">
           <magazine-badge />
@@ -91,7 +91,7 @@
               v-model="email"
               type="email"
               label="E-Mail"
-              outline
+              outlined
               dense
               autofocus
             />
@@ -99,7 +99,7 @@
               v-model="password"
               type="password"
               label="Passwort"
-              outline
+              outlined
               dense
             />
             <q-btn
@@ -216,5 +216,13 @@
     width: 360px;
     max-width: 92vw;
     border-radius: 18px;
+  }
+</style>
+
+<!-- global: darken the backdrop so the article/paywall behind doesn't bleed
+     through and read as overlapping buttons -->
+<style lang="scss">
+  .mag-login-dialog .q-dialog__backdrop {
+    background: rgba(20, 20, 20, 0.8);
   }
 </style>

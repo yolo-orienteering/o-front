@@ -40,12 +40,6 @@
       desc: 'Das Beste aus beiden Welten: gedrucktes Heft plus digitaler Zugang.',
       icon: 'mdi-newspaper-variant-multiple-outline',
       badge: 'Bestes Angebot'
-    },
-    {
-      value: 'print',
-      title: 'Print',
-      desc: 'Das gedruckte Magazin, viermal im Jahr bequem im Briefkasten.',
-      icon: 'mdi-newspaper-variant-outline'
     }
   ]
   const selectedPlan = ref<MagazinePlan>('combo')

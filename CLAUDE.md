@@ -250,9 +250,16 @@ collection, or backend model is involved.
   **content blocks** (`paragraph`/`heading`/`figure`/`pullquote`/`list`/`infobox`/`qa`/`expert`).
   Images were extracted from the print PDF and live in `public/magazine/*.jpg`.
 - **Feed teasers:** `pages/feed/index.vue` renders `components/magazine/MagazineTeaser.vue`
-  cards above the Directus posts, linking to `/magazine/[slug]`.
-- **Reader:** `pages/magazine/[slug].vue` renders the hero + header + body via
+  above the Directus posts, linking to `/magazine/[slug]`. Teasers **deliberately mirror the
+  news-post layout** (source logo + date, edge-to-edge image via the shared `feed-carousel`,
+  action icons, `text-subtitle1` title, `text-caption` lead) so they blend into the feed; the
+  premium article gets a small lock glyph before its title.
+- **Reader:** `pages/magazine/[slug].vue` — a **full-bleed hero** (bleeds ±8px past the q-page
+  padding, no rounding) then a light, minimal editorial layout via
   `components/magazine/MagazineArticleBlock.vue` (per-block styling). Unknown slug → 404.
+- **Branding:** the magazine accent is `--mag-red` (`#d60000`, defined in `assets/css/app.scss`) —
+  used for the `MagazineBadge` "O" mark, the article kicker, pull-quote rules, and numbered-tip
+  badges. Typography is intentionally lightweight (light-weight title, no drop caps, no reading-time).
 - **Paywall demo:** one article (`herzgesundheit-…`) has `premium: true` + `previewBlocks`.
   After the preview blocks, `components/magazine/MagazinePaywall.vue` blocks the rest unless
   subscribed. The gated region is wrapped in `<client-only>` (fallback = paywall) so premium

@@ -15,10 +15,10 @@
     align-items: center;
     gap: 0.45rem;
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--q-primary);
+    color: #1d1d1d;
   }
 
   .mag-badge__mark {
@@ -28,9 +28,10 @@
     width: 1.25rem;
     height: 1.25rem;
     border-radius: 50%;
-    background: var(--q-secondary);
+    background: var(--mag-red);
     color: #fff;
     font-size: 0.78rem;
+    font-weight: 700;
     letter-spacing: 0;
   }
 

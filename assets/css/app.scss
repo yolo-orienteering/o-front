@@ -1,6 +1,11 @@
 // app global css in SCSS form
 @use 'quasar/src/css/variables' as *;
 
+// Swiss O Magazine brand accent (used for the magazine logo + article accents)
+:root {
+  --mag-red: #d60000;
+}
+
 @keyframes animate-up {
   from {
     transform: translateY(60px);

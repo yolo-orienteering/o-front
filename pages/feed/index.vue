@@ -60,29 +60,14 @@
 <template>
   <div class="row q-mt-lg justify-center">
     <!-- Swiss O Magazine — online articles (test) -->
-    <div class="col-12" style="max-width: 600px">
-      <div class="row items-center justify-between q-mb-md">
-        <div class="text-overline text-primary">Aus dem Swiss O Magazine</div>
-        <q-chip
-          dense
-          square
-          color="secondary"
-          text-color="white"
-          class="text-caption"
-        >
-          Neu
-        </q-chip>
-      </div>
-
-      <div class="q-gutter-y-md">
-        <magazine-teaser
-          v-for="mag in magazineArticles"
-          :key="mag.slug"
-          :article="mag"
-        />
-      </div>
-
-      <q-separator class="q-my-lg" />
+    <div
+      v-for="(mag, magIndex) in magazineArticles"
+      :key="mag.slug"
+      class="col-12"
+      style="max-width: 600px"
+    >
+      <q-separator v-if="magIndex > 0" class="q-my-lg" />
+      <magazine-teaser :article="mag" />
     </div>
 
     <div
@@ -94,7 +79,10 @@
       <a v-if="post.sourceUrl" :href="post.sourceUrl" target="_blank">
         <div class="row">
           <div class="col-12">
-            <q-separator v-if="postId > 0" class="q-my-lg" />
+            <q-separator
+              v-if="postId > 0 || magazineArticles.length"
+              class="q-my-lg"
+            />
           </div>
           <div class="col-12">
             <div class="row items-center justify-between q-pb-sm">

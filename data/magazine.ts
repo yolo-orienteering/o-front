@@ -78,7 +78,6 @@ export interface MagazineArticle {
   author: string
   /** ISO date string */
   date: string
-  readingMinutes: number
   /** path under /public */
   hero: string
   heroCaption?: string
@@ -98,7 +97,6 @@ export const magazineArticles: MagazineArticle[] = [
     lead: 'Atemberaubende Aussicht, offenes Gelände und Abenteuer: OL in den Bergen fasziniert – und fordert. Ein Blick hinter die Kulissen der Swiss O Week zeigt, wie komplex Planung, Prävention und Krisenmanagement sind.',
     author: 'Annina Müller',
     date: '2026-05-28',
-    readingMinutes: 7,
     hero: '/magazine/sicherheit-hero.jpg',
     heroCaption:
       'Das plötzliche Aufziehen von dicken Wolken ist in den Bergen nicht selten.',
@@ -213,7 +211,6 @@ export const magazineArticles: MagazineArticle[] = [
     lead: 'Ohne gesundes Herz kein Leistungssport. Worauf vor allem junge Athletinnen und Athleten achten sollten, welcher Trainingsumfang die Pumpe zu Höchstleistungen antreibt und warum nicht nur Ausdauertraining gut fürs Herz ist – erklärt mit Hilfe eines Experten.',
     author: 'Nik Walter',
     date: '2026-05-20',
-    readingMinutes: 6,
     hero: '/magazine/herz-hero.jpg',
     heroCaption:
       'Jungen Menschen wird für eine optimale Herzgesundheit ein regelmässiger Herzcheck empfohlen.',
@@ -281,7 +278,6 @@ export const magazineArticles: MagazineArticle[] = [
     lead: 'Zwei Läufe vom nationalen Saisonauftakt: Wie der Lette Uldis Upitis die Langdistanz im Forst sezierte – und wie Lisa Hubmann nach zwei Fehlstarts in Utzigenwil noch auf Rang zwei lief.',
     author: 'Jonas Merz',
     date: '2026-04-30',
-    readingMinutes: 5,
     hero: '/magazine/forst-map.jpg',
     heroCaption: '2. Nationaler OL – Karte Forst, Langdistanz.',
     heroCredit: 'Karte: OLG Bern',
@@ -358,7 +354,6 @@ export const magazineArticles: MagazineArticle[] = [
     lead: 'Viel Steigung, anspruchsvolle Belaufbarkeit, weite Sicht: Wettkämpfe in alpinem Gelände bringen eigene Herausforderungen mit sich. Fünf Trainingstipps, wie OL in den Bergen sowohl zum Erfolg als auch zum Genuss wird.',
     author: 'Véronique Ruppenthal',
     date: '2026-05-12',
-    readingMinutes: 6,
     hero: '/magazine/training-hero.jpg',
     heroCaption:
       'Den Blick gezielt in die Ferne richten und entfernte Geländekammern erkennen, unterstützt eine präzise Routenplanung.',
