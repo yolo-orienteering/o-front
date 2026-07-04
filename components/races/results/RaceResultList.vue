@@ -1,78 +1,70 @@
 <template>
   <div class="result-list">
-    <!-- name search (client-side filter) -->
-    <q-input
-      v-model="search"
-      class="q-mb-md"
-      dense
-      outlined
-      rounded
-      clearable
-      debounce="100"
-      placeholder="Läufer:in suchen …"
-    >
-      <template #prepend>
-        <q-icon name="search" />
-      </template>
-    </q-input>
+    <!-- reference toggle: gap to the winner vs. among the selected runners -->
+    <div class="row no-wrap q-gutter-sm items-top justify-between q-mt-md">
+      <!-- name search (client-side filter) -->
+      <q-input
+        v-model="search"
+        dense
+        outlined
+        rounded
+        clearable
+        debounce="100"
+        placeholder="Läufer:in suchen …"
+      >
+        <template #prepend>
+          <q-icon name="search" />
+        </template>
+      </q-input>
 
-    <!-- comparison chart -->
-    <div v-if="hasSplits && compareSeries.length" class="q-mb-md">
-      <client-only>
-        <race-result-split-chart
-          :x-values="chartBaseline"
-          :series="compareSeries"
-        />
-      </client-only>
-
-      <!-- reference toggle: gap to the winner vs. among the selected runners -->
-      <div class="row items-center justify-between q-gutter-x-sm q-mt-xs">
-        <q-btn-toggle
-          v-model="compareMode"
-          :options="compareModeOptions"
-          dense
-          no-caps
-          rounded
-          outline
-          toggle-color="primary"
-          text-color="grey-7"
-        />
-        <q-btn
-          v-if="compareIndices.length"
-          dense
-          flat
-          no-caps
-          size="sm"
-          icon="close"
-          label="Vergleich leeren"
-          @click="compareIndices = []"
-        />
-      </div>
-      <div class="text-caption text-grey-6 q-mt-xs">{{ compareHint }}</div>
-      <div class="text-caption text-grey-5">
-        Zahlen oben = Posten · zoomen &amp; seitlich schieben
-      </div>
+      <q-btn-toggle
+        v-model="compareMode"
+        :options="compareModeOptions"
+        dense
+        no-caps
+        rounded
+        toggle-color="primary"
+        text-color="grey-7"
+        color="primary"
+      />
     </div>
+  </div>
+  <div class="row justify-end">
+    <div class="text-caption text-grey-5 q-mt-sm">
+      {{ compareHint }}
+    </div>
+  </div>
+
+  <!-- comparison chart -->
+  <div v-if="hasSplits && compareSeries.length" class="q-mt-md">
+    <client-only>
+      <race-result-split-chart
+        :x-values="chartBaseline"
+        :series="compareSeries"
+      />
+    </client-only>
 
     <!-- ranked rows (filtered by name search; original index preserved) -->
-    <race-result-row
-      v-for="row in visibleRows"
-      :key="`${row.entry.identifier}-${row.index}`"
-      :entry="row.entry"
-      :runner-analysis="analysis.byIndex[row.index]"
-      :gap-seconds="gapFor(row.index)"
-      :bar-pct="barPctFor(row.index)"
-      :is-me="isMe(row.entry.identifier)"
-      :is-followed="isFollowed(row.entry.identifier)"
-      :expanded="expandedIndex === row.index"
-      :in-compare="compareIndices.includes(row.index)"
-      :compare-color="compareColorMap.get(row.index) ?? null"
-      :compare-mode="compareMode"
-      :compare-baseline="compareBaseline"
-      :selected-leg-times="selectedLegTimes"
-      @toggle="toggleExpand(row.index)"
-      @toggle-compare="toggleCompare(row.index)"
-    />
+    <div class="q-mt-md">
+      <race-result-row
+        v-for="row in visibleRows"
+        :key="`${row.entry.identifier}-${row.index}`"
+        :entry="row.entry"
+        :runner-analysis="analysis.byIndex[row.index]"
+        :gap-seconds="gapFor(row.index)"
+        :bar-pct="barPctFor(row.index)"
+        :is-me="isMe(row.entry.identifier)"
+        :is-followed="isFollowed(row.entry.identifier)"
+        :expanded="expandedIndex === row.index"
+        :in-compare="compareIndices.includes(row.index)"
+        :compare-color="compareColorMap.get(row.index) ?? null"
+        :compare-mode="compareMode"
+        :compare-baseline="compareBaseline"
+        :selected-leg-times="selectedLegTimes"
+        @toggle="toggleExpand(row.index)"
+        @toggle-compare="toggleCompare(row.index)"
+      />
+    </div>
 
     <div v-if="!visibleRows.length" class="text-center text-grey-6 q-py-lg">
       Keine Läufer:innen gefunden für „{{ search }}“.

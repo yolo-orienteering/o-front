@@ -167,3 +167,33 @@ function min(values: (number | null)[]): number | null {
   }
   return best
 }
+
+/**
+ * Fastest (smallest strictly-positive) leg time at control index `i` across the
+ * given per-runner leg-time rows. Used to re-base "Zeitverlust pro Abschnitt" on
+ * a subset of runners (Direktvergleich) instead of the whole class.
+ */
+export function fastestLegAmong(
+  legTimesByRunner: (number | null)[][],
+  i: number
+): number | null {
+  return min(legTimesByRunner.map((legs) => legs[i] ?? null))
+}
+
+/**
+ * Rank of `legTime` at control `i` among the given per-runner leg-time rows
+ * (1 = fastest of the field). Ties share a rank. Null for an invalid leg time.
+ */
+export function legRankAmong(
+  legTime: number | null,
+  legTimesByRunner: (number | null)[][],
+  i: number
+): number | null {
+  if (legTime === null || legTime <= 0) return null
+  let faster = 0
+  for (const legs of legTimesByRunner) {
+    const t = legs[i]
+    if (t !== null && t > 0 && t < legTime) faster++
+  }
+  return faster + 1
+}

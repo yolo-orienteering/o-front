@@ -179,10 +179,14 @@ In-app, mobile-first orienteering results with split-time analysis — instead o
   (a `q-btn-toggle` under the chart, owned by `RaceResultList` as `compareMode`): **Sieger** = gap to the
   class winner (`analysis.bestCumulative`, the classic Rückstand; default) and **Direktvergleich** = gap
   to the fastest of the _currently selected_ runners per control (`compareBaseline`, re-bases as you
-  add/remove runners). The mode drives **both** the chart's 0-line (`chartBaseline`) and the split table's
-  single comparison column (`RaceResultSplitsTable` shows either **Rückstand**+category leg-rank badge, or
+  add/remove runners). The mode drives the chart's 0-line (`chartBaseline`), the split table's single
+  comparison column (`RaceResultSplitsTable` shows either **Rückstand**+category leg-rank badge, or
   **Direktvergleich**+leg-rank-among-selected badge; values precomputed in a `rows` computed for cheap
-  re-toggling; Direktvergleich falls back to winner when no selection). `RaceResultSplitChart`: **linear
+  re-toggling; Direktvergleich falls back to winner when no selection), **and** the per-leg _Zeitverlust_
+  shown both in brackets next to each **Abschnitt** and as the `RaceResultLegChart` bars — re-based on the
+  fastest leg of the class (Sieger) or of the selected runners (Direktvergleich). The mode-aware "fastest
+  leg / rank among a set" helpers live in `useSplitAnalysis` (`fastestLegAmong`, `legRankAmong`), shared by
+  the table and the leg chart. `RaceResultSplitChart`: **linear
   x-axis spaced by the reference's cumulative time per control** (columns reflect leg length — true per-leg
   distances are NOT in the o-l.ch XML), **pinch-zoom + pan** via `chartjs-plugin-zoom`; the reversed y-axis
   is pinned at `0` so 0:00 stays at the top while zooming; **no hover tooltip** — control (Posten) sequence

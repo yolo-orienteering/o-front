@@ -1,16 +1,5 @@
 <template>
   <div class="split-chart-wrap">
-    <q-btn
-      class="reset-zoom"
-      dense
-      round
-      flat
-      size="sm"
-      icon="zoom_out_map"
-      @click="resetZoom"
-    >
-      <q-tooltip>Zoom zurücksetzen</q-tooltip>
-    </q-btn>
     <div class="split-chart">
       <Line
         ref="chartRef"
@@ -182,14 +171,6 @@
       }
     }
   }))
-
-  function resetZoom(): void {
-    // vue-chartjs exposes the underlying Chart instance as `.chart`
-    const chart = (
-      chartRef.value as unknown as { chart?: { resetZoom?: () => void } }
-    )?.chart
-    chart?.resetZoom?.()
-  }
 </script>
 
 <style lang="scss" scoped>
@@ -202,13 +183,5 @@
     height: 300px;
     width: 100%;
     touch-action: pan-y; // let the plugin handle horizontal pan/pinch
-  }
-
-  .reset-zoom {
-    position: absolute;
-    top: -2px;
-    right: 0;
-    z-index: 1;
-    color: var(--q-primary);
   }
 </style>

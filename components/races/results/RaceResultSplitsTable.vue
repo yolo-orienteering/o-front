@@ -19,6 +19,9 @@
       </div>
       <div class="splits-col-num">
         <span class="splits-leg-time">{{ formatRaceTime(row.legTime) }}</span>
+        <span class="splits-leg-loss" :class="{ primary: !row.legLoss }">
+          (+{{ formatRaceTime(row.legLoss || 0) }})
+        </span>
       </div>
       <div class="splits-col-num">{{ formatRaceTime(row.cumulative) }}</div>
       <div class="splits-col-num" :class="row.deltaClass">
@@ -34,6 +37,7 @@
 <script lang="ts" setup>
   import { computed } from 'vue'
   import type { LegAnalysis } from '@/composables/useSplitAnalysis'
+  import { fastestLegAmong, legRankAmong } from '@/composables/useSplitAnalysis'
   import { formatDelta, formatRaceTime } from '@/utils/raceResultFormat'
 
   const props = defineProps<{
@@ -60,34 +64,30 @@
     effectiveMode.value === 'selected' ? 'Direktvergleich' : 'Rückstand'
   )
 
-  /** Rank of this runner's leg among the selected runners (1 = fastest of the field). */
-  function rankAmongSelected(legTime: number | null, i: number): number | null {
-    if (legTime === null || legTime <= 0 || !props.selectedLegTimes) return null
-    let faster = 0
-    for (const legs of props.selectedLegTimes) {
-      const t = legs[i]
-      if (t !== null && t > 0 && t < legTime) faster++
-    }
-    return faster + 1
-  }
-
   // Precompute the display values once per (legs, mode) change — the template then
   // only reads plain fields, so toggling the mode re-renders cheaply.
   const rows = computed(() => {
     const selected = effectiveMode.value === 'selected'
+    const selLegs = props.selectedLegTimes ?? []
     return props.legs.map((leg, i) => {
       let delta: number | null
       let rank: number | null
+      let legLoss: number | null
       if (selected) {
         const base = props.baseline?.[i]
         delta =
           leg.cumulative !== null && base !== null && base !== undefined
             ? leg.cumulative - base
             : null
-        rank = rankAmongSelected(leg.legTime, i)
+        rank = legRankAmong(leg.legTime, selLegs, i)
+        // Zeitverlust re-based on the selected field: leg time − fastest selected leg.
+        const refLeg = fastestLegAmong(selLegs, i)
+        legLoss =
+          leg.legTime !== null && refLeg !== null ? leg.legTime - refLeg : null
       } else {
         delta = leg.cumulativeBehind
         rank = leg.legRank
+        legLoss = leg.legLoss
       }
       return {
         seq: i + 1,
@@ -96,6 +96,7 @@
         cumulative: leg.cumulative,
         delta,
         rank,
+        legLoss,
         // Highlight the row where this runner led the compared field on the leg.
         isBest: rank === 1,
         deltaClass: deltaClass(delta)
@@ -124,7 +125,7 @@
 
   .splits-row {
     display: grid;
-    grid-template-columns: 0.9fr 0.85fr 0.95fr 1.3fr;
+    grid-template-columns: 0.7fr 1.25fr 0.8fr 1.05fr;
     align-items: center;
     gap: 2px;
     padding: 4px 0;
@@ -165,6 +166,13 @@
 
   .splits-leg-time {
     font-weight: 500;
+  }
+
+  // "Zeitverlust" on this leg, shown in brackets next to the section time.
+  .splits-leg-loss {
+    margin-left: 3px;
+    font-size: 0.7rem;
+    color: var(--q-secondary);
   }
 
   .splits-rank {

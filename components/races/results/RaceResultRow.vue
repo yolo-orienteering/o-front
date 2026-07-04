@@ -125,7 +125,11 @@
             Zeitverlust pro Abschnitt
           </div>
           <client-only>
-            <race-result-leg-chart :legs="legs" />
+            <race-result-leg-chart
+              :legs="legs"
+              :mode="compareMode"
+              :selected-leg-times="selectedLegTimes"
+            />
           </client-only>
         </div>
       </div>
