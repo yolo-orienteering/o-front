@@ -20,15 +20,23 @@
     <div v-if="hasSplits && compareSeries.length" class="q-mb-md">
       <client-only>
         <race-result-split-chart
-          :x-values="analysis.bestCumulative"
-          :controls="analysis.controls"
+          :x-values="chartBaseline"
           :series="compareSeries"
         />
       </client-only>
-      <div class="row items-center justify-between q-mb-xs">
-        <div class="text-caption text-grey-6">
-          zoomen & seitlich schieben möglich
-        </div>
+
+      <!-- reference toggle: gap to the winner vs. among the selected runners -->
+      <div class="row items-center justify-between q-gutter-x-sm q-mt-xs">
+        <q-btn-toggle
+          v-model="compareMode"
+          :options="compareModeOptions"
+          dense
+          no-caps
+          rounded
+          outline
+          toggle-color="primary"
+          text-color="grey-7"
+        />
         <q-btn
           v-if="compareIndices.length"
           dense
@@ -39,6 +47,10 @@
           label="Vergleich leeren"
           @click="compareIndices = []"
         />
+      </div>
+      <div class="text-caption text-grey-6 q-mt-xs">{{ compareHint }}</div>
+      <div class="text-caption text-grey-5">
+        Zahlen oben = Posten · zoomen &amp; seitlich schieben
       </div>
     </div>
 
@@ -55,6 +67,9 @@
       :expanded="expandedIndex === row.index"
       :in-compare="compareIndices.includes(row.index)"
       :compare-color="compareColorMap.get(row.index) ?? null"
+      :compare-mode="compareMode"
+      :compare-baseline="compareBaseline"
+      :selected-leg-times="selectedLegTimes"
       @toggle="toggleExpand(row.index)"
       @toggle-compare="toggleCompare(row.index)"
     />
@@ -85,6 +100,20 @@
   const expandedIndex = ref<number | null>(null)
   const compareIndices = ref<number[]>([])
   const search = ref('')
+
+  // Comparison reference: 'winner' = classic gap to the class winner (Rückstand);
+  // 'selected' = Direktvergleich, gap to the fastest of the selected runners.
+  type CompareMode = 'winner' | 'selected'
+  const compareMode = ref<CompareMode>('winner')
+  const compareModeOptions = [
+    { label: 'Sieger', value: 'winner' },
+    { label: 'Direktvergleich', value: 'selected' }
+  ]
+  const compareHint = computed(() =>
+    compareMode.value === 'selected'
+      ? 'Vergleich der gewählten Läufer:innen'
+      : 'Rückstand auf die Siegerzeit'
+  )
 
   // Rows to render, filtered by the name search but keeping the original index
   // so ranks, gaps, bars and the comparison chart stay relative to the full field.
@@ -174,14 +203,52 @@
     return map
   })
 
+  // Reference line for the comparison chart: the fastest of the *currently
+  // selected* runners at each control — not the category leader. Comparing
+  // places 4/5/8 makes the fastest of those three the 0-line, so the chart zooms
+  // in on their mutual gaps instead of dwarfing them against the overall winner.
+  const compareBaseline = computed<(number | null)[]>(() =>
+    Array.from({ length: props.analysis.legCount }, (_, i) => {
+      let best: number | null = null
+      for (const index of compareIndices.value) {
+        const cum = props.analysis.byIndex[index]?.legs[i]?.cumulative ?? null
+        if (cum !== null && cum > 0 && (best === null || cum < best)) {
+          best = cum
+        }
+      }
+      return best
+    })
+  )
+
+  // Leg (section) times per control for each selected runner — feeds the split
+  // table's "Direktvergleich" rank badge (rank within the compared field).
+  const selectedLegTimes = computed<(number | null)[][]>(() =>
+    compareIndices.value.map(
+      (index) => props.analysis.byIndex[index]?.legs.map((l) => l.legTime) ?? []
+    )
+  )
+
+  // The 0-line the chart is drawn against, per the active mode: the class winner
+  // (analysis.bestCumulative) or the fastest selected runner (compareBaseline).
+  const chartBaseline = computed<(number | null)[]>(() =>
+    compareMode.value === 'selected'
+      ? compareBaseline.value
+      : props.analysis.bestCumulative
+  )
+
   const compareSeries = computed(() =>
     compareIndices.value.map((index) => {
       const entry = props.raceClass.results[index]
+      const legs = props.analysis.byIndex[index]?.legs ?? []
       return {
         label: entry.fullName,
-        data:
-          props.analysis.byIndex[index]?.legs.map((l) => l.cumulativeBehind) ??
-          [],
+        // Cumulative gap to the active reference (winner or fastest selected).
+        data: legs.map((l, i) => {
+          const base = chartBaseline.value[i]
+          return l.cumulative !== null && base !== null && base !== undefined
+            ? l.cumulative - base
+            : null
+        }),
         color: compareColorMap.value.get(index) ?? PALETTE[0],
         dashed: entry.position === 1
       }

@@ -30,6 +30,21 @@ export function formatGap(seconds: number | null | undefined): string {
   return `+${formatRaceTime(seconds)}`
 }
 
+/**
+ * Format a signed delta to a reference: `+m:ss` when behind, `-m:ss` when ahead,
+ * `–` at exactly 0 or null. Unlike `formatGap`, this keeps the sign — the
+ * reference (e.g. the fastest *selected* runner) is not always the fastest, so a
+ * compared runner can be ahead of it.
+ */
+export function formatDelta(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) {
+    return '–'
+  }
+  const rounded = Math.round(seconds)
+  if (rounded === 0) return '–'
+  return rounded > 0 ? `+${formatRaceTime(rounded)}` : formatRaceTime(rounded)
+}
+
 const STATUS_LABELS: Record<ResultStatus, string> = {
   OK: 'OK',
   DidNotFinish: 'Aufgegeben',

@@ -113,7 +113,12 @@
           Start {{ startClock }} · {{ legCount }} Posten
         </div>
 
-        <race-result-splits-table :legs="legs" />
+        <race-result-splits-table
+          :legs="legs"
+          :mode="compareMode"
+          :baseline="compareBaseline"
+          :selected-leg-times="selectedLegTimes"
+        />
 
         <div v-if="legs.length" class="q-mt-md">
           <div class="text-caption text-grey-7 q-mb-xs">
@@ -151,6 +156,12 @@
     expanded: boolean
     inCompare: boolean
     compareColor?: string | null
+    /** Comparison reference for the split table: 'winner' (Rückstand) or 'selected' (Direktvergleich). */
+    compareMode?: 'winner' | 'selected'
+    /** Fastest selected runner's cumulative time per control (drives the "Direktvergleich" column). */
+    compareBaseline?: (number | null)[]
+    /** Leg times per control for each selected runner (drives the "Direktvergleich" rank badge). */
+    selectedLegTimes?: (number | null)[][]
   }>()
 
   defineEmits<{ toggle: []; 'toggle-compare': [] }>()
