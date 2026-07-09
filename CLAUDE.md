@@ -83,8 +83,14 @@ npm run lint      # Format with Prettier
 ## State Management (Pinia Stores)
 
 - **`syncCenter`** — Main app state: user data, followed races, departures. Syncs to localStorage.
+  Also tracks feed read-state: `lastSeenPostDate` (ISO `date_created` of the newest post the user
+  has seen) + `markPostsSeen(date)` (advances forward-only), persisted locally since there's no auth.
 - **`useApi`** — Directus SDK client initialization. Provides `directus` client and `getImgUrl()` helper.
 - **`useRegion`** — Fetches unique race regions via Directus aggregation.
+- **`useUnreadPosts`** — Fetches the newest published post's `date_created` and exposes
+  `hasUnreadPosts` (true when it's newer than `syncCenter.lastSeenPostDate`). Drives the red dot on
+  the Feed menu entry (`components/layout/MenuEntries.vue`); the feed page clears it via
+  `markPostsSeen`. Fetches client-side only (the menu is `<client-only>`).
 
 ## Composables
 

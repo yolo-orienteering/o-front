@@ -7,15 +7,29 @@
   import tamedia from '@/assets/img/newsSources/tamedia_logo.png'
   import blick from '@/assets/img/newsSources/blick_logo.png'
   import az from '@/assets/img/newsSources/aargauerzeitung_logo.svg'
+  import ajour from '@/assets/img/newsSources/ajour_logo.webp'
+  import bzbasel from '@/assets/img/newsSources/bzbasel_logo.svg'
+  import nau from '@/assets/img/newsSources/nau_logo.svg'
+  import nzz from '@/assets/img/newsSources/nzz_logo.svg'
+  import suedostschweiz from '@/assets/img/newsSources/suedostschweiz_logo.svg'
 
   const { directus } = useApi()
   const { notify } = useQuasar()
   const filter = usePostsFilter()
+  const syncCenter = useSyncCenter()
 
   const { data: posts } = await useAsyncData<Post[]>('fetchPosts', () => {
     const query = filter.composePostsQuery({ initialLoad: true })
     return directus.request<Post[]>(readItems('Post', query))
   })
+
+  // posts are sorted newest-first, so the first one marks the feed as seen
+  // and clears the unread red dot on the menu entry
+  watch(
+    posts,
+    (loadedPosts) => syncCenter.markPostsSeen(loadedPosts?.[0]?.date_created),
+    { immediate: true }
+  )
 
   async function loadMore() {
     filter.filter.page += 1
@@ -39,7 +53,11 @@
     if (post.sourceUrl?.includes('tagesanzeiger.ch')) return tamedia
     if (post.sourceUrl?.includes('blick.ch')) return blick
     if (post.sourceUrl?.includes('aargauerzeitung.ch')) return az
-
+    if (post.sourceUrl?.includes('ajour.ch')) return ajour
+    if (post.sourceUrl?.includes('bzbasel.ch')) return bzbasel
+    if (post.sourceUrl?.includes('nau.ch')) return nau
+    if (post.sourceUrl?.includes('nzz.ch')) return nzz
+    if (post.sourceUrl?.includes('suedostschweiz.ch')) return suedostschweiz
     return solv
   }
 
@@ -91,7 +109,7 @@
                 <img
                   v-else
                   :src="getSourceLogo(post)"
-                  style="max-height: 30px; max-width: 180px"
+                  style="max-height: 30px; max-width: 180px; min-height: 20px"
                 />
               </div>
               <div class="col-auto text-grey">

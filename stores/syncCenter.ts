@@ -25,6 +25,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   const calendarSubscriptionId = ref<string | null>(null)
   const bookmarkCount = ref<number>(0)
   const showCalendarPrompt = ref<boolean>(false)
+  // ISO date_created of the newest post the user has seen on the feed
+  const lastSeenPostDate = ref<string | null>(null)
 
   /**
    * DEFINE STORE KEY NAMES
@@ -36,6 +38,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   const FOLLOWING_USER_DEPARTURES_STORAGE_KEY = 'following-user-departures'
   const CALENDAR_SUBSCRIPTION_ID_STORAGE_KEY = 'calendar-subscription-id'
   const BOOKMARK_COUNT_STORAGE_KEY = 'bookmark-count'
+  const LAST_SEEN_POST_DATE_STORAGE_KEY = 'last-seen-post-date'
 
   /**
    * INITIAL DATA READING FROM STORE
@@ -47,6 +50,7 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     readFollowingUserDepartures()
     readCalendarSubscriptionId()
     readBookmarkCount()
+    readLastSeenPostDate()
   })
 
   // load data from the local store
@@ -81,6 +85,28 @@ export const useSyncCenter = defineStore('syncCenter', () => {
   function readBookmarkCount(): void {
     bookmarkCount.value =
       localStorage.getItem<number>(BOOKMARK_COUNT_STORAGE_KEY) || 0
+  }
+  function readLastSeenPostDate(): void {
+    lastSeenPostDate.value =
+      localStorage.getItem<string>(LAST_SEEN_POST_DATE_STORAGE_KEY) || null
+  }
+
+  /**
+   * Mark the feed as seen up to the given post date_created. Only ever advances
+   * forward, so an older page load can't reset the unread marker.
+   */
+  function markPostsSeen(date: string | null | undefined): void {
+    if (isServer() || !date) {
+      return
+    }
+    if (
+      lastSeenPostDate.value &&
+      new Date(date).getTime() <= new Date(lastSeenPostDate.value).getTime()
+    ) {
+      return
+    }
+    lastSeenPostDate.value = date
+    localStorage.set(LAST_SEEN_POST_DATE_STORAGE_KEY, date)
   }
 
   /**
@@ -189,6 +215,8 @@ export const useSyncCenter = defineStore('syncCenter', () => {
     bookmarkCount,
     showCalendarPrompt,
     incrementBookmarkCount,
+    lastSeenPostDate,
+    markPostsSeen,
     userIdentifier,
     myDepartures
   }
