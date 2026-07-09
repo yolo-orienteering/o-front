@@ -75,15 +75,15 @@
 <template>
   <div class="row q-mt-lg justify-center">
     <div
-      v-for="(post, postId) in posts"
-      :key="postId"
+      v-for="(post, index) in posts"
+      :key="post.id"
       class="col-12"
       style="max-width: 600px"
     >
       <a v-if="post.sourceUrl" :href="post.sourceUrl" target="_blank">
         <div class="row">
           <div class="col-12">
-            <q-separator v-if="postId > 0" class="q-my-lg" />
+            <q-separator v-if="index > 0" class="q-my-lg" />
           </div>
           <div class="col-12">
             <div class="row items-center justify-between q-pb-sm">

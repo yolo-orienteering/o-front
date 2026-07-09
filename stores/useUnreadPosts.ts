@@ -30,7 +30,10 @@ export const useUnreadPosts = defineStore('useUnreadPosts', () => {
         readItems('Post', {
           fields: ['date_created'],
           filter: { status: { _eq: 'published' } },
-          sort: ['-date_created'],
+          // stable tie-breaker so "newest" is deterministic when several posts
+          // share the same date_created — matches the feed's sort in
+          // usePostsFilter.ts
+          sort: ['-date_created', 'id'],
           limit: 1
         })
       )

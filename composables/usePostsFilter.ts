@@ -47,7 +47,12 @@ export const usePostsFilter = defineStore('usePostsFilter', () => {
           _eq: 'published'
         }
       },
-      sort: ['-date_created'],
+      // '-date_created' alone isn't a stable order: many posts share the same
+      // date_created (day-precision crawler sources stamp midnight), and Postgres
+      // returns rows tied on the sole ORDER BY column in an arbitrary, per-request
+      // order — the feed reshuffles on reload. 'id' (unique UUID) breaks ties
+      // deterministically so the order stays fixed across reloads and pages.
+      sort: ['-date_created', 'id'],
       limit,
       page
     } as PostsQuery
